@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/setting_item_selector"
+        android:orientation="horizontal"
+        android:clickable="true">
+        <TextView
+            android:id="@id/tv1"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:textSize="20dp"
+            android:textColor="@color/brown"
+            android:gravity="center_vertical"
+            android:text="LY306E："
+            android:focusable="false"/>
+        <TextView
+            android:id="@+id/tv2"
+            style="@style/TxtTitle"
+            android:textSize="20dp"
+            android:gravity="center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="16dp"
+            android:drawablePadding="10dp"
+            android:drawableRight="@mipmap/right"
+            android:singleLine="true"
+            android:ellipsize="end"
+            android:text="ELY1234567890"
+            android:textColor="@color/skyblue"
+            android:focusable="false"/>
+
+    </LinearLayout>
+    <View
+        android:background="@color/black2"
+        android:layout_width="fill_parent"
+        android:layout_height="1.0dip"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"/>
+</LinearLayout>

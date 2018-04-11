@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.msw.mesapp.activity.home.quality.TestCheckMainActivity">
+    <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout" />
+
+    <View
+        android:layout_width="match_parent" android:layout_height="15dp" android:background="@color/barcolor"/>
+    <TextView
+        android:id="@+id/tv1"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/setting_item_selector"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:text="原料发布"
+        android:textSize="20dp"
+        android:textColor="@color/titlecolor"/>
+    <View
+        android:layout_width="match_parent" android:layout_height="15dp" android:background="@color/barcolor"/>
+
+    <TextView
+        android:id="@+id/tv2"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:background="@drawable/setting_item_selector"
+        android:gravity="center_vertical"
+        android:paddingLeft="20dp"
+        android:text="制程数据"
+        android:textSize="20dp"
+        android:textColor="@color/titlecolor"/>
+
+</LinearLayout>

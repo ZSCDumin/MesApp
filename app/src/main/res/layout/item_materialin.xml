@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/setting_item_selector"
+        android:orientation="horizontal"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/tv"
+            style="@style/TxtTitle"
+            android:textSize="20dp"
+            android:gravity="center_vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="16dp"
+            android:drawablePadding="10dp"
+            android:drawableRight="@mipmap/right"
+            android:text="金驰能源材料有限..."
+            android:focusable="false"/>
+
+    </LinearLayout>
+    <View
+        android:background="@color/black2"
+        android:layout_width="fill_parent"
+        android:layout_height="1.0dip"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"/>
+</LinearLayout>

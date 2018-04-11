@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.msw.mesapp">
+
+    <!-- 蓝牙相关 -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="false" />
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
+                     tools:ignore="ProtectedPermissions"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <!-- NFC权限 -->
+    <uses-permission android:name="android.permission.NFC" />
+
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
+
+
+    <application
+        android:name=".base.MyApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/logo"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/logo"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.LoginActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.LoginNfcActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+        </activity>
+
+        <activity android:name=".activity.HomeActivity" />
+        <activity android:name=".activity.home.equipment.InspectActivity" />
+        <activity android:name=".activity.component.QRCodeActivity" />
+        <activity android:name=".activity.home.equipment.RepairActivity" />
+        <activity android:name=".activity.home.equipment.OutsourceActivity" />
+        <activity android:name=".activity.home.quality.TestCheckActivity" />
+        <activity android:name=".activity.home.quality.TestCheck2Activity" />
+        <activity android:name=".activity.home.quality.TestCheckProductActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseActivity" />
+        <activity android:name=".activity.home.warehouse.MaterialInActivity" />
+        <activity android:name=".activity.home.warehouse.MaterialOutActivity" />
+        <activity android:name=".activity.home.warehouse.ProductInActivity" />
+        <activity android:name=".activity.home.warehouse.ProductOutActivity" />
+        <activity
+            android:name=".activity.me.ModifyPasswordActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activity.me.SettingActivity" />
+        <activity android:name=".activity.home.warehouse.VerifyActivity" />
+        <activity android:name=".activity.home.equipment.InspectWorkerActivity" />
+        <activity android:name=".activity.home.equipment.InspectWorkerDetailActivity" />
+        <activity
+            android:name=".activity.home.equipment.InspectWorkerJudgeActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activity.home.equipment.InspectWorkerJudgeErrActivity" />
+        <activity android:name=".activity.home.quality.TestCheckDetailingActivity" />
+        <activity android:name=".activity.home.quality.TestCheckDetailedActivity" />
+        <activity android:name=".activity.home.quality.TestCheck2DetailingActivity" />
+        <activity android:name=".activity.home.quality.TestCheck2DetailedActivity" />
+        <activity android:name=".activity.home.quality.TestCheckProductDetailingActivity" />
+        <activity android:name=".activity.home.quality.TestCheckProductDetailedActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseDetailingActivity" />
+        <activity android:name=".activity.home.quality.TestRelease2DetailedActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseDetailedActivity" />
+        <activity android:name=".activity.home.quality.TestRelease2DetailingActivity" />
+        <activity android:name=".activity.home.equipment.InspectMonitorActivity" />
+        <activity android:name=".activity.home.equipment.InspectMonitorDetailActivity" />
+        <activity
+            android:name=".activity.home.equipment.InspectMonitorJudgeActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activity.home.equipment.InspectMonitorJudgeErrActivity" />
+        <activity android:name=".activity.home.quality.TestCheckMainActivity" />
+        <activity android:name=".activity.home.quality.TestCheckProcessActivity" />
+        <activity android:name=".activity.home.quality.TestCheckProcessedActivity" />
+        <activity android:name=".activity.home.quality.TestCheckProcessDetailActivity" />
+        <activity android:name=".activity.home.quality.TestCheckProcessedDetailActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseMainActivity" />
+        <activity android:name=".activity.home.quality.TestRelease2Activity" />
+        <activity android:name=".activity.home.quality.TestReleaseProcessDetailActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseProcessedDetailActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseProcessedActivity" />
+        <activity android:name=".activity.home.quality.TestReleaseProcessActivity" />
+        <activity android:name=".activity.home.warehouse.MaterialInDetail1Activity" />
+        <activity android:name=".activity.home.warehouse.MaterialInDetail2Activity" />
+        <activity android:name=".activity.home.warehouse.MaterialInDetail3Activity" />
+        <activity android:name=".activity.home.warehouse.MaterialInDetail1ScanActivity" />
+        <activity android:name=".activity.home.warehouse.MaterialInDetail1PrintActivity" />
+        <activity android:name=".activity.home.equipment.PhotoviewActivity" />
+        <activity android:name=".activity.home.equipment.RepairScoreDetailActivity" />
+        <activity android:name=".activity.home.equipment.RepairScoreDetail2Activity" />
+        <activity android:name=".activity.home.equipment.RepairScoreActivity" />
+        <activity android:name=".activity.home.equipment.RepairWorkDetailActivity" />
+        <activity
+            android:name=".activity.home.equipment.RepairWorkDetail2Activity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activity.home.equipment.RepairWorkActivity" />
+        <activity android:name=".activity.home.equipment.RepairReportDetailActivity" />
+        <activity
+            android:name=".activity.home.equipment.RepairReportActivity"
+            android:windowSoftInputMode="adjustPan" />
+        <activity android:name=".activity.PlanActivity"/>
+    </application>
+
+</manifest>

@@ -1,0 +1,736 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    >
+    <View
+        android:id="@+id/bar"
+        android:layout_width="match_parent"
+        android:layout_height="18dp"
+        android:background="@color/titlecolor"/>
+    <!--标题栏-->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/titlecolor">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="待办事项"
+            android:textColor="@color/white"
+            android:textSize="20dp" />
+
+
+    </RelativeLayout>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/titlecolor"></View>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:text="设备管理"
+                        android:textColor="@color/titlecolor"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+
+                    <TableRow>
+                        <LinearLayout android:id="@+id/device1"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_inspect"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="设备巡检"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/device2"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_repair"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="维修申请"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/device3"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_outsource"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="外协申请"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/device4"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                    </TableRow>
+                </TableLayout>
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:background="@color/barcolor"></View>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/titlecolor"></View>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:text="品质管理"
+                        android:textColor="@color/titlecolor"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+
+                    <TableRow>
+                        <LinearLayout android:id="@+id/quality1"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_testcheck"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/quality2"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验发布"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/quality3"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/quality4"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:background="@color/barcolor"></View>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/titlecolor"></View>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:text="仓库管理"
+                        android:textColor="@color/titlecolor"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:background="@color/barcolor"
+                        android:paddingLeft="20dp"
+                        android:textSize="12dp"
+                        android:text="出入库管理" />
+
+                    <TableRow>
+
+                        <LinearLayout android:id="@+id/iokun1"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_materialin"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="原料入库"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/iokun2"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_productin"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="产品入库"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/iokun3"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_materialout"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="原料出库"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/iokun4"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_productout"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="产品出库"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                    </TableRow>
+                </TableLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+
+                    <TextView
+                        android:visibility="gone"
+                        android:background="@color/barcolor"
+                        android:paddingLeft="20dp"
+                        android:textSize="12dp"
+                        android:text="盘库管理" />
+
+                    <TableRow>
+
+                        <LinearLayout android:id="@+id/panku1"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_verify"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="盘库管理"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/panku2"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/panku3"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/panku4"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="化验审核"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                    </TableRow>
+
+                </TableLayout>
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="15dp"
+                android:background="@color/barcolor"></View>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp">
+
+                    <View
+                        android:layout_width="3dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="10dp"
+                        android:background="@color/titlecolor"></View>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="3dp"
+                        android:text="生产管理"
+                        android:textColor="@color/titlecolor"
+                        android:textSize="18dp" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+
+                    <TableRow>
+                        <LinearLayout android:id="@+id/output1"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="工艺管理"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/output2"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="操作记录"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/output3"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="批号追溯"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/output4"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="岗位日志"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+
+                    </TableRow>
+                </TableLayout>
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stretchColumns="*">
+
+                    <TableRow>
+                        <LinearLayout android:id="@+id/output5"
+                            android:layout_height="@dimen/item_home_high"
+                            android:layout_width="0.0dip"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="副产品统计"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/output6"
+                            android:layout_height="@dimen/item_home_high"
+                            android:layout_width="0.0dip"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="岗位日志"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/output7"
+                            android:layout_height="@dimen/item_home_high"
+                            android:layout_width="0.0dip"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="操作记录"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:id="@+id/output8"
+                            android:layout_height="@dimen/item_home_high"
+                            android:layout_width="0.0dip"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true"
+                            android:visibility="invisible">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_release"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="批号追溯"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+</LinearLayout>
