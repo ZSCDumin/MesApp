@@ -30,7 +30,9 @@ import com.flyco.dialog.widget.NormalDialog;
 import com.flyco.dialog.widget.popup.BubblePopup;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.equipment.InspectActivity;
+import com.msw.mesapp.activity.home.equipment.QrManageActivity;
 import com.msw.mesapp.activity.home.equipment.RepairActivity;
+import com.msw.mesapp.activity.home.equipment.RepairItemActivity;
 import com.msw.mesapp.activity.home.quality.TestCheckMainActivity;
 import com.msw.mesapp.activity.home.quality.TestReleaseMainActivity;
 import com.msw.mesapp.activity.home.warehouse.MaterialInActivity;
@@ -147,6 +149,24 @@ public class HomeActivity extends AppCompatActivity {
                 ActivityUtil.switchTo(HomeActivity.this, RepairActivity.class);
             }
         });
+
+        device3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //ActivityUtil.toastShow(getActivity(), "维修单");
+                ToastUtil.showToast(HomeActivity.this, "维修单", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, RepairItemActivity.class);
+            }
+        });
+        device4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //ActivityUtil.toastShow(getActivity(), "条码管理");
+                ToastUtil.showToast(HomeActivity.this, "条码管理", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, QrManageActivity.class);
+            }
+        });
+
         quality1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

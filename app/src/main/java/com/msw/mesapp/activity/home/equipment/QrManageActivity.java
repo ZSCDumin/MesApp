@@ -1,25 +1,19 @@
-package com.msw.mesapp.activity.fragment.warehouse;
-
-/**
- * Created by Mr.Meng on 2017/12/31.
- */
+package com.msw.mesapp.activity.home.equipment;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.home.warehouse.MaterialInDetail1Activity;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.StatusBarUtils;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -36,82 +30,95 @@ import java.util.Map;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class FragmentMaterialIn1 extends Fragment {
+public class QrManageActivity extends AppCompatActivity {
 
+    @Bind(R.id.back)
+    ImageView back;
+    @Bind(R.id.title)
+    TextView title;
+    @Bind(R.id.add)
+    ImageView add;
     @Bind(R.id.search_view)
     MaterialSearchView searchView;
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
-    @Bind(R.id.classicsFooter)
-    ClassicsFooter classicsFooter;
     @Bind(R.id.refreshLayout)
     SmartRefreshLayout refreshLayout;
+    @Bind(R.id.classicsFooter)
+    ClassicsFooter classicsFooter;
     @Bind(R.id.imgsearch)
     ImageView imgsearch;
 
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
-
-    /** 目标项是否在最后一个可见项之后*/
+    /**
+     * 目标项是否在最后一个可见项之后
+     */
     private boolean mShouldScroll;
-    /** 记录目标项位置*/
+    /**
+     * 记录目标项位置
+     */
     private int mToPosition;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //引用创建好的xml布局
-        View view = inflater.inflate(R.layout.viewpaper_testchecking, container, false);
-        ButterKnife.bind(this, view);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_qr_manage);
+        ButterKnife.bind(this);
         initData();
         initView();
-        return view;
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void initTitle() {
+        StatusBarUtils.setActivityTranslucent(this); //设置全屏
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+        title.setText("条码管理");
+        add.setVisibility(View.INVISIBLE);
     }
 
     private void initData() {
         for (int i = 0; i < 20; i++) {
             Map listmap = new HashMap<>();
-            listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
-            listmap.put("2","KC664" + (57+i)+":"); //内部编号
+            listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
+            listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
             list.add(listmap);
         }
     }
 
-    private void initView() {
+    public void initView() {
+        initTitle();
         initRefreshLayout();
         initSearchView();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
-        adapter = new CommonAdapter<Map<String, Object>>(getActivity(), R.layout.item_materialin, list) {
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
+        adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_materialin, list) {
             @Override
             protected void convert(ViewHolder holder, final Map s, final int position) {
                 holder.setOnClickListener(R.id.item, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         //ActivityUtil.toastShow(getActivity(), "点击了" + position);
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("1",s.get("1").toString());
-                        map.put("2",s.get("2").toString());
-                        map.put("3",list.size());
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("1", s.get("1").toString());
+                        map.put("2", s.get("2").toString());
+                        map.put("3", list.size());
 
-                        ActivityUtil.switchTo(getActivity(), MaterialInDetail1Activity.class);
+                        ActivityUtil.switchTo(QrManageActivity.this, DeviceInfoActivity.class);
                     }
                 });
-                holder.setText(R.id.tv,s.get("1").toString());
+                holder.setText(R.id.tv, s.get("1").toString());
             }
         };
         recyclerView.setAdapter(adapter);
     }
 
-    /**
-     * 初始化搜索框
-     */
     private void initSearchView() {
         searchView.setHint("搜索");
         searchView.setVoiceSearch(false); //or true    ，是否支持声音的
@@ -181,17 +188,16 @@ public class FragmentMaterialIn1 extends Fragment {
                 if (list.size() <= 40 - 10) {
                     for (int i = 0; i < 10; i++) {
                         Map listmap = new HashMap<>();
-                        listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
-                        listmap.put("2","KC664" + (57+i)+":"); //内部编号
+                        listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
+                        listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
                         list.add(listmap);
                     }
                     { //搜索显示的提示
                         List<String> listitem = new ArrayList<>();
-                        for(int i=0;i<list.size();i++){
+                        for (int i = 0; i < list.size(); i++) {
                             listitem.add(list.get(i).get("1").toString());
                         }
                         String[] array = listitem.toArray(new String[listitem.size()]);
-                        searchView.setSuggestions(array);
                         adapter.notifyDataSetChanged();
                     }
                 } else {
@@ -205,22 +211,16 @@ public class FragmentMaterialIn1 extends Fragment {
         list.clear();
         for (int i = 0; i < 20; i++) {
             Map listmap = new HashMap<>();
-            listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
-            listmap.put("2","KC664" + (57+i)+":"); //内部编号
+            listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
+            listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
             list.add(listmap);
-        }
-        { //搜索显示的提示
-            List<String> listitem = new ArrayList<>();
-            for(int i=0;i<list.size();i++){
-                listitem.add(list.get(i).get("1").toString());
-            }
-            String[] array = listitem.toArray(new String[listitem.size()]);
-            searchView.setSuggestions(array);
         }
     }
 
+
     /**
      * 滑动到指定位置
+     *
      * @param mRecyclerView
      * @param position
      */
@@ -241,7 +241,7 @@ public class FragmentMaterialIn1 extends Fragment {
                 int top = mRecyclerView.getChildAt(movePosition).getTop();
                 mRecyclerView.smoothScrollBy(0, top);
             }
-        }else {
+        } else {
             // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
             // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
             mRecyclerView.smoothScrollToPosition(position);
@@ -252,8 +252,8 @@ public class FragmentMaterialIn1 extends Fragment {
 
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
+    public void onDestroy() {
+        super.onDestroy();
         ButterKnife.unbind(this);
     }
 }
