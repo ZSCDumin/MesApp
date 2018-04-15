@@ -145,6 +145,10 @@
         </activity>
         <activity android:name=".activity.home.equipment.DeviceInfoActivity">
         </activity>
+        <activity android:name=".activity.home.id_management.IdManagementActivity">
+        </activity>
+        <activity android:name=".activity.home.id_management.MemberNameActivity">
+        </activity>
     </application>
 
 </manifest>

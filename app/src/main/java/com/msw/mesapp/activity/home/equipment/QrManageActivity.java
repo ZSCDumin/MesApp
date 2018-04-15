@@ -120,13 +120,12 @@ public class QrManageActivity extends AppCompatActivity {
     }
 
     private void initSearchView() {
-        searchView.setHint("搜索");
         searchView.setVoiceSearch(false); //or true    ，是否支持声音的
         searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
         searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
         //搜索显示的提示
         List<String> listitem = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             listitem.add(list.get(i).get("1").toString());
         }
         String[] array = listitem.toArray(new String[listitem.size()]);
@@ -139,17 +138,18 @@ public class QrManageActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int i = 0;
-                for (Map<String,Object> temp : list) {
+                for (Map<String, Object> temp : list) {
                     i++;
                     if (temp.get("1").toString().contains(query)) {
                         break;
                     }
                 }
                 //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView,i);
+                smoothMoveToPosition(recyclerView, i);
                 adapter.notifyDataSetChanged();
                 return false;
             }
+
             //文本内容发生改变时
             @Override
             public boolean onQueryTextChange(String newText) {

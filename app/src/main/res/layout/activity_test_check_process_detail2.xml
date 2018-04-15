@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/white">
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/white"
+              android:orientation="vertical">
 
 
-    <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout2" />
+    <include
+        layout="@layout/title_layout2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
     <ExpandableListView
         android:id="@+id/expandablelistview"
         android:layout_width="match_parent"
@@ -17,11 +20,12 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <com.bin.david.form.core.SmartTable
                 android:id="@+id/table"

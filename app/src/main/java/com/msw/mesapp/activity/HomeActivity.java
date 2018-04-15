@@ -33,6 +33,7 @@ import com.msw.mesapp.activity.home.equipment.InspectActivity;
 import com.msw.mesapp.activity.home.equipment.QrManageActivity;
 import com.msw.mesapp.activity.home.equipment.RepairActivity;
 import com.msw.mesapp.activity.home.equipment.RepairItemActivity;
+import com.msw.mesapp.activity.home.id_management.IdManagementActivity;
 import com.msw.mesapp.activity.home.quality.TestCheckMainActivity;
 import com.msw.mesapp.activity.home.quality.TestReleaseMainActivity;
 import com.msw.mesapp.activity.home.warehouse.MaterialInActivity;
@@ -115,6 +116,9 @@ public class HomeActivity extends AppCompatActivity {
     ViewPager viewPager;
     @Bind(R.id.title)
     TextView title;
+    @Bind(R.id.id_management)
+    LinearLayout idManagement;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,6 +193,13 @@ public class HomeActivity extends AppCompatActivity {
                 //ActivityUtil.toastShow(getActivity(), "原料入库");
                 ToastUtil.showToast(HomeActivity.this, "原料入库", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, MaterialInActivity.class);
+            }
+        });
+        idManagement.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "ID管理", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, IdManagementActivity.class);
             }
         });
         initNavView();
