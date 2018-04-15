@@ -24,6 +24,7 @@ android {
 
 dependencies {
 
+    implementation 'com.githang:status-bar-compat:0.7'
     implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'com.nineoldandroids:library:2.4.0'
     implementation 'com.android.support:appcompat-v7:25.4.0'

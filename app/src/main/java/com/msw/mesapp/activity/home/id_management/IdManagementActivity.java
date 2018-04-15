@@ -10,8 +10,6 @@ import android.widget.Toast;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.home.equipment.DeviceInfoActivity;
-import com.msw.mesapp.activity.home.equipment.QrManageActivity;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 

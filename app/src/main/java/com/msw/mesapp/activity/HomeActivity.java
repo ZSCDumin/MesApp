@@ -125,9 +125,8 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        StatusBarUtils.setActivityTranslucent(this); //设置全屏d
-        StatusBarUtils.setColorForDrawerLayout(this, drawerLayout, R.color.nocolor);
-
+//        StatusBarUtils.setActivityTranslucent(this); //设置全屏d
+//        StatusBarUtils.setColorForDrawerLayout(this, drawerLayout, R.color.nocolor);
         initData();
         initView();
     }
