@@ -57,7 +57,7 @@
                     android:singleLine="true"
                     android:gravity="end"
                     android:textColor="#020202"
-                    android:textSize="11dp"
+                    android:textSize="13dp"
                     android:text="2017-07-07"/>
                 <View
                     android:layout_width="match_parent"

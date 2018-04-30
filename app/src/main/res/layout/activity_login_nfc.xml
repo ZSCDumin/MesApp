@@ -2,7 +2,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@mipmap/bg_updata_pw"
+    android:background="@mipmap/login_bg"
   >
     <com.msw.mesapp.ui.background.FloatBackground
         android:id="@+id/float_view"
@@ -61,6 +61,7 @@
                     android:background="@null"
                     android:singleLine="true"
                     android:imeOptions="actionDone"
+                    android:textColor="@color/white"
                     android:hint="nfc卡号为"
                     android:textColorHint="#555566ee"/>
             </TableRow>

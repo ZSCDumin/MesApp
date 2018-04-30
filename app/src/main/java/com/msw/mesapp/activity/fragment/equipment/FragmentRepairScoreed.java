@@ -23,7 +23,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.equipment.RepairScoreDetail2Activity;
-import com.msw.mesapp.activity.home.equipment.RepairWorkDetail2Activity;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;

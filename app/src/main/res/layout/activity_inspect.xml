@@ -14,12 +14,14 @@
         android:id="@+id/bt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="工人入口"/>
+        android:layout_marginTop="20dp"
+        android:text="巡检入口"/>
 
     <Button
         android:id="@+id/bt2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="班长入口"/>
+        android:layout_marginTop="20dp"
+        android:text="审核入口"/>
 
 </LinearLayout>

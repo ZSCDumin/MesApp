@@ -18,9 +18,9 @@ import android.widget.ImageView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
+import com.msw.mesapp.activity.home.quality.TestCheckProcessDetailActivity;
 import com.msw.mesapp.activity.home.warehouse.MaterialInDetail1Activity;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
@@ -53,13 +53,9 @@ public class FragmentMaterialIn1 extends Fragment {
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
 
-    /**
-     * 目标项是否在最后一个可见项之后
-     */
+    /** 目标项是否在最后一个可见项之后*/
     private boolean mShouldScroll;
-    /**
-     * 记录目标项位置
-     */
+    /** 记录目标项位置*/
     private int mToPosition;
 
 
@@ -81,8 +77,8 @@ public class FragmentMaterialIn1 extends Fragment {
     private void initData() {
         for (int i = 0; i < 20; i++) {
             Map listmap = new HashMap<>();
-            listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
-            listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
+            listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
+            listmap.put("2","KC664" + (57+i)+":"); //内部编号
             list.add(listmap);
         }
     }
@@ -100,15 +96,15 @@ public class FragmentMaterialIn1 extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //ActivityUtil.toastShow(getActivity(), "点击了" + position);
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("1", s.get("1").toString());
-                        map.put("2", s.get("2").toString());
-                        map.put("3", list.size());
+                        Map<String,Object> map = new HashMap<>();
+                        map.put("1",s.get("1").toString());
+                        map.put("2",s.get("2").toString());
+                        map.put("3",list.size());
 
                         ActivityUtil.switchTo(getActivity(), MaterialInDetail1Activity.class);
                     }
                 });
-                holder.setText(R.id.tv, s.get("1").toString());
+                holder.setText(R.id.tv,s.get("1").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -118,13 +114,12 @@ public class FragmentMaterialIn1 extends Fragment {
      * 初始化搜索框
      */
     private void initSearchView() {
-        searchView.setHint("搜索");
         searchView.setVoiceSearch(false); //or true    ，是否支持声音的
         searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
         searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
         //搜索显示的提示
         List<String> listitem = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
+        for(int i=0;i<list.size();i++){
             listitem.add(list.get(i).get("1").toString());
         }
         String[] array = listitem.toArray(new String[listitem.size()]);
@@ -137,18 +132,17 @@ public class FragmentMaterialIn1 extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int i = 0;
-                for (Map<String, Object> temp : list) {
+                for (Map<String,Object> temp : list) {
                     i++;
                     if (temp.get("1").toString().contains(query)) {
                         break;
                     }
                 }
                 //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView, i);
+                smoothMoveToPosition(recyclerView,i);
                 adapter.notifyDataSetChanged();
                 return false;
             }
-
             //文本内容发生改变时
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -187,13 +181,13 @@ public class FragmentMaterialIn1 extends Fragment {
                 if (list.size() <= 40 - 10) {
                     for (int i = 0; i < 10; i++) {
                         Map listmap = new HashMap<>();
-                        listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
-                        listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
+                        listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
+                        listmap.put("2","KC664" + (57+i)+":"); //内部编号
                         list.add(listmap);
                     }
                     { //搜索显示的提示
                         List<String> listitem = new ArrayList<>();
-                        for (int i = 0; i < list.size(); i++) {
+                        for(int i=0;i<list.size();i++){
                             listitem.add(list.get(i).get("1").toString());
                         }
                         String[] array = listitem.toArray(new String[listitem.size()]);
@@ -211,13 +205,13 @@ public class FragmentMaterialIn1 extends Fragment {
         list.clear();
         for (int i = 0; i < 20; i++) {
             Map listmap = new HashMap<>();
-            listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
-            listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
+            listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
+            listmap.put("2","KC664" + (57+i)+":"); //内部编号
             list.add(listmap);
         }
         { //搜索显示的提示
             List<String> listitem = new ArrayList<>();
-            for (int i = 0; i < list.size(); i++) {
+            for(int i=0;i<list.size();i++){
                 listitem.add(list.get(i).get("1").toString());
             }
             String[] array = listitem.toArray(new String[listitem.size()]);
@@ -227,7 +221,6 @@ public class FragmentMaterialIn1 extends Fragment {
 
     /**
      * 滑动到指定位置
-     *
      * @param mRecyclerView
      * @param position
      */
@@ -248,7 +241,7 @@ public class FragmentMaterialIn1 extends Fragment {
                 int top = mRecyclerView.getChildAt(movePosition).getTop();
                 mRecyclerView.smoothScrollBy(0, top);
             }
-        } else {
+        }else {
             // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
             // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
             mRecyclerView.smoothScrollToPosition(position);

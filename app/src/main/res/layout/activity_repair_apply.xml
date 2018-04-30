@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white"
+    tools:context="com.msw.mesapp.activity.home.equipment.RepairBillActivity">
+    <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dp" android:background="#00ffffff"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text=""
+            android:hint="请输入部门"
+            app:met_textColor="@color/slateblue"
+            app:met_textColorHint="@color/skyblue"
+            app:met_underlineColor="@color/midnightblue"
+            app:met_floatingLabelTextColor="@color/seagreen"
+            app:met_singleLineEllipsis="true"
+            app:met_floatingLabel="normal"
+            app:met_floatingLabelText="部门"
+            />
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text=""
+            android:hint="请输入设备名称"
+            app:met_textColor="@color/slateblue"
+            app:met_textColorHint="@color/skyblue"
+            app:met_underlineColor="@color/midnightblue"
+            app:met_floatingLabelTextColor="@color/seagreen"
+            app:met_singleLineEllipsis="true"
+            app:met_floatingLabel="normal"
+            app:met_floatingLabelText="设备名称"/>
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/et3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text=""
+            android:hint="请输入生产线"
+            app:met_textColor="@color/slateblue"
+            app:met_textColorHint="@color/skyblue"
+            app:met_underlineColor="@color/midnightblue"
+            app:met_floatingLabelTextColor="@color/seagreen"
+            app:met_singleLineEllipsis="true"
+            app:met_floatingLabel="normal"
+            app:met_floatingLabelText="生产线"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:padding="20dp" >
+            <EditText
+                android:id="@+id/et4"
+                android:background="@drawable/shape_corner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:gravity="left|top"
+                android:hint="故障描述..."
+                android:textColor="@color/slateblue"
+                android:textColorHint="@color/skyblue"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="30dp" android:background="#00ffffff"/>
+        <Button
+            android:id="@+id/bt"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="提   交"
+            android:textColor="@color/white"
+            android:background="@drawable/button_submit_selector"/>
+    </LinearLayout>
+
+
+
+</LinearLayout>

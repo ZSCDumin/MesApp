@@ -5,14 +5,8 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
@@ -24,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.flyco.animation.BaseAnimatorSet;
 import com.flyco.animation.FadeExit.FadeExit;
 import com.flyco.animation.FlipEnter.FlipVerticalSwingEnter;
@@ -49,7 +42,8 @@ import com.zhouyou.http.callback.ProgressDialogCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhouyou.http.subsciber.IProgressDialog;
 
-import java.io.IOException;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -79,6 +73,8 @@ public class LoginActivity extends AppCompatActivity {
     FloatBackground floatView;
     @Bind(R.id.text_wjmm)
     TextView textWjmm;
+
+    String permission_code = "";
 
     //nfc
     String strUI = "";
@@ -154,15 +150,33 @@ public class LoginActivity extends AppCompatActivity {
                         String message = "出错";
                         LoginBean loginBean = null;
                         try {
-                            JSONObject jsonObject = JSON.parseObject(loginModel);
+                            JSONObject jsonObject = new JSONObject(loginModel);
                             status = (int) jsonObject.get("code");
                             message = (String) jsonObject.get("message");
+                            JSONObject data = new JSONObject(jsonObject.get("data").toString());
+
                             loginBean = JSON.parseObject(loginModel, LoginBean.class);
+
+                            JSONArray roles = data.optJSONArray("roles");
+
+                            //获取权限
+                            for(int i=0;i<roles.length();i++){
+                                JSONObject rolesItem = roles.optJSONObject(i);
+                                JSONArray models = rolesItem.optJSONArray("models"); //获取模型
+                               for(int j=0;j<models.length();j++){
+                                   JSONObject modelsItem = models.optJSONObject(j);
+                                   String code = modelsItem.optString("code");
+                                   permission_code += (code + "-");
+                               }
+                            }
+
+
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         if (status == 0) {
                             //保存用户信息
+                            SPUtil.put(LoginActivity.this, GlobalKey.permiss.SPKEY, permission_code);
                             SPUtil.put(LoginActivity.this, GlobalKey.Login.CODE, name);
                             ACacheUtil.get(LoginActivity.this).put(GlobalKey.Login.DATA, loginModel);
                             //跳转
@@ -181,7 +195,7 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
     private void initView(){
-        initFloatView();
+        //initFloatView();
 
         Login.setOnClickListener(new View.OnClickListener() {
             @Override

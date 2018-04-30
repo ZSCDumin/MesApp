@@ -62,7 +62,7 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
     String code = ""; //主键
 
     String batchNumber = ""; //批号
-    String type = "";//类型
+    String type = "" ;//类型
     String judge = ""; //判定
     String number = ""; //数量
     String furnaceNum = ""; //炉号
@@ -77,7 +77,7 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
 
 
     CommonExpandableListAdapter<ChildData, GroupData> commonExpandableListAdapter;
-    List<ChildData> temp = new ArrayList<>();
+    List<ChildData>  temp = new ArrayList<>();
 
 
     private String column0[] = {"振实密度", "水分", "SSA", "pH", "D1", "D10", "D50", "D90", "D99", "筛上物", "ppb(Fe)", "ppb{Ni)", "ppb(Cr)", "ppb(Zn)", "ppb(总量)", "Ni+Co+Mn", "Co", "Mn", "Ni", "Na", "Mg", "Ca", "Fe", "Cu", "Cd", "Zn", "S", "Cl-", "Zr"};
@@ -103,22 +103,12 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
         id = (String) SPUtil.get(TestCheckProcessedDetailActivity.this, GlobalKey.Login.CODE, id);
 
         String Path = "";
-        switch (ctype) {
-            case "1":
-                Path = GlobalApi.Quality.ProcessPremix.ByCode.PATH;
-                break;
-            case "2":
-                Path = GlobalApi.Quality.ProcessSize.ByCode.PATH;
-                break;
-            case "3":
-                Path = GlobalApi.Quality.ProcessLithium.ByCode.PATH;
-                break;
-            case "4":
-                Path = GlobalApi.Quality.ProcessBuckle.ByCode.PATH;
-                break;
-            default:
-                Path = GlobalApi.Quality.ProcessPremix.ByCode.PATH;
-                break;
+        switch (ctype){
+            case "1": Path = GlobalApi.Quality.ProcessPremix.ByCode.PATH;break;
+            case "2": Path = GlobalApi.Quality.ProcessSize.ByCode.PATH;break;
+            case "3": Path = GlobalApi.Quality.ProcessLithium.ByCode.PATH;break;
+            case "4": Path = GlobalApi.Quality.ProcessBuckle.ByCode.PATH;break;
+            default:Path = GlobalApi.Quality.ProcessPremix.ByCode.PATH;break;
         }
 
         EasyHttp.post(Path)
@@ -142,11 +132,11 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
                             //judge = data.getJSONObject("judge").optString("name");
                             //number = data.optString("number");
 
-                            if (!ctype.equals("1")) {
+                            if(!ctype.equals("1")) {
                                 furnaceNum = RidnullStr(data.optString("furnaceNum"));
                             }
 
-                            if (ctype.equals("1")) {
+                            if(ctype.equals("1")) {
                                 type = RidnullStr(data.optString("type"));
                                 lithiumSoluble = RidnullStr(data.optString("lithiumSoluble"));
                                 supplier = RidnullStr(data.getJSONObject("supplier").optString("name"));
@@ -170,47 +160,23 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
                         }
                         if (code == 0) {
                             ChildData childData = new ChildData();
-                            childData.childName1 = "批号";
-                            childData.childName2 = batchNumber;
-                            temp.add(childData);
-                            childData = new ChildData();
+                            childData.childName1 = "批号"; childData.childName2=batchNumber; temp.add(childData);childData = new ChildData();
                             //childData.childName1 = "判定"; childData.childName2=judge; temp.add(childData);childData = new ChildData();
                             //childData.childName1 = "数量"; childData.childName2=number; temp.add(childData);childData = new ChildData();
 
-                            if (!ctype.equals("1")) {
-                                childData.childName1 = "炉号";
-                                childData.childName2 = furnaceNum;
-                                temp.add(childData);
-                                childData = new ChildData();
+                            if(!ctype.equals("1")) {
+                                childData.childName1 = "炉号";childData.childName2 = furnaceNum;temp.add(childData);childData = new ChildData();
                             }
-                            if (ctype.equals("1")) {
-                                childData.childName1 = "类型";
-                                childData.childName2 = type;
-                                temp.add(childData);
-                                childData = new ChildData();
-                                childData.childName1 = "可溶锂";
-                                childData.childName2 = lithiumSoluble;
-                                temp.add(childData);
-                                childData = new ChildData();
-                                childData.childName1 = "主原料厂家";
-                                childData.childName2 = supplier;
-                                temp.add(childData);
-                                childData = new ChildData();
+                            if(ctype.equals("1")) {
+                                childData.childName1 = "类型";childData.childName2 = type;temp.add(childData);childData = new ChildData();
+                                childData.childName1 = "可溶锂";childData.childName2 = lithiumSoluble;temp.add(childData);childData = new ChildData();
+                                childData.childName1 = "主原料厂家";childData.childName2 = supplier;temp.add(childData);childData = new ChildData();
                                 //childData.childName1 = "生产日期"; childData.childName2=productDate; temp.add(childData);childData = new ChildData();
                             }
-                            childData.childName1 = "检测日期";
-                            childData.childName2 = testDate;
-                            temp.add(childData);
-                            childData = new ChildData();
+                            childData.childName1 = "检测日期"; childData.childName2=testDate; temp.add(childData);childData = new ChildData();
 
-                            childData.childName1 = "审核人";
-                            childData.childName2 = auditor;
-                            temp.add(childData);
-                            childData = new ChildData();
-                            childData.childName1 = "审核时间";
-                            childData.childName2 = auditDate;
-                            temp.add(childData);
-                            childData = new ChildData();
+                            childData.childName1 = "审核人"; childData.childName2=auditor; temp.add(childData);childData = new ChildData();
+                            childData.childName1 = "审核时间"; childData.childName2=auditDate; temp.add(childData);childData = new ChildData();
                             //childData.childName1 = "发布人"; childData.childName2=publisher; temp.add(childData);childData = new ChildData();
                             //childData.childName1 = "发布时间"; childData.childName2=publishDate; temp.add(childData);childData = new ChildData();
 
@@ -242,19 +208,15 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
 
     private void initView() {
         initTitle();
-        initHeadInfo();
-        initTable();
     }
 
     private void initHeadInfo() {
-        expandablelistview.setAdapter(commonExpandableListAdapter = new CommonExpandableListAdapter<ChildData, GroupData>(this, R.layout.item_detail_adapter_child, R.layout.item_detail_adapter_group) {
+        expandablelistview.setAdapter(commonExpandableListAdapter = new CommonExpandableListAdapter<ChildData, GroupData>(this,R.layout.item_detail_adapter_child, R.layout.item_detail_adapter_group ) {
             @Override
             protected void getChildView(ViewHolder holder, int groupPositon, int childPositon, boolean isLastChild, ChildData data) {
 
-                TextView v1 = holder.getView(R.id.tv1);
-                TextView v2 = holder.getView(R.id.tv2);
-                v1.setText(data.childName1);
-                v2.setText(data.childName2);
+                TextView v1 = holder.getView(R.id.tv3); TextView v2 = holder.getView(R.id.tv3);
+                v1.setText(data.childName1);  v2.setText(data.childName2);
 //                ((TextView)holder.getView(R.id.tv1)).setText(data.childName1);
 //                ((TextView)holder.getView(R.id.tv2)).setText(data.childName2);
             }
@@ -265,12 +227,11 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
                 ImageView arrowImage = holder.getView(R.id.groupIcon);//分组箭头
                 textView.setText(data.groupName);
                 //根据分组是否展开设置自定义箭头方向
-                arrowImage.setImageResource(isExpanded ? R.mipmap.ic_arrow_expanded : R.mipmap.ic_arrow_uexpanded);
+                arrowImage.setImageResource(isExpanded?R.mipmap.ic_arrow_expanded :R.mipmap.ic_arrow_uexpanded);
             }
         });
         expandablelistview.setAdapter(commonExpandableListAdapter);
-        GroupData groupData = new GroupData();
-        groupData.groupName = "展开/收起";
+        GroupData groupData = new GroupData(); groupData.groupName = "展开/收起";
         commonExpandableListAdapter.getGroupData().add(groupData);
 
 
@@ -334,22 +295,26 @@ public class TestCheckProcessedDetailActivity extends AppCompatActivity {
     /**
      * 分组数据
      */
-    class GroupData {
+    class GroupData
+    {
         String groupName;
     }
 
     /**
      * 孩子数据
      */
-    class ChildData {
+    class ChildData
+    {
         String childName1;
         String childName2;
     }
 
-    private String RidnullStr(String str) {
-        if (str == null) return "";
+    private String RidnullStr(String str){
+        if(str==null) return "";
         return str;
     }
+
+
 
 
     @Override

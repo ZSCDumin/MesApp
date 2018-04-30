@@ -10,15 +10,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
+import com.msw.mesapp.base.GlobalApi;
+import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
+import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
@@ -51,6 +61,16 @@ public class QrManageActivity extends AppCompatActivity {
 
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
+    int page = 0; //获取数据的第几页
+    int totalPages = 0; //总共几页
+    int totalElements = 0; //总共多少条数据
+
+    String eqcode = ""; //设备编码
+    String eqname = ""; //设备名称
+    String productLinecode = "";//生产线
+    String productLinename = ""; //名称
+    String departmentcode = ""; //部门名称
+    String departmentname = ""; //名称
     /**
      * 目标项是否在最后一个可见项之后
      */
@@ -83,22 +103,98 @@ public class QrManageActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        for (int i = 0; i < 20; i++) {
-            Map listmap = new HashMap<>();
-            listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
-            listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
-            list.add(listmap);
+
+        list.clear();
+        page = 0;
+        EasyHttp.post(GlobalApi.QrManager.PATH)
+                .params(GlobalApi.QrManager.page, String.valueOf(page)) //从第0 页开始获取
+                .params(GlobalApi.QrManager.size, "20") //一次获取多少
+                .params(GlobalApi.QrManager.sort, "code") //根据code排序
+                .params(GlobalApi.QrManager.asc, "1") //升序
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        int code = 1;
+                        String message = "出错";
+
+                        try {
+                            JSONObject jsonObject = JSON.parseObject(result);
+                            code = (int) jsonObject.get("code");
+                            message = (String) jsonObject.get("message");
+                            JSONObject data =  JSON.parseObject(jsonObject.get("data").toString());
+                            JSONArray content = JSON.parseArray(data.get("content").toString());
+
+                            totalPages = data.getInteger("totalPages");
+                            totalElements = data.getInteger("totalElements");
+
+                            for (int i = 0; i < content.size(); i++) {
+                                JSONObject content0 = JSON.parseObject(content.get(i).toString());
+
+                                eqcode = content0.getString("code");
+                                eqname = content0.getString("name");
+
+                                JSONObject productLineobj = JSON.parseObject(content0.get("productLine").toString());
+                                productLinecode = productLineobj.getString("code");
+                                productLinename = productLineobj.getString("name");
+
+                                JSONObject departmentobj  = JSON.parseObject(content0.get("department").toString());
+                                departmentcode = departmentobj.getString("code");
+                                departmentname = departmentobj.getString("name");
+
+                                Map map = new HashMap<>();
+                                map.put("1",eqcode); //
+                                map.put("2",eqname); //
+                                map.put("3",productLinecode); //
+                                map.put("4",productLinename); //
+                                map.put("5",departmentcode); //
+                                map.put("6",departmentname); //
+
+                                list.add(map);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (code == 0) {
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            ToastUtil.showToast(QrManageActivity.this, message, ToastUtil.Error);
+                        }
+                    }
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(QrManageActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    }
+                });
+    }
+    public void initPermission(){
+
+        String permission_code = (String) SPUtil.get(QrManageActivity.this, GlobalKey.permiss.SPKEY, new String(""));
+        String[] split_pc = permission_code.split("-");
+
+        int p1 = 0;
+        for(int i = 0;i<split_pc.length;i++){
+            if(split_pc[i].equals( GlobalKey.permiss.QrManner) ) p1 = 1;
         }
+        if(p1 == 0){
+            finish();
+            ToastUtil.showToast(QrManageActivity.this,"权限不足！",ToastUtil.Error);
+        }
+
     }
 
     public void initView() {
+        initPermission();
+
         initTitle();
         initRefreshLayout();
         initSearchView();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
-        adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_materialin, list) {
+        adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_repair_report, list) {
             @Override
             protected void convert(ViewHolder holder, final Map s, final int position) {
                 holder.setOnClickListener(R.id.item, new View.OnClickListener() {
@@ -108,24 +204,29 @@ public class QrManageActivity extends AppCompatActivity {
                         Map<String, Object> map = new HashMap<>();
                         map.put("1", s.get("1").toString());
                         map.put("2", s.get("2").toString());
-                        map.put("3", list.size());
+                        map.put("3", s.get("3").toString());
+                        map.put("4", s.get("4").toString());
+                        map.put("5", s.get("5").toString());
+                        map.put("6", s.get("6").toString());
 
-                        ActivityUtil.switchTo(QrManageActivity.this, DeviceInfoActivity.class);
+                        ActivityUtil.switchTo(QrManageActivity.this, DeviceInfoActivity.class,map);
                     }
                 });
-                holder.setText(R.id.tv, s.get("1").toString());
+                holder.setText(R.id.tv1, s.get("1").toString() + "：" +s.get("2").toString());
+                holder.setText(R.id.tv2,s.get("6").toString());
             }
         };
         recyclerView.setAdapter(adapter);
     }
 
     private void initSearchView() {
+        searchView.setHint("搜索");
         searchView.setVoiceSearch(false); //or true    ，是否支持声音的
         searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
         searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
         //搜索显示的提示
         List<String> listitem = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
+        for(int i=0;i<list.size();i++){
             listitem.add(list.get(i).get("1").toString());
         }
         String[] array = listitem.toArray(new String[listitem.size()]);
@@ -138,18 +239,17 @@ public class QrManageActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int i = 0;
-                for (Map<String, Object> temp : list) {
+                for (Map<String,Object> temp : list) {
                     i++;
                     if (temp.get("1").toString().contains(query)) {
                         break;
                     }
                 }
                 //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView, i);
+                smoothMoveToPosition(recyclerView,i);
                 adapter.notifyDataSetChanged();
                 return false;
             }
-
             //文本内容发生改变时
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -175,9 +275,8 @@ public class QrManageActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                refreshlayout.finishRefresh(2000);
+                refreshlayout.finishRefresh(1500);
                 getData();
-                adapter.notifyDataSetChanged();
                 classicsFooter.setLoadmoreFinished(false);
             }
         });
@@ -185,35 +284,77 @@ public class QrManageActivity extends AppCompatActivity {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
                 refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
-                if (list.size() <= 40 - 10) {
-                    for (int i = 0; i < 10; i++) {
-                        Map listmap = new HashMap<>();
-                        listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
-                        listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
-                        list.add(listmap);
-                    }
-                    { //搜索显示的提示
-                        List<String> listitem = new ArrayList<>();
-                        for (int i = 0; i < list.size(); i++) {
-                            listitem.add(list.get(i).get("1").toString());
-                        }
-                        String[] array = listitem.toArray(new String[listitem.size()]);
-                        adapter.notifyDataSetChanged();
-                    }
-                } else {
-                    classicsFooter.setLoadmoreFinished(true);
-                }
+                getData();
             }
         });
     }
 
     private void getData() {
-        list.clear();
-        for (int i = 0; i < 20; i++) {
-            Map listmap = new HashMap<>();
-            listmap.put("1", "金池能源材料有限公司" + (6 + i)); //厂家编号
-            listmap.put("2", "KC664" + (57 + i) + ":"); //内部编号
-            list.add(listmap);
+        page ++;
+        if(page > totalPages || list.size() > totalElements)  classicsFooter.setLoadmoreFinished(true);
+        else {
+            EasyHttp.post(GlobalApi.QrManager.PATH)
+                    .params(GlobalApi.QrManager.page, String.valueOf(page)) //从第0 页开始获取
+                    .params(GlobalApi.QrManager.size, "20") //一次获取多少
+                    .params(GlobalApi.QrManager.sort, "code") //根据code排序
+                    .params(GlobalApi.QrManager.asc, "1") //升序
+                    .sign(true)
+                    .timeStamp(true)//本次请求是否携带时间戳
+                    .execute(new SimpleCallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            int code = 1;
+                            String message = "出错";
+
+                            try {
+                                JSONObject jsonObject = JSON.parseObject(result);
+                                code = (int) jsonObject.get("code");
+                                message = (String) jsonObject.get("message");
+                                JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
+                                JSONArray content = JSON.parseArray(data.get("content").toString());
+
+                                totalPages = data.getInteger("totalPages");
+                                totalElements = data.getInteger("totalElements");
+
+                                for (int i = 0; i < content.size(); i++) {
+                                    JSONObject content0 = JSON.parseObject(content.get(i).toString());
+
+                                    eqcode = content0.getString("code");
+                                    eqname = content0.getString("name");
+
+                                    JSONObject productLineobj = JSON.parseObject(content0.get("productLine").toString());
+                                    productLinecode = productLineobj.getString("code");
+                                    productLinename = productLineobj.getString("name");
+
+                                    JSONObject departmentobj  = JSON.parseObject(content0.get("department").toString());
+                                    departmentcode = departmentobj.getString("code");
+                                    departmentname = departmentobj.getString("name");
+
+                                    Map map = new HashMap<>();
+                                    map.put("1",eqcode); //
+                                    map.put("2",eqname); //
+                                    map.put("3",productLinecode); //
+                                    map.put("4",productLinename); //
+                                    map.put("5",departmentcode); //
+                                    map.put("6",departmentname); //
+
+                                    list.add(map);
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (code == 0) {
+                                adapter.notifyDataSetChanged(); //显示添加的数据
+                            } else {
+                                ToastUtil.showToast(QrManageActivity.this, message, ToastUtil.Error);
+                            }
+                        }
+                        @Override
+                        public void onError(ApiException e) {
+                            ToastUtil.showToast(QrManageActivity.this,GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        }
+                    });
         }
     }
 

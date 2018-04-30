@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.base.GlobalKey;
@@ -34,10 +33,14 @@ import com.zhouyou.http.callback.ProgressDialogCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhouyou.http.subsciber.IProgressDialog;
 
+import org.json.JSONArray;
+
 import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+
 
 public class LoginNfcActivity extends AppCompatActivity {
     String TAG = "LoginActivity";
@@ -46,6 +49,8 @@ public class LoginNfcActivity extends AppCompatActivity {
     PendingIntent mPendingIntent;
     @Bind(R.id.float_view)
     FloatBackground floatView;
+
+    String permission_code = "";
 
     //nfc
     Intent m_intent;
@@ -185,15 +190,31 @@ public class LoginNfcActivity extends AppCompatActivity {
                         String message = "出错";
                         LoginBean loginBean = null;
                         try {
-                            JSONObject jsonObject = JSON.parseObject(loginModel);
+                           org.json.JSONObject jsonObject = new org.json.JSONObject(loginModel);
                             status = (int) jsonObject.get("code");
                             message = (String) jsonObject.get("message");
+                            org.json.JSONObject data = new org.json.JSONObject(jsonObject.get("data").toString());
+
                             loginBean = JSON.parseObject(loginModel, LoginBean.class);
+
+                            JSONArray roles = data.optJSONArray("roles");
+
+                            //获取权限
+                            for(int i=0;i<roles.length();i++){
+                                org.json.JSONObject rolesItem = roles.optJSONObject(i);
+                                JSONArray models = rolesItem.optJSONArray("models"); //获取模型
+                                for(int j=0;j<models.length();j++){
+                                    org.json.JSONObject modelsItem = models.optJSONObject(j);
+                                    String code = modelsItem.optString("code");
+                                    permission_code += (code + "-");
+                                }
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                         if (status == 0) {
                             //保存用户信息
+                            SPUtil.put(LoginNfcActivity.this, GlobalKey.permiss.SPKEY, permission_code);
                             SPUtil.put(LoginNfcActivity.this, GlobalKey.Login.CODE, loginBean.getData().getCode());
                             ACacheUtil.get(LoginNfcActivity.this).put(GlobalKey.Login.DATA, loginModel);
                             //跳转

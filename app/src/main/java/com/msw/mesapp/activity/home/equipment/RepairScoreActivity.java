@@ -70,7 +70,7 @@ public class RepairScoreActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("设备维修");
+        title.setText("维修单据");
         add.setVisibility(View.INVISIBLE);
     }
 

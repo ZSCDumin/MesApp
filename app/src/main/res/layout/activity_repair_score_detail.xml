@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.msw.mesapp.activity.home.equipment.RepairActivity">
+    tools:context="com.msw.mesapp.activity.home.equipment.RepairBillActivity">
 
 
     <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout" />
@@ -62,7 +62,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:id="@+id/tv1"
+                        android:id="@+id/tv3"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"

@@ -109,10 +109,25 @@
                     android:layout_marginLeft="10dp"
                     android:background="@color/black2" />
             </LinearLayout>
-
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp" android:background="#00ffffff"/>
+            <Button
+                android:id="@+id/submit"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:text="审   核"
+                android:textColor="@color/white"
+                android:background="@drawable/button_submit_selector"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="30dp" android:background="#00ffffff"/>
         <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="160dp">
+        android:layout_height="160dp"
+            android:visibility="gone">
         <RelativeLayout
             android:layout_gravity="center"
             android:layout_width="match_parent"

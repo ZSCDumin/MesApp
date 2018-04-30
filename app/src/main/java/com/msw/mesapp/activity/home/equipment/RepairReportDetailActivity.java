@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
@@ -215,13 +214,7 @@ public class RepairReportDetailActivity extends AppCompatActivity {
                 holder.setText(R.id.tv1,s.get("1").toString());
                 holder.setText(R.id.tv2,s.get("2").toString());
 
-                holder.setOnClickListener(R.id.tv2, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //ActivityUtil.toastShow(InspectMonitorActivity.this, "点击了进入" + position);
-                        ///ActivityUtil.switchTo(RepairReportDetailActivity.this,InspectMonitorJudgeActivity.class);
-                    }
-                });
+
             }
         };
         recyclerView.setAdapter(adapter);

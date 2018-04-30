@@ -149,6 +149,8 @@
         </activity>
         <activity android:name=".activity.home.id_management.MemberNameActivity">
         </activity>
+        <activity android:name=".activity.TestActivity">
+        </activity>
     </application>
 
 </manifest>

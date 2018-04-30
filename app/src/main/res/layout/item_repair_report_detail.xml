@@ -25,7 +25,7 @@
         android:paddingRight="20dp"
         android:singleLine="true"
         android:ellipsize="end"
-        android:textColor="@color/blueviolet"
+        android:textColor="@color/black"
         android:text="预期1-112345678909987676655443356788768769434353"/>
     </RelativeLayout>
     <View

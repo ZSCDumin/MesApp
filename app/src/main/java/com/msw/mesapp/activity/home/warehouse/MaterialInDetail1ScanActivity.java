@@ -18,10 +18,8 @@ import android.widget.TextView;
 
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.LoginActivity;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DialogUtil;
-import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
@@ -131,8 +129,8 @@ public class MaterialInDetail1ScanActivity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_material_in_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1, s.get("1").toString());
-                holder.setText(R.id.tv2, s.get("2").toString());
+                holder.setText(R.id.tv1,s.get("1").toString());
+                holder.setText(R.id.tv2,s.get("2").toString());
 
             }
         };

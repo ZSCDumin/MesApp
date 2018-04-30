@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -171,7 +170,7 @@ public class TestCheckProductDetailedActivity extends AppCompatActivity {
             @Override
             protected void getChildView(ViewHolder holder, int groupPositon, int childPositon, boolean isLastChild, ChildData data) {
 
-                TextView v1 = holder.getView(R.id.tv1); TextView v2 = holder.getView(R.id.tv2);
+                TextView v1 = holder.getView(R.id.tv3); TextView v2 = holder.getView(R.id.tv3);
                 v1.setText(data.childName1);  v2.setText(data.childName2);
 //                ((TextView)holder.getView(R.id.tv1)).setText(data.childName1);
 //                ((TextView)holder.getView(R.id.tv2)).setText(data.childName2);

@@ -49,6 +49,8 @@ public class MaterialInDetail1PrintActivity extends AppCompatActivity {
     private void initView() {
         initBluetooth();
         initTitle();
+
+
         printerUtil = new PrinterUtil(this,btnPrinter);
         api = printerUtil.api;
 

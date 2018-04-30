@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dip"
             zhy:progress_text_color="#ff03F793"
-            zhy:progress_text_size="20dp"
+            zhy:progress_text_size="18dp"
             zhy:progress_unreached_color="#ffAFF2D6"/>
 
         <LinearLayout
@@ -33,7 +33,7 @@
             <me.panpf.sketch.SketchImageView
                 android:id="@+id/img"
                 android:layout_width="match_parent"
-                android:layout_height="420px"
+                android:layout_height="460px"
                 android:src="@mipmap/head2"/>
         </LinearLayout>
 
@@ -70,7 +70,7 @@
                 android:focusableInTouchMode="true"
                 android:lines="1"
                 android:text="检查限位器、行程开关是否正常"
-                android:textColor="@color/firebrick"
+                android:textColor="@color/titlecolor"
                 android:textSize="18dp" />
         </LinearLayout>
         <LinearLayout
@@ -121,7 +121,7 @@
                     android:focusableInTouchMode="true"
                     android:lines="1"
                     android:text="耳听：无异常声响；触摸：手心放置于电机尾部，是否有风感"
-                    android:textColor="@color/firebrick"
+                    android:textColor="@color/titlecolor"
                     android:textSize="18dp" />
             </LinearLayout>
             <View
@@ -170,7 +170,7 @@
                     android:focusableInTouchMode="true"
                     android:lines="1"
                     android:text="检查限位器、行程开关是否正常"
-                    android:textColor="@color/firebrick"
+                    android:textColor="@color/titlecolor"
                     android:textSize="18dp" />
             </LinearLayout>
             <View
@@ -194,7 +194,7 @@
             <Button
                 android:id="@+id/bt1"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
                 android:layout_toLeftOf="@+id/view"
                 android:background="@drawable/button_submit_selector"
                 android:text="不合格"
@@ -208,7 +208,7 @@
             <Button
                 android:id="@+id/bt2"
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
+                android:layout_height="40dp"
                 android:layout_toRightOf="@id/view"
                 android:background="@drawable/button_submit_selector"
                 android:text="合格"

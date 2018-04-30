@@ -23,7 +23,7 @@
                 android:layout_toLeftOf="@+id/tv2"
                 android:gravity="center_vertical"
                 android:singleLine="true"
-                android:textColor="@color/skyblue"
+                android:textColor="@color/black"
                 android:textSize="18dp"
                 android:text="炉号1111111111111111111111111111"/>
             <TextView
@@ -33,7 +33,7 @@
                 android:layout_alignParentRight="true"
                 android:gravity="center_vertical"
                 android:paddingRight="15dp"
-                android:textColor="@color/burlywood"
+                android:textColor="@color/black2"
                 android:text="已接单"/>
         </RelativeLayout>
 

@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.equipment.InspectActivity;
-import com.msw.mesapp.activity.home.equipment.RepairActivity;
+import com.msw.mesapp.activity.home.equipment.RepairBillActivity;
 import com.msw.mesapp.activity.home.quality.TestCheckMainActivity;
 import com.msw.mesapp.activity.home.quality.TestReleaseMainActivity;
 import com.msw.mesapp.activity.home.warehouse.MaterialInActivity;
@@ -88,7 +88,7 @@ public class FragmentHome extends Fragment {
             public void onClick(View view) {
                 //ActivityUtil.toastShow(getActivity(), "维修申请");
                 ToastUtil.showToast(getActivity(),"维修申请",ToastUtil.Default);
-                ActivityUtil.switchTo(getActivity(), RepairActivity.class);
+                ActivityUtil.switchTo(getActivity(), RepairBillActivity.class);
             }
         });
         quality1.setOnClickListener(new View.OnClickListener() {

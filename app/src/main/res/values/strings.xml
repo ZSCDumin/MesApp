@@ -15,7 +15,7 @@
     <string name="print2dbarcode">打印二维码</string>
     <string name="printbitmap">打印图片</string>
     <string name="romupgrade">打印机固件升级</string>
-    <string name="noconnectprinter">打印机：未连接打印机</string>
+    <string name="noconnectprinter">点击连接打印机</string>
     <string name="unsupportedbluetooth">当前设备不支持蓝牙！</string>
     <string name="unenablebluetooth">蓝牙适配器未开启！</string>
     <string name="selectbondeddevice">选择已绑定的设备</string>

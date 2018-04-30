@@ -3,19 +3,20 @@ package com.msw.mesapp.ui.widget;
 /**
  * Created by Mr.Meng on 2018/3/29.
  */
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.widget.ProgressBar;
 
 import com.msw.mesapp.R;
 
 
-public class HorizontalProgressBarWithNumber extends ProgressBar {
+public class HorizontalProgressBarWithNumber extends ProgressBar
+{
 
     private static final int DEFAULT_TEXT_SIZE = 10;
     private static final int DEFAULT_TEXT_COLOR = 0XFFFC00D1;
@@ -68,12 +69,14 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
 
     protected static final int VISIBLE = 0;
 
-    public HorizontalProgressBarWithNumber(Context context, AttributeSet attrs) {
+    public HorizontalProgressBarWithNumber(Context context, AttributeSet attrs)
+    {
         this(context, attrs, 0);
     }
 
     public HorizontalProgressBarWithNumber(Context context, AttributeSet attrs,
-                                           int defStyle) {
+                                           int defStyle)
+    {
         super(context, attrs, defStyle);
         obtainStyledAttributes(attrs);
         mPaint.setTextSize(mTextSize);
@@ -82,7 +85,8 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
 
     @Override
     protected synchronized void onMeasure(int widthMeasureSpec,
-                                          int heightMeasureSpec) {
+                                          int heightMeasureSpec)
+    {
 
         int width = MeasureSpec.getSize(widthMeasureSpec);
         int height = measureHeight(heightMeasureSpec);
@@ -91,18 +95,22 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
         mRealWidth = getMeasuredWidth() - getPaddingRight() - getPaddingLeft();
     }
 
-    private int measureHeight(int measureSpec) {
+    private int measureHeight(int measureSpec)
+    {
         int result = 0;
         int specMode = MeasureSpec.getMode(measureSpec);
         int specSize = MeasureSpec.getSize(measureSpec);
-        if (specMode == MeasureSpec.EXACTLY) {
+        if (specMode == MeasureSpec.EXACTLY)
+        {
             result = specSize;
-        } else {
+        } else
+        {
             float textHeight = (mPaint.descent() - mPaint.ascent());
             result = (int) (getPaddingTop() + getPaddingBottom() + Math.max(
                     Math.max(mReachedProgressBarHeight,
                             mUnReachedProgressBarHeight), Math.abs(textHeight)));
-            if (specMode == MeasureSpec.AT_MOST) {
+            if (specMode == MeasureSpec.AT_MOST)
+            {
                 result = Math.min(result, specSize);
             }
         }
@@ -114,7 +122,8 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
      *
      * @param attrs
      */
-    private void obtainStyledAttributes(AttributeSet attrs) {
+    private void obtainStyledAttributes(AttributeSet attrs)
+    {
         // init values from custom attributes
         final TypedArray attributes = getContext().obtainStyledAttributes(
                 attrs, R.styleable.HorizontalProgressBarWithNumber);
@@ -151,14 +160,16 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
         int textVisible = attributes
                 .getInt(R.styleable.HorizontalProgressBarWithNumber_progress_text_visibility,
                         VISIBLE);
-        if (textVisible != VISIBLE) {
+        if (textVisible != VISIBLE)
+        {
             mIfDrawText = false;
         }
         attributes.recycle();
     }
 
     @Override
-    protected synchronized void onDraw(Canvas canvas) {
+    protected synchronized void onDraw(Canvas canvas)
+    {
 
         canvas.save();
         canvas.translate(getPaddingLeft(), getHeight() / 2);
@@ -172,27 +183,31 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
         float textWidth = mPaint.measureText(text);
         float textHeight = (mPaint.descent() + mPaint.ascent()) / 2;
 
-        if (progressPosX + textWidth > mRealWidth) {
+        if (progressPosX + textWidth > mRealWidth)
+        {
             progressPosX = mRealWidth - textWidth;
             noNeedBg = true;
         }
 
         // draw reached bar
         float endX = progressPosX - mTextOffset / 2;
-        if (endX > 0) {
+        if (endX > 0)
+        {
             mPaint.setColor(mReachedBarColor);
             mPaint.setStrokeWidth(mReachedProgressBarHeight);
             canvas.drawLine(0, 0, endX, 0, mPaint);
         }
         // draw progress bar
         // measure text bound
-        if (mIfDrawText) {
+        if (mIfDrawText)
+        {
             mPaint.setColor(mTextColor);
             canvas.drawText(text, progressPosX, -textHeight, mPaint);
         }
 
         // draw unreached bar
-        if (!noNeedBg) {
+        if (!noNeedBg)
+        {
             float start = progressPosX + mTextOffset / 2 + textWidth;
             mPaint.setColor(mUnReachedBarColor);
             mPaint.setStrokeWidth(mUnReachedProgressBarHeight);
@@ -208,7 +223,8 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
      *
      * @param dpVal
      */
-    protected int dp2px(int dpVal) {
+    protected int dp2px(int dpVal)
+    {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
                 dpVal, getResources().getDisplayMetrics());
     }
@@ -219,7 +235,8 @@ public class HorizontalProgressBarWithNumber extends ProgressBar {
      * @param spVal
      * @return
      */
-    protected int sp2px(int spVal) {
+    protected int sp2px(int spVal)
+    {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,
                 spVal, getResources().getDisplayMetrics());
 

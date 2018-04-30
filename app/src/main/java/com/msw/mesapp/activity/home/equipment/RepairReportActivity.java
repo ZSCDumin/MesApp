@@ -35,7 +35,7 @@ public class RepairReportActivity extends AppCompatActivity {
     @Bind(R.id.viewPager)
     DecoratorViewPager viewPager;
 
-    private final String[] mTitles = {"故障上报", "维修进度"};
+    private final String[] mTitles = {"维修进度"};
 
     private ArrayList<Fragment> fragmentList = new ArrayList<>();
 
@@ -66,12 +66,12 @@ public class RepairReportActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("设备维修");
+        title.setText("维修单据");
         add.setVisibility(View.INVISIBLE);
     }
 
     public void initSlidingTabLayout() {
-        fragmentList.add(new FragmentRepairReporting());
+        //fragmentList.add(new FragmentRepairReporting());
         fragmentList.add(new FragmentRepairReported());
         viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
         viewPager.setAdapter(new mPageAdapter(this.getSupportFragmentManager()));

@@ -1,16 +1,10 @@
 package com.android.dev;
+ 
 
-
-
-import android.app.Activity;
+ 
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-
-import com.msw.mesapp.activity.home.equipment.RepairActivity;
-import com.msw.mesapp.utils.ACacheUtil;
-import com.msw.mesapp.utils.ActivityManager;
-import com.msw.mesapp.utils.ToastUtil;
 
 public class BarcodeAPI {
 

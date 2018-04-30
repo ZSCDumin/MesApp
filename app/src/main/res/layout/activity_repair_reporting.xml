@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/white"
-    tools:context="com.msw.mesapp.activity.home.equipment.RepairActivity">
+    tools:context="com.msw.mesapp.activity.home.equipment.RepairBillActivity">
 
 
     <LinearLayout
@@ -19,13 +19,23 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp" android:background="#00ffffff"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/qrimg"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:src="@mipmap/icon_qrcode3"/>
+        </RelativeLayout>
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/et1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:drawableRight="@mipmap/icon_qrcode3"
             android:text=""
             android:hint="请输入部门"
             app:met_textColor="@color/slateblue"
@@ -42,7 +52,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:drawableRight="@mipmap/icon_qrcode3"
             android:text=""
             android:hint="请输入设备名称"
             app:met_textColor="@color/slateblue"
@@ -58,7 +67,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:drawableRight="@mipmap/icon_qrcode3"
             android:text=""
             android:hint="请输入生产线"
             app:met_textColor="@color/slateblue"

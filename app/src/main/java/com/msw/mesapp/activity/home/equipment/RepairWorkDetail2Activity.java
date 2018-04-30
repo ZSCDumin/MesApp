@@ -14,7 +14,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
@@ -23,8 +22,6 @@ import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -296,16 +293,10 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_repair_report_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1, s.get("1").toString());
-                holder.setText(R.id.tv2, s.get("2").toString());
+                holder.setText(R.id.tv1,s.get("1").toString());
+                holder.setText(R.id.tv2,s.get("2").toString());
 
-                holder.setOnClickListener(R.id.tv2, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //ActivityUtil.toastShow(InspectMonitorActivity.this, "点击了进入" + position);
-                        ///ActivityUtil.switchTo(RepairReportDetailActivity.this,InspectMonitorJudgeActivity.class);
-                    }
-                });
+
             }
         };
         recyclerView.setAdapter(adapter);

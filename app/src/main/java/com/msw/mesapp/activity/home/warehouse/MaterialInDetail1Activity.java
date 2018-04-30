@@ -86,8 +86,8 @@ public class MaterialInDetail1Activity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_material_in_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1, s.get("1").toString());
-                holder.setText(R.id.tv2, s.get("2").toString());
+                holder.setText(R.id.tv1,s.get("1").toString());
+                holder.setText(R.id.tv2,s.get("2").toString());
 
             }
         };

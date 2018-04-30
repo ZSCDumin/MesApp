@@ -215,13 +215,7 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
                 holder.setText(R.id.tv1,s.get("1").toString());
                 holder.setText(R.id.tv2,s.get("2").toString());
 
-                holder.setOnClickListener(R.id.tv2, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //ActivityUtil.toastShow(InspectMonitorActivity.this, "点击了进入" + position);
-                        ///ActivityUtil.switchTo(RepairReportDetailActivity.this,InspectMonitorJudgeActivity.class);
-                    }
-                });
+
             }
         };
         recyclerView.setAdapter(adapter);
