@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.msw.mesapp.activity.home.warehouse.MaterialInDetail1PrintActivity">
+    tools:context="com.msw.mesapp.activity.home.warehouse.MaterialInActivityDetail1Print">
     <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout2" />
 
     <RelativeLayout
