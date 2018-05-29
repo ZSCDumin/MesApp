@@ -5,8 +5,14 @@ import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.MifareClassic;
+import android.nfc.tech.MifareUltralight;
+import android.nfc.tech.NfcA;
+import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
@@ -44,6 +50,8 @@ import com.zhouyou.http.subsciber.IProgressDialog;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -140,9 +148,6 @@ public class LoginActivity extends AppCompatActivity {
                 .params(GlobalApi.Login.PASSWORD, pass)
                 .sign(true)
                 .timeStamp(true)//本次请求是否携带时间戳
-                //.cacheMode(CacheMode.FIRSTREMOTE)//先请求网络，请求网络失败后再加载缓存
-                //.cacheKey(GlobalKey.Login.DATA)//缓存key
-                //.retryCount(5)//重试次数
                 .execute(new ProgressDialogCallBack<String>(mProgressDialog, true, true) {
                     @Override
                     public void onSuccess(String loginModel) {

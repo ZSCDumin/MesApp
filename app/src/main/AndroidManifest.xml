@@ -159,10 +159,14 @@
         <activity android:name=".activity.home.warehouse.ProductOutCheckActivityDetail1" />
         <activity android:name=".activity.home.warehouse.ProductOutCheckActivityDetail2" />
         <activity android:name=".activity.home.warehouse.SampleInActivity" />
+        <activity android:name=".activity.home.warehouse.SampleOutActivity" />
         <activity android:name=".activity.home.warehouse.SampleInActivityDetial1" />
         <activity android:name=".activity.home.warehouse.SampleInActivityDetial1Scan" />
         <activity android:name=".activity.home.warehouse.SampleInActivityDetial2" />
-        <activity android:name=".activity.home.warehouse.MaterialOutUrgentCheckActivity"></activity>
+        <activity android:name=".activity.home.warehouse.SampleOutActivityDetial1" />
+        <activity android:name=".activity.home.warehouse.SampleOutActivityDetial1Scan" />
+        <activity android:name=".activity.home.warehouse.SampleOutActivityDetial2" />
+        <activity android:name=".activity.home.warehouse.MaterialOutUrgentCheckActivity"/>
     </application>
 
 </manifest>

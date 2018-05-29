@@ -1,7 +1,5 @@
 package com.msw.mesapp.activity.home.equipment;
 
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -9,7 +7,6 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,7 +16,6 @@ import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.ui.widget.TitlePopup;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.NotifyUtil;
 import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
@@ -38,8 +34,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -141,7 +135,6 @@ public class InspectWorkerActivity extends AppCompatActivity {
     public void initView(){
         initTitle();
         initRefreshLayout();
-        initPopup();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
@@ -308,46 +301,4 @@ public class InspectWorkerActivity extends AppCompatActivity {
 
 
 
-        //初始化标题列表
-        public void initPopup() {
-            titlePopup = new TitlePopup(this, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            //给标题栏弹窗添加子类
-            titlePopup.addAction(new TitlePopup.ActionItem(this, "按任务发布时间", R.drawable.mm_title_btn_compose_normal));
-            titlePopup.addAction(new TitlePopup.ActionItem(this, "按任务截止时间", R.drawable.mm_title_btn_receiver_normal));
-            titlePopup.addAction(new TitlePopup.ActionItem(this, "设置提醒时间", R.drawable.mm_title_btn_keyboard_normal));
-            titlePopup.setItemOnClickListener(new TitlePopup.OnItemOnClickListener() {
-                @Override
-                public void onItemClick(TitlePopup.ActionItem item, int position) {
-                    ActivityUtil.toastShow(InspectWorkerActivity.this, "点击了" + item.mTitle.toString());
-                    switch (position){
-                        case 0:
-                            Collections.sort(list, new Comparator<Map<String,Object>>(){
-
-                                @Override
-                                public int compare(Map<String, Object> h1, Map<String, Object> h2) {
-                                    String name1 =(String)h1.get("1");
-                                    String name2= (String)h2.get("1");
-                                    return name1.compareTo(name2);
-                                }
-                            });
-                            adapter.notifyDataSetChanged();
-                            break;
-                        case 1:
-                            break;
-                        case 2:
-                            new NotifyUtil(InspectWorkerActivity.this,1).notify_normal_singline(
-                                    PendingIntent.getActivity(InspectWorkerActivity.this,1, new Intent(InspectWorkerActivity.this,InspectWorkerActivity.class), PendingIntent.FLAG_UPDATE_CURRENT),
-                                    R.mipmap.ic_launcher,
-                                    "您有一条新通知",
-                                    "双十一大优惠！！！",
-                                    "仿真皮肤充气娃娃，女朋友带回家！",
-                                    true/*声音*/, true/*震动*/, false/*灯光*/
-                            );
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            });
-        }
 }

@@ -18,17 +18,24 @@ import android.widget.ImageView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.home.quality.TestCheckProcessDetailActivity;
-import com.msw.mesapp.activity.home.warehouse.MaterialInDetail1Activity;
-import com.msw.mesapp.activity.home.warehouse.MaterialInDetail1PrintActivity;
+import com.msw.mesapp.activity.home.warehouse.MaterialInActivityDetail1;
+import com.msw.mesapp.activity.home.warehouse.MaterialInActivityDetail2;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +44,7 @@ import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
+//获取第三方发货单列表
 public class FragmentMaterialIn2 extends Fragment {
 
     @Bind(R.id.search_view)
@@ -53,6 +60,10 @@ public class FragmentMaterialIn2 extends Fragment {
 
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
+
+    int page = 0; //获取数据的第几页
+    int totalPages = 0; //总共几页
+    int totalElements = 0; //总共多少条数据
 
     /** 目标项是否在最后一个可见项之后*/
     private boolean mShouldScroll;
@@ -76,12 +87,66 @@ public class FragmentMaterialIn2 extends Fragment {
     }
 
     private void initData() {
-        for (int i = 0; i < 20; i++) {
-            Map listmap = new HashMap<>();
-            listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
-            listmap.put("2","KC664" + (57+i)+":"); //内部编号
-            list.add(listmap);
-        }
+        list.clear();
+        page = 0;
+        EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_GoDown_Header_ByPage) //获取发货单
+                .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
+                .params(GlobalApi.WareHourse.size, "20") //一次获取多少
+                .params(GlobalApi.WareHourse.sort, "code") //根据code排序
+                .params(GlobalApi.WareHourse.asc, "1") //升序
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        int code = 1;
+                        String message = "出错";
+
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            code =  jsonObject.optInt("code");
+                            message = jsonObject.optString("message");
+                            JSONObject data =  jsonObject.optJSONObject("data");
+                            JSONArray content = data.optJSONArray("content");
+
+                            totalPages = data.optInt("totalPages");
+                            totalElements = data.optInt("totalElements");
+
+                            for (int i = 0; i < content.length(); i++) {
+                                JSONObject content0 = content.optJSONObject(i);
+
+                                String head_code = content0.optString("code"); //获取编码
+                                String materia_name="";
+                                JSONObject rawTypeobj = content0.optJSONObject("rawType");
+                                if(rawTypeobj !=null)
+                                    materia_name = rawTypeobj.optString("name"); //原料名字
+
+
+                                String weight = content0.optString("weight"); //重量
+                                String DownDate = content0.optString("date"); //到货日期
+
+                                Map listmap = new HashMap<>();
+                                listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
+                                listmap.put("2", DownDate); //
+                                listmap.put("3", head_code); //
+                                list.add(listmap);
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (code == 0) {
+                            adapter.notifyDataSetChanged();
+                            //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
+                        } else {
+                            ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
+                        }
+                    }
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    }
+                });
     }
 
     private void initView() {
@@ -98,14 +163,13 @@ public class FragmentMaterialIn2 extends Fragment {
                     public void onClick(View view) {
                         //ActivityUtil.toastShow(getActivity(), "点击了" + position);
                         Map<String,Object> map = new HashMap<>();
-                        map.put("1",s.get("1").toString());
-                        map.put("2",s.get("2").toString());
-                        map.put("3",list.size());
+                        map.put("code",s.get("3").toString());
 
-                        ActivityUtil.switchTo(getActivity(), MaterialInDetail1PrintActivity.class);
+                        ActivityUtil.switchTo(getActivity(), MaterialInActivityDetail2.class,map);
                     }
                 });
-                holder.setText(R.id.tv,s.get("1").toString());
+                holder.setText(R.id.tv1,s.get("1").toString());
+                holder.setText(R.id.tv2,s.get("2").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -115,53 +179,7 @@ public class FragmentMaterialIn2 extends Fragment {
      * 初始化搜索框
      */
     private void initSearchView() {
-        searchView.setVoiceSearch(false); //or true    ，是否支持声音的
-        searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
-        searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
-        //搜索显示的提示
-        List<String> listitem = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            listitem.add(list.get(i).get("1").toString());
-        }
-        String[] array = listitem.toArray(new String[listitem.size()]);
-        searchView.setSuggestions(array);
-
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            //数据提交时
-            //1.点击ListView的Item条目会回调这个方法
-            //2.点击系统键盘的搜索/回车后回调这个方法
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                int i = 0;
-                for (Map<String,Object> temp : list) {
-                    i++;
-                    if (temp.get("1").toString().contains(query)) {
-                        break;
-                    }
-                }
-                //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView,i);
-                adapter.notifyDataSetChanged();
-                return false;
-            }
-            //文本内容发生改变时
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        imgsearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (searchView.isSearchOpen()) {
-                    searchView.closeSearch();//隐藏搜索框
-                } else {
-                    searchView.showSearch(true);//显示搜索框
-                }
-            }
-        });
     }
-
     /**
      * 初始化滑动列表
      */
@@ -169,9 +187,8 @@ public class FragmentMaterialIn2 extends Fragment {
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
-                refreshlayout.finishRefresh(2000);
-                getData();
-                adapter.notifyDataSetChanged();
+                refreshlayout.finishRefresh(1500);
+                initData();
                 classicsFooter.setLoadmoreFinished(false);
             }
         });
@@ -179,44 +196,75 @@ public class FragmentMaterialIn2 extends Fragment {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
                 refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
-                if (list.size() <= 40 - 10) {
-                    for (int i = 0; i < 10; i++) {
-                        Map listmap = new HashMap<>();
-                        listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
-                        listmap.put("2","KC664" + (57+i)+":"); //内部编号
-                        list.add(listmap);
-                    }
-                    { //搜索显示的提示
-                        List<String> listitem = new ArrayList<>();
-                        for(int i=0;i<list.size();i++){
-                            listitem.add(list.get(i).get("1").toString());
-                        }
-                        String[] array = listitem.toArray(new String[listitem.size()]);
-                        searchView.setSuggestions(array);
-                        adapter.notifyDataSetChanged();
-                    }
-                } else {
-                    classicsFooter.setLoadmoreFinished(true);
-                }
+                getData();
             }
         });
     }
 
     private void getData() {
-        list.clear();
-        for (int i = 0; i < 20; i++) {
-            Map listmap = new HashMap<>();
-            listmap.put("1","金池能源材料有限公司"+(6+i)); //厂家编号
-            listmap.put("2","KC664" + (57+i)+":"); //内部编号
-            list.add(listmap);
-        }
-        { //搜索显示的提示
-            List<String> listitem = new ArrayList<>();
-            for(int i=0;i<list.size();i++){
-                listitem.add(list.get(i).get("1").toString());
-            }
-            String[] array = listitem.toArray(new String[listitem.size()]);
-            searchView.setSuggestions(array);
+        page ++;
+        if(page > totalPages)  classicsFooter.setLoadmoreFinished(true);
+        else {
+            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_GoDown_Header_ByPage) //获取发货单
+                    .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
+                    .params(GlobalApi.WareHourse.size, "20") //一次获取多少
+                    .params(GlobalApi.WareHourse.sort, "code") //根据code排序
+                    .params(GlobalApi.WareHourse.asc, "1") //升序
+                    .sign(true)
+                    .timeStamp(true)//本次请求是否携带时间戳
+                    .execute(new SimpleCallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            int code = 1;
+                            String message = "出错";
+
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                code =  jsonObject.optInt("code");
+                                message = jsonObject.optString("message");
+                                JSONObject data =  jsonObject.optJSONObject("data");
+                                JSONArray content = data.optJSONArray("content");
+
+                                totalPages = data.optInt("totalPages");
+                                totalElements = data.optInt("totalElements");
+
+                                for (int i = 0; i < content.length(); i++) {
+                                    JSONObject content0 = content.optJSONObject(i);
+
+                                    String head_code = content0.optString("code"); //获取编码
+
+                                    JSONObject rawTypeobj = content0.optJSONObject("rawType");
+                                    String materia_name = "";
+                                    if(rawTypeobj != null) {
+                                        materia_name = rawTypeobj.optString("name"); //原料名字
+                                    }
+
+                                    String weight = content0.optString("weight"); //重量
+                                    String DownDate = content0.optString("date"); //到货日期
+
+                                    Map listmap = new HashMap<>();
+                                    listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
+                                    listmap.put("2", DownDate); //
+                                    listmap.put("3", head_code); //
+                                    list.add(listmap);
+
+                                }
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (code == 0) {
+                                adapter.notifyDataSetChanged();
+                                //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
+                            } else {
+                                ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
+                            }
+                        }
+                        @Override
+                        public void onError(ApiException e) {
+                            ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        }
+                    });
         }
     }
 

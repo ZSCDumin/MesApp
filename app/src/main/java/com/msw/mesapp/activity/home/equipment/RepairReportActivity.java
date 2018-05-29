@@ -74,7 +74,7 @@ public class RepairReportActivity extends AppCompatActivity {
         //fragmentList.add(new FragmentRepairReporting());
         fragmentList.add(new FragmentRepairReported());
         viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
-        viewPager.setAdapter(new mPageAdapter(this.getSupportFragmentManager()));
+        viewPager.setAdapter(new RepairReportActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setViewPager(viewPager, mTitles);
     }
 

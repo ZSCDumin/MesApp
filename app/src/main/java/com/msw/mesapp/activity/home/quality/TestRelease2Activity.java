@@ -80,7 +80,7 @@ public class TestRelease2Activity extends AppCompatActivity {
         fragmentList.add(new FragmentTestReleaseing2());
         fragmentList.add(new FragmentTestReleaseed2());
         viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
-        viewPager.setAdapter(new mPageAdapter(this.getSupportFragmentManager()));
+        viewPager.setAdapter(new TestRelease2Activity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setViewPager(viewPager, mTitles);
     }
     //初始化标题列表

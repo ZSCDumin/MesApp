@@ -17,6 +17,13 @@ public class GlobalKey {
         public final static String Repair_Worker = "90"; //维修人
         public final static String Repair_Soorer = "91"; //评价人
         public final static String QrManner = "92"; //条码管理
+
+        public final static String TestCheck = "108"; //原料审核
+        public final static String TestCheckProduct = "109"; //产品审核
+        public final static String TestCheckProcess = "110"; //制程数据-审核
+        public final static String TestRelease = "111"; //原料发布
+        public final static String TestReleaseProcess = "112"; //制程数据-发布
+
     }
     //....
     public final static class Login {

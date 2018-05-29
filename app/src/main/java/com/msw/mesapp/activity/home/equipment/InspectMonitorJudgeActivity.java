@@ -86,7 +86,7 @@ public class InspectMonitorJudgeActivity extends AppCompatActivity {
 
     private void initData() {
         final Map[] map = {new HashMap()};
-        map[0].put("1", getIntent().getExtras().get("01").toString());
+        map[0].put("1", "巡检主键："+getIntent().getExtras().get("01").toString());
         map[0].put("2", "");
         list.add(map[0]);
         code = getIntent().getExtras().get("01").toString();

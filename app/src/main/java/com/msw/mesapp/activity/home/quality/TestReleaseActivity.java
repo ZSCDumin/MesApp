@@ -78,7 +78,7 @@ public class TestReleaseActivity extends AppCompatActivity {
         fragmentList.add(new FragmentTestReleaseing());
         fragmentList.add(new FragmentTestReleaseed());
         viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
-        viewPager.setAdapter(new mPageAdapter(this.getSupportFragmentManager()));
+        viewPager.setAdapter(new TestReleaseActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setViewPager(viewPager, mTitles);
     }
     //初始化标题列表

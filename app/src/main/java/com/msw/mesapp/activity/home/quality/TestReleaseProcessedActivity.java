@@ -87,7 +87,7 @@ public class TestReleaseProcessedActivity extends AppCompatActivity {
         fragmentList.add(new FragmentTestReleaseProcessed3());
         fragmentList.add(new FragmentTestReleaseProcessed4());
         viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
-        viewPager.setAdapter(new mPageAdapter(this.getSupportFragmentManager()));
+        viewPager.setAdapter(new TestReleaseProcessedActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setTextsize(13);
         slidingTabLayout.setTextAllCaps(true);
         slidingTabLayout.setViewPager(viewPager, mTitles);

@@ -12,10 +12,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,27 +27,41 @@ import com.flyco.dialog.listener.OnBtnClickL;
 import com.flyco.dialog.widget.NormalDialog;
 import com.flyco.dialog.widget.popup.BubblePopup;
 import com.msw.mesapp.R;
+import com.msw.mesapp.activity.fragment.CardFragment;
 import com.msw.mesapp.activity.home.equipment.InspectActivity;
 import com.msw.mesapp.activity.home.equipment.QrManageActivity;
 import com.msw.mesapp.activity.home.equipment.RepairApplyActivity;
 import com.msw.mesapp.activity.home.equipment.RepairBillActivity;
+import com.msw.mesapp.activity.home.id_management.IdManagementActivity;
 import com.msw.mesapp.activity.home.quality.TestCheckMainActivity;
 import com.msw.mesapp.activity.home.quality.TestReleaseMainActivity;
 import com.msw.mesapp.activity.home.warehouse.MaterialInActivity;
+import com.msw.mesapp.activity.home.warehouse.MaterialOutMainActivity;
+import com.msw.mesapp.activity.home.warehouse.ProductInMainActivity;
+import com.msw.mesapp.activity.home.warehouse.ProductOutMainActivity;
+import com.msw.mesapp.activity.home.warehouse.SampleInActivity;
+import com.msw.mesapp.activity.home.warehouse.SampleOutActivity;
 import com.msw.mesapp.activity.me.ModifyPasswordActivity;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityManager;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.SPUtil;
-import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import me.panpf.sketch.SketchImageView;
 import me.panpf.sketch.display.FadeInImageDisplayer;
 import me.panpf.sketch.request.ShapeSize;
@@ -116,33 +128,38 @@ public class HomeActivity extends AppCompatActivity {
     ViewPager viewPager;
     @Bind(R.id.title)
     TextView title;
-
-    String permission_code = "";
+    @Bind(R.id.idMg1)
+    LinearLayout idMg1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            savedInstanceState = null;
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        StatusBarUtils.setActivityTranslucent(this); //设置全屏d
-        StatusBarUtils.setColorForDrawerLayout(this, drawerLayout, R.color.nocolor);
-
         initData();
         initView();
+        new Timer().schedule(new TimerTask() {
+                                 @Override
+                                 public void run() {
+                                     fragmentList.clear();
+                                     initCardView();
+                                 }
+                             }, 0, 5000
+        );
     }
 
     private void initView() {
         String name = "";
         name = (String) SPUtil.get(HomeActivity.this, GlobalKey.Login.CODE, name);
-        //permission_code = (String) SPUtil.get(HomeActivity.this,GlobalKey.permiss.SPKEY, permission_code);
-        //String[] split_pc = permission_code.split("-");
 
         ToastUtil.showToast(HomeActivity.this, "欢迎用户：" + name, ToastUtil.Success);
-
+        //------------------------------------------------------------------------------------------
         device1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ActivityUtil.toastShow(getActivity(), "设备巡检");
                 ToastUtil.showToast(HomeActivity.this, "设备巡检", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, InspectActivity.class);
             }
@@ -168,11 +185,10 @@ public class HomeActivity extends AppCompatActivity {
                 ActivityUtil.switchTo(HomeActivity.this, QrManageActivity.class);
             }
         });
-
+        //------------------------------------------------------------------------------------------
         quality1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ActivityUtil.toastShow(getActivity(), "化验审核");
                 ToastUtil.showToast(HomeActivity.this, "化验审核", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, TestCheckMainActivity.class);
             }
@@ -180,19 +196,63 @@ public class HomeActivity extends AppCompatActivity {
         quality2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ActivityUtil.toastShow(getActivity(), "化验发布");
                 ToastUtil.showToast(HomeActivity.this, "化验发布", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, TestReleaseMainActivity.class);
             }
         });
+        //------------------------------------------------------------------------------------------
         iokun1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ActivityUtil.toastShow(getActivity(), "原料入库");
                 ToastUtil.showToast(HomeActivity.this, "原料入库", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, MaterialInActivity.class);
             }
         });
+        iokun2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "成品入库", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, ProductInMainActivity.class);
+            }
+        });
+        iokun3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "原料出库", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, MaterialOutMainActivity.class);
+            }
+        });
+        iokun4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "成品出库", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, ProductOutMainActivity.class);
+            }
+        });
+        panku1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "样品入库", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, SampleInActivity.class);
+            }
+        });
+        panku2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "样品出库", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, SampleOutActivity.class);
+            }
+        });
+
+        //------------------------------------------------------------------------------------------
+        idMg1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ToastUtil.showToast(HomeActivity.this, "ID管理", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, IdManagementActivity.class);
+            }
+        });
+        //------------------------------------------------------------------------------------------
         initNavView();
         initCardView();
     }
@@ -255,12 +315,7 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (id == R.id.nav_change) {
                     ActivityUtil.switchTo(HomeActivity.this, ModifyPasswordActivity.class);
-                }
-//                else if (id == R.id.nav_gallery) {
-//
-//                } else if (id == R.id.nav_slideshow) {
-//                }
-                else if (id == R.id.nav_output) {
+                } else if (id == R.id.nav_output) {
                     BaseAnimatorSet bas_in = new FadeEnter();
                     BaseAnimatorSet bas_out = new FadeExit();
                     final NormalDialog dialog = new NormalDialog(HomeActivity.this);
@@ -292,82 +347,51 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    List<Fragment> fragmentList = new ArrayList<>();
+    List<CardFragment> fragmentList = new ArrayList<>();
 
     private void initCardView() {
+        String userCode = (String) SPUtil.get(this, GlobalKey.Login.CODE, "");
+        EasyHttp.post(GlobalApi.UndoThingsItems.PATH)
+                .params(GlobalApi.UndoThingsItems.STATUS, "0")
+                .params(GlobalApi.UndoThingsItems.ADDRESSEECODE, userCode)
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            JSONArray contents = jsonObject.optJSONObject("data").optJSONArray("content");
+                            for (int i = 0; i < contents.length(); i++) {
+                                JSONObject item = contents.optJSONObject(i);
+                                String code = item.optString("code");
+                                String title = item.optString("title");
+                                String content = item.optString("content"); //获取申请内容
+                                String date = item.optString("createTime");
+                                String url = item.optString("url");
+                                String status = item.optString("status");
+                                String ss[] = new String[6];
+                                ss[0] = title;
+                                ss[1] = content;
+                                ss[2] = date;
+                                ss[3] = url;
+                                ss[4] = status;
+                                ss[5] = code;
+                                fragmentList.add(CardFragment.newInstance(ss));
+                            }
+                            viewPager.setAdapter(new FrPageAdapter(HomeActivity.this.getSupportFragmentManager()));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
-        //加载数据库数据（暂时模拟一下）
-        for (int i = 1; i <= 5; i++) {
-            String ss[] = new String[3];
-            ss[0] = "巡检任务" + i;
-            ss[1] = "发生故障，需要点检";
-            ss[2] = "2018-09-12";
-            fragmentList.add(CardFragment.newInstance(ss));
-        }
-        viewPager.setAdapter(new FrPageAdapter(this.getSupportFragmentManager()));
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(HomeActivity.this, "获取待办事项出错!", ToastUtil.Error);
+                    }
+                });
     }
 
-
-    public static class CardFragment extends Fragment {
-        @Bind(R.id.tv1)
-        TextView tv1;
-        @Bind(R.id.tvview)
-        View tvview;
-        @Bind(R.id.tv2)
-        TextView tv2;
-        @Bind(R.id.tv3)
-        TextView tv3;
-        String[] ss;
-
-        public static CardFragment newInstance(String[] ss) {
-            CardFragment newFragment = new CardFragment();
-            Bundle bundle = new Bundle();
-            bundle.putStringArray("ss", ss);
-            newFragment.setArguments(bundle);
-            return newFragment;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            //引用创建好的xml布局
-            View view = inflater.inflate(R.layout.item_cardview, container, false);
-            ButterKnife.bind(this, view);
-
-            String[] sss = new String[3];
-
-            Bundle args = getArguments();
-            if (args != null) {
-                sss = args.getStringArray("ss");
-            }
-
-            tv1.setText(sss[0]);
-            tv2.setText(sss[1]);
-            tv3.setText(sss[2]);
-
-            return view;
-        }
-
-        @Override
-        public void onDestroyView() {
-            super.onDestroyView();
-            ButterKnife.unbind(this);
-        }
-
-        @OnClick({R.id.cardview})
-        public void onViewClicked(View view) {
-            switch (view.getId()) {
-                case R.id.cardview:
-                    //模块跳转代码
-                    ActivityUtil.switchTo(getActivity(),TestActivity.class);
-                    //设置消息状态为已读
-                    tvview.setBackgroundResource(R.mipmap.blue_dot);
-
-                    //进行数据库更新操作
-
-                    break;
-            }
-        }
-    }
 
     public class FrPageAdapter extends FragmentPagerAdapter {
 
@@ -394,7 +418,6 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - firstTime > 2000) {
-                //Toast.makeText(HomeActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
                 ToastUtil.showToast(HomeActivity.this, "再按一次退出程序", ToastUtil.Info);
                 firstTime = System.currentTimeMillis();
             } else {

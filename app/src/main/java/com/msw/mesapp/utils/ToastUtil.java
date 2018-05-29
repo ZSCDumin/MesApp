@@ -16,12 +16,13 @@ public class ToastUtil {
     public static int Confusion = TastyToast.CONFUSING;
     public static int Success = TastyToast.SUCCESS;
 
-    public static void showToast(Activity activity,String info, int type){
-        if(activity != null)
-        TastyToast.makeText(activity, info, TastyToast.LENGTH_SHORT, type);
+    public static void showToast(Activity activity, String info, int type) {
+        if (activity != null)
+            TastyToast.makeText(activity, info, TastyToast.LENGTH_SHORT, type);
     }
-    public static void showToastLong(Activity activity,String info, int type){
-        if(activity != null)
-        TastyToast.makeText(activity, info, TastyToast.LENGTH_LONG, type);
+
+    public static void showToastLong(Activity activity, String info, int type) {
+        if (activity != null)
+            TastyToast.makeText(activity, info, TastyToast.LENGTH_LONG, type);
     }
 }

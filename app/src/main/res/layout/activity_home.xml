@@ -363,26 +363,6 @@
                                 android:textSize="11dp"
                                 android:focusable="false"/>
                         </LinearLayout>
-                        <LinearLayout android:id="@+id/iokun2"
-                            android:layout_height="@dimen/item_home_high"
-                            android:orientation="vertical"
-                            android:background="@drawable/setting_item_selector"
-                            android:clickable="true">
-                            <ImageView
-                                android:layout_height="@dimen/icon_home_size"
-                                android:layout_width="@dimen/icon_home_size"
-                                android:layout_gravity="center_horizontal"
-                                app:srcCompat="@mipmap/icon_home_productin"
-                                android:focusable="false"/>
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_horizontal"
-                                android:gravity="center"
-                                android:text="产品入库"
-                                android:textSize="11dp"
-                                android:focusable="false"/>
-                        </LinearLayout>
                         <LinearLayout android:id="@+id/iokun3"
                             android:layout_height="@dimen/item_home_high"
                             android:orientation="vertical"
@@ -403,6 +383,27 @@
                                 android:textSize="11dp"
                                 android:focusable="false"/>
                         </LinearLayout>
+                        <LinearLayout android:id="@+id/iokun2"
+                            android:layout_height="@dimen/item_home_high"
+                            android:orientation="vertical"
+                            android:background="@drawable/setting_item_selector"
+                            android:clickable="true">
+                            <ImageView
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+                                app:srcCompat="@mipmap/icon_home_productin"
+                                android:focusable="false"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+                                android:gravity="center"
+                                android:text="产品入库"
+                                android:textSize="11dp"
+                                android:focusable="false"/>
+                        </LinearLayout>
+
                         <LinearLayout android:id="@+id/iokun4"
                             android:layout_height="@dimen/item_home_high"
                             android:orientation="vertical"

@@ -79,6 +79,7 @@ public class RepairApplyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repair_apply);
+        StatusBarUtils.setActivityTranslucent(this); //设置全屏
         ButterKnife.bind(this);
 
         initData();
@@ -107,7 +108,7 @@ public class RepairApplyActivity extends AppCompatActivity {
     public void initTitle(){
         initPermission();
 
-        StatusBarUtils.setActivityTranslucent(this); //设置全屏
+
         title.setText("维修申请");
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +129,8 @@ public class RepairApplyActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
     private void initView() {
         //et1.setText("001");
@@ -162,9 +165,9 @@ public class RepairApplyActivity extends AppCompatActivity {
                     }
                 };
                 EasyHttp.post(GlobalApi.Repair.UpErr.PATH)
-                        .params(GlobalApi.Repair.UpErr.department_code, t1) //部门
-                        .params(GlobalApi.Repair.UpErr.eqArchive_code, t2) //设备名称
-                        .params(GlobalApi.Repair.UpErr.productLine_code, t3) //生产线
+                        .params(GlobalApi.Repair.UpErr.eqArchive_code, t1) //设备
+                        .params(GlobalApi.Repair.UpErr.productLine_code, t2) //生产线
+                        .params(GlobalApi.Repair.UpErr.department_code, t3) //部门
                         .params(GlobalApi.Repair.UpErr.applicationDescription, t4) //故障描述
                         .params(GlobalApi.Repair.UpErr.applicationPerson_code, id) //申请人id
                         .sign(true)

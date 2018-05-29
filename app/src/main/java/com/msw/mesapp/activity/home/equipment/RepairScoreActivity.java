@@ -78,7 +78,7 @@ public class RepairScoreActivity extends AppCompatActivity {
         fragmentList.add(new FragmentRepairScoreing());
         fragmentList.add(new FragmentRepairScoreed());
         viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
-        viewPager.setAdapter(new mPageAdapter(this.getSupportFragmentManager()));
+        viewPager.setAdapter(new RepairScoreActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setViewPager(viewPager, mTitles);
     }
 
