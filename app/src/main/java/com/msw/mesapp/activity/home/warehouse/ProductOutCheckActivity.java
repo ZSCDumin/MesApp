@@ -64,7 +64,7 @@ public class ProductOutCheckActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("成品出库");
+        title.setText("产品出库");
         add.setVisibility(View.INVISIBLE);
     }
 
@@ -77,8 +77,8 @@ public class ProductOutCheckActivity extends AppCompatActivity {
     }
 
     public void initSlidingTabLayout() {
-        fragmentList.add(new FragmentProductOutCheck1()); //成品待入库
-        fragmentList.add(new FragmentProductOutCheck2()); //成品已入库
+        fragmentList.add(new FragmentProductOutCheck1()); //未审核
+        fragmentList.add(new FragmentProductOutCheck2()); //已审核
         viewPager.setNestedpParent((ViewGroup) viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
         viewPager.setAdapter(new ProductOutCheckActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setTextsize(14);

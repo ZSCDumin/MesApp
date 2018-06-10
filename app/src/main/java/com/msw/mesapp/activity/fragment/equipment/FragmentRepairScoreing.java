@@ -88,7 +88,7 @@ public class FragmentRepairScoreing extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.Repair.PATH_ByFlagInPages)
-                .params(GlobalApi.Repair.code, "2") //查找所有完成维修的数据
+                .params(GlobalApi.Repair.code, "1") //查找所有完成维修的数据
                 .params(GlobalApi.Repair.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.Repair.size, "20") //一次获取多少
                 .params(GlobalApi.Repair.sort, "applicationTime") //根据code排序

@@ -62,6 +62,8 @@
         android:gravity="center">
 
         <Button
+            android:background="@color/blue"
+            android:textColor="@color/white"
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -69,6 +71,8 @@
             android:text="取消扫描" />
 
         <Button
+            android:background="@color/blue"
+            android:textColor="@color/white"
             android:id="@+id/submit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

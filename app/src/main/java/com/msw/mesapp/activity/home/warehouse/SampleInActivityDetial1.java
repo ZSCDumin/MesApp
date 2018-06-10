@@ -78,6 +78,12 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
     List<String> spinnerList = new ArrayList<>();
     List<String> spinnerList2 = new ArrayList<>();
+    @Bind(R.id.ttx1)
+    TextView ttx1;
+    @Bind(R.id.ttx2)
+    TextView ttx2;
+    @Bind(R.id.ttx3)
+    TextView ttx3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +109,14 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
 
     public void initSpinner() {
         //适配器
-        ArrayAdapter<String> arr_adapter= new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
+        ArrayAdapter<String> arr_adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, spinnerList);
         //设置样式
         arr_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //加载适配器
         spinner.setAdapter(arr_adapter);
     }
-    public void getDepartment(){
+
+    public void getDepartment() {
         EasyHttp.get("department/getAll")
                 .sign(true)
                 .timeStamp(true)//本次请求是否携带时间戳
@@ -125,8 +132,8 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
                             message = jsonObject.optString("message");
                             JSONArray data = jsonObject.optJSONArray("data");
 
-                            for(int i= 0;i<data.length();i++){
-                                JSONObject data0 = new JSONObject( data.get(i).toString() );
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject data0 = new JSONObject(data.get(i).toString());
                                 spinnerList.add(data0.optString("name"));
                                 spinnerList2.add(data0.optString("code"));
                             }
@@ -139,6 +146,7 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
                             ToastUtil.showToast(SampleInActivityDetial1.this, message, ToastUtil.Error);
                         }
                     }
+
                     @Override
                     public void onError(ApiException e) {
                         ToastUtil.showToast(SampleInActivityDetial1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -196,6 +204,10 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
                             if (createUserobj != null)
                                 createUser = createUserobj.optString("name"); //创建者
 
+                            String status = data.optString("status");
+                            String receiptor = data.optJSONObject("receiptor").optString("name");
+                            String receiveTime = DateUtil.getDateToString(Long.valueOf(data.optString("receiveTime")));
+
                             JSONArray sendEntriesArr = data.getJSONArray("godownTestInforms");
                             for (int i = 0; i < sendEntriesArr.length(); i++) {
                                 JSONObject godwon0 = new JSONObject(sendEntriesArr.opt(i).toString());
@@ -212,6 +224,9 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
                             ss[4] = createTime; //创建时间
                             ss[5] = department; //受文部门
                             ss[6] = createUser; //创建者
+                            ss[7] = status;
+                            ss[8] = receiptor;
+                            ss[9] = receiveTime;
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -229,6 +244,7 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
                     }
                 });
     }
+
     public void initView() {
 
         tx1.setText(ss[0]);
@@ -236,8 +252,11 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
         tx3.setText(ss[2]);
         tx4.setText(ss[3]);
         tx5.setText(ss[4]);
-
         tx7.setText(ss[6]);
+        ttx1.setText(ss[7]);
+        ttx2.setText(ss[8]);
+        ttx3.setText(ss[9]);
+
         initTable();
 
         spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {//选择item的选择点击监听事件
@@ -245,7 +264,7 @@ public class SampleInActivityDetial1 extends AppCompatActivity {
                                        int arg2, long arg3) {
                 // TODO Auto-generated method stub
                 // 将所选mySpinner 的值带入myTextView 中
-                ToastUtil.showToast(SampleInActivityDetial1.this, "选择了"+arg2, ToastUtil.Confusion);
+                ToastUtil.showToast(SampleInActivityDetial1.this, "选择了" + arg2, ToastUtil.Confusion);
             }
 
             public void onNothingSelected(AdapterView<?> arg0) {

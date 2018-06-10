@@ -69,8 +69,8 @@ public class MaterialOutActivity extends AppCompatActivity {
     }
 
     public void initSlidingTabLayout() {
-        fragmentList.add(new FragmentProductOut1()); //产品未出库
-        fragmentList.add(new FragmentProductOut2()); //产品已出库
+        fragmentList.add(new FragmentMaterialOut1()); //产品未出库
+        fragmentList.add(new FragmentMaterialOut2()); //产品已出库
         viewPager.setNestedpParent((ViewGroup) viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
         viewPager.setAdapter(new MaterialOutActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setTextsize(14);

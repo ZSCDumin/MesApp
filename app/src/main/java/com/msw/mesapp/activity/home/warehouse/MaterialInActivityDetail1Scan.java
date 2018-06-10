@@ -10,6 +10,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -72,23 +73,46 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
             switch (msg.what) {
                 case BarcodeAPI.BARCODE_READ:
                     String s = msg.obj.toString().trim();
-                    boolean tt = true;
+                    boolean tt = false;
                     for (int i = 0; i < batchList.size(); i++) {
                         Map map = batchList.get(i);
-                        if (map.get("2").equals(s)) tt = false;
+                        if (map.get("2").equals(s)) tt = true;
                     }
-                    if (tt) {
+                    if (!tt) { //如果不存在该记录则添加
                         Map listmap = new HashMap<>();
                         listmap.put("1", String.valueOf(batchList.size()));
                         listmap.put("2", s);
                         batchList.add(listmap);
-                        adapter.notifyDataSetChanged();
-                        checkSubmit();
+                        //adapter.notifyDataSetChanged();
+                        check(0);
                     }
                     break;
             }
         }
     };
+
+    public void check(int flag) {
+        for (int i = 0; i < batchList.size(); i++) {
+            Map map1 = batchList.get(i);
+            for (int j = 0; j < list.size(); j++) {
+                Map map2 = list.get(j);
+                Map map = new HashMap();
+                map.put("1", map1.get("1"));
+                map.put("2", map1.get("2"));
+                if ((map1.get("2").toString()).equals(map2.get("2").toString())) {
+                    map.put("3", "1");
+                    batchList.set(i, map);
+                    break;
+                } else if (j == list.size() - 1) { //扫描记录不存在于批号数据集中
+                    map.put("3", "0");
+                    batchList.set(i, map);
+                    if (flag == 1)
+                        BtFlag = false;
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
 
     boolean BtFlag = true;
 
@@ -141,14 +165,13 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_material_in_detai_scan, batchList) {
             @Override
-            protected void convert(ViewHolder holder, Map s, final int position) {
+            protected void convert(final ViewHolder holder, Map s, final int position) {
                 holder.setText(R.id.tv1, s.get("1").toString());
                 holder.setText(R.id.tv2, s.get("2").toString());
-                if (!BtFlag)
-                    if (s.get("3").toString().equals("1"))
-                        holder.setImageResource(R.id.img, R.mipmap.cross_right);
-                    else
-                        holder.setImageResource(R.id.img, R.mipmap.cross_false);
+                if (s.get("3").toString().equals("1"))
+                    holder.setImageResource(R.id.img, R.mipmap.cross_right);
+                else
+                    holder.setImageResource(R.id.img, R.mipmap.cross_false);
                 holder.getView(R.id.img).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -176,7 +199,7 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkSubmit();
+                submit();
             }
         });
 
@@ -212,32 +235,20 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    public void checkSubmit() {
-        final String userCode = (String) SPUtil.get(this, GlobalKey.Login.CODE, "");
-        for (int i = 0; i < batchList.size(); i++) {
-            Map map1 = batchList.get(i);
-            for (int j = 0; j < list.size(); j++) {
-                Map map2 = list.get(j);
-                Map map = new HashMap();
-                map.put("1", map1.get("1"));
-                map.put("2", map1.get("2"));
-                if ((map1.get("2").toString()).equals(map2.get("2").toString())) {
-                    map.put("3", "1");
-                    batchList.set(i, map);
-                    break;
-                } else if (j == list.size() - 1) {
-                    map.put("3", "0");
-                    batchList.set(i, map);
-                    BtFlag = false;
-                }
-            }
-        }
-        if (!BtFlag) adapter.notifyDataSetChanged();
-        if (BtFlag && batchList.size() > 0)
-            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Updata)
+
+    public void submit() {
+
+        BtFlag = true;
+        check(1);
+
+        Log.i("TAG", batchList.size() + "");
+        Log.i("TAG", list.size() + "");
+        Log.i("TAG", BtFlag + "");
+
+        if (BtFlag && batchList.size() == list.size())
+            EasyHttp.post(GlobalApi.WareHourse.SampleIn.updateStatusByCode)
                     .params(GlobalApi.WareHourse.code, headcode) //
-                    .params(GlobalApi.WareHourse.status, "2") //
-                    .params(GlobalApi.WareHourse.userCode, userCode) //
+                    .params(GlobalApi.WareHourse.status, "1") //
                     .sign(true)
                     .timeStamp(true)//本次请求是否携带时间戳
                     .execute(new SimpleCallBack<String>() {
@@ -265,6 +276,8 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
                             ToastUtil.showToast(MaterialInActivityDetail1Scan.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
                         }
                     });
+        else {
+            ToastUtil.showToast(MaterialInActivityDetail1Scan.this, "匹配数目不一致！", ToastUtil.Confusion);
+        }
     }
-
 }

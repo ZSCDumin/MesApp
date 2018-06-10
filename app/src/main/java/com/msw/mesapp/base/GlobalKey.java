@@ -7,8 +7,9 @@ package com.msw.mesapp.base;
 public class GlobalKey {
 
     //权限
-    public final static  class  permiss{
-        public final static String SPKEY = "000";
+    public final static class permiss {
+
+        public final static String SPKEY = "000"; //超级管理员权限
 
         public final static String Inspect_Worker = "86"; //工人巡检
         public final static String Inspect_Monitor = "87"; //巡检审核
@@ -25,10 +26,11 @@ public class GlobalKey {
         public final static String TestReleaseProcess = "112"; //制程数据-发布
 
     }
+
     //....
     public final static class Login {
         public final static String DATA = "001";
         public final static String CODE = "001CODE";
-        public final static String NFC  = "001NFC";
+        public final static String NFC = "001NFC";
     }
 }

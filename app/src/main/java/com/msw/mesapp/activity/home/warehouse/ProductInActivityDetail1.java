@@ -21,9 +21,7 @@ import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.bean.warehouse.MaterialOutBean;
 import com.msw.mesapp.bean.warehouse.ProductInBean;
-import com.msw.mesapp.bean.warehouse.ProductOutBean;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
@@ -127,7 +125,7 @@ public class ProductInActivityDetail1 extends AppCompatActivity {
                             JSONObject data = jsonObject.optJSONObject("data");
                             headcode = data.optString("code");
                             String batchNumber = data.optString("batchNumber");
-                            String payTime = DateUtil.getDateToString(Long.valueOf(data.optString("payTime")));
+                            String payTime = data.optString("payTime");
                             String payer = data.optJSONObject("payer").optString("name");
                             String department = data.optJSONObject("department").optString("name");
                             String model = data.optString("model");

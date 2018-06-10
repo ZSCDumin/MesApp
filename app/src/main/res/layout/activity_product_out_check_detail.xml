@@ -167,6 +167,33 @@
                     android:layout_marginRight="10dp"
                     android:background="@color/color3" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:id="@+id/tt5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="10dp"
+                        android:text="审核状态："
+                        android:textColor="@color/balack333" />
+
+                    <TextView
+                        android:id="@+id/tx5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@+id/tt5"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="20dp"
+                        android:singleLine="true"
+                        android:text="KDHUD-8982939"
+                        android:textColor="@color/balack333" />
+                </RelativeLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
@@ -282,36 +309,6 @@
                     android:layout_marginRight="10dp"
                     android:background="@color/white" />
 
-                <LinearLayout
-                    android:id="@+id/line3"
-                    android:layout_width="match_parent"
-                    android:layout_height="94dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="15dp"
-                    android:background="@mipmap/matarialout4"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <com.bin.david.form.core.SmartTable
-                        android:id="@+id/table1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-
-                        android:layout_marginBottom="15dp"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginRight="15dp"
-
-                        android:layout_weight="1" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@color/color3" />
-                </LinearLayout>
-
                 <EditText
                     android:id="@+id/suggestion_et"
                     android:layout_width="match_parent"
@@ -332,17 +329,21 @@
 
                 <Button
                     android:id="@+id/disagree_bt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
                     android:layout_margin="10dp"
-                    android:text="不同意" />
+                    android:background="@color/blue"
+                    android:text="不同意"
+                    android:textColor="@color/white" />
 
                 <Button
                     android:id="@+id/agree_bt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_width="100dp"
+                    android:layout_height="50dp"
                     android:layout_margin="10dp"
-                    android:text="同意" />
+                    android:background="@color/blue"
+                    android:text="同意"
+                    android:textColor="@color/white" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

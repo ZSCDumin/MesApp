@@ -10,14 +10,18 @@
         android:name="android.hardware.bluetooth_le"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER" />
+    <uses-permission android:name="android.permission.ACCESS_DOWNLOAD_MANAGER_ADVANCED" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- NFC权限 -->
     <uses-permission android:name="android.permission.NFC" />
 
@@ -166,7 +170,27 @@
         <activity android:name=".activity.home.warehouse.SampleOutActivityDetial1" />
         <activity android:name=".activity.home.warehouse.SampleOutActivityDetial1Scan" />
         <activity android:name=".activity.home.warehouse.SampleOutActivityDetial2" />
-        <activity android:name=".activity.home.warehouse.MaterialOutUrgentCheckActivity"/>
+        <activity android:name=".activity.home.warehouse.MaterialOutUrgentCheckActivity" />
+        <activity android:name=".activity.home.warehouse.ProductInAddActivityDetail2" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesManagement" />
+        <activity android:name=".activity.home.production_management.ShaiwangManagement.ShaiWangManagement" />
+        <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagement" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesManagementDetails1" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesManagementDetails2" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesManagementDetails3" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesCheckDetails1" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesCheckActivity" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesMemberActivity" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesCheckDetails2" />
+        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesCheckDetails3" />
+        <activity android:name=".activity.home.production_management.ShaiwangManagement.ShaiWangManagementDetails1" />
+        <activity android:name=".activity.home.production_management.ShaiwangManagement.ShaiWangManagementDetails2" />
+        <activity android:name=".activity.home.production_management.ShaiwangManagement.ShaiWangManagementDetails3" />
+        <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagementDetails1" />
+        <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagementDetails2" />
+        <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagementDetails3" />
+        <activity android:name=".activity.ChangeServerActivity" />
+
     </application>
 
 </manifest>

@@ -6,7 +6,11 @@ package com.msw.mesapp.base;
 
 public class GlobalApi {
 
-    public static final String BASEURL = "http://115.157.192.47:8080/mes/";
+    public static String BASEURL = "http://115.157.192.47:8080/mes/";
+
+    public final static class AppUpdate {
+        public final static String PATH = "appUpdate/getAll";
+    }
 
     //待办事项
     public final static class UndoThingsItems {
@@ -17,7 +21,6 @@ public class GlobalApi {
         public final static String CODE = "code";
         public final static String ADDRESSEECODE = "addresseeCode";
     }
-
 
     //用户登录
     public final static class Login {
@@ -403,8 +406,8 @@ public class GlobalApi {
 
     //仓库管理
     public final static class WareHourse {
-
-
+        public final static String materialCode = "materialCode";
+        public final static String productSendHeaderCode = "productSendHeaderCode";
         public final static String pickingStatus = "pickingStatus"; //原料领取状态
         public final static String curAuditorCode = "curAuditorCode"; //原料领取状态
         public final static String auditStatus = "auditStatus"; //原料审核状态
@@ -443,6 +446,7 @@ public class GlobalApi {
 
         //原料出库
         public final static class MaterialOut {
+
             public final static String PATH_PickingApply_Header_ByPage = "pickingApplyHeader/getByPickingStatusByPage"; //通过领料状态查询-分页
             public final static String PATH_AUDIT = "pickingApplyHeader/getByAuditStatus"; //通过审核状态查询
             public final static String PATH_CODE = "pickingApplyHeader/getByCode"; //通过code查询
@@ -455,6 +459,9 @@ public class GlobalApi {
 
         //产品入库
         public final static class ProductIn {
+            public final static String getAllDepartment = "department/getAllByPage";
+            public final static String getAllRawType = "rawType/getAllByPage";
+            public final static String getByMaterialCode = "rawType/getByMaterialCode";
             public final static String getByStatusByPage = "productGodownHeader/getByStatusByPage"; //通过入库状态查询
             public final static String getByCode = "productGodownHeader/getByCode"; //通过编码获取
             public final static String updateStatusAndGodownerByCode = "productGodownHeader/updateStatusAndGodownerByCode";//更新入库状态
@@ -464,20 +471,25 @@ public class GlobalApi {
 
         //产品出库
         public final static class ProductOut {
+
+            public final static String getByProductSendHeader = "productSendAudit/getByProductSendHeader";
+            public final static String getByAuditStatusByPage = "productSendHeader/getByAuditStatusByPage";
             public final static String getByOutStatusAndNumberLike = "productSendHeader/getByOutStatusAndNumberLike"; //通过出库状态查询
             public final static String getByCode = "productSendHeader/getByCode"; //通过编码获取
             public final static String updateOutStatusByCode = "productSendHeader/updateOutStatusByCode"; //通过编码更新出库状态
+            public final static String updateAuditStatusByCode = "productSendHeader/updateAuditStatusByCode"; //通过编码更新审核状态
         }
 
         //样品入库
         public final static class SampleIn {
             public final static String PATH_Header_ByPage = "godownTestInformHeader/getGodownTestInformHeadersByStatusByPage"; //表头
             public final static String PATH_Header_ByCode = "godownTestInformHeader/getByCode"; //内容---通过编码获取
-            public final static String PATH_Updata = "godownTestInformHeader/updateStatusByCode"; //更新
+            public final static String updateStatusByCode = "godownEntryHeader/updateStatusByCode"; //更新
         }
 
         //样品出库
         public final static class SampleOut {
+            public final static String updateStatusByCode = "godownTestInformHeader/updateStatusByCode"; //更新
             public final static String getAll = "godownEntryHeader/getAll"; //查询所有
             public final static String getGodownTestInformHeadersByStatusByPage = "godownTestInformHeader/getGodownTestInformHeadersByStatusByPage"; //内容---通过状态查询
 

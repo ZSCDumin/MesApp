@@ -26,7 +26,7 @@
         android:singleLine="true"
         android:ellipsize="end"
         android:textColor="@color/black"
-        android:text="预期1-112345678909987676655443356788768769434353"/>
+        android:text="预期1-112345678" />
     </RelativeLayout>
     <View
         android:layout_width="match_parent"

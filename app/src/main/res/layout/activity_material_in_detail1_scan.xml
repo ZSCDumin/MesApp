@@ -4,26 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context="com.msw.mesapp.activity.home.warehouse.MaterialInActivityDetail1">
-    <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout" />
+
+    <include
+        layout="@layout/title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="40dp">
+
             <TextView
                 android:id="@+id/tv1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:paddingLeft="10dp"
                 android:gravity="center_vertical"
+                android:paddingLeft="10dp"
                 android:text="序号"
                 android:textColor="@color/titlecolor"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/tv2"
                 android:layout_width="wrap_content"
@@ -32,7 +40,8 @@
                 android:gravity="center_vertical"
                 android:text="批号"
                 android:textColor="@color/titlecolor"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
+
             <TextView
                 android:id="@+id/tv3"
                 android:layout_width="wrap_content"
@@ -42,48 +51,51 @@
                 android:paddingRight="10dp"
                 android:text="操作"
                 android:textColor="@color/titlecolor"
-                android:textStyle="bold"/>
+                android:textStyle="bold" />
         </RelativeLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/color3"/>
+            android:background="@color/color3" />
 
     </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="@drawable/shape_qr_border"
-            android:paddingBottom="30dp"
-            android:paddingTop="5dp" />
 
         <LinearLayout
-            android:id="@id/line"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_toEndOf="@+id/recyclerView"
-            android:gravity="center">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <Button
-                android:id="@+id/bt"
-                android:layout_width="200dp"
-                android:layout_height="35dp"
-                android:background="@drawable/button_submit_selector"
-                android:clickable="true"
-                android:text="确认提交"
-                android:textColor="#fff" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_margin="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/shape_qr_border"
+                android:paddingBottom="30dp"
+                android:paddingTop="5dp" />
+
+            <LinearLayout
+                android:id="@id/line"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="30dp"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/bt"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/button_submit_selector"
+                    android:text="确认提交"
+                    android:textColor="#fff" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
     </ScrollView>
 </LinearLayout>

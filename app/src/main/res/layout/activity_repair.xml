@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context="com.msw.mesapp.activity.home.equipment.RepairBillActivity">
 
-
-    <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout" />
+    <include
+        layout="@layout/title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/bt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:background="@color/blue"
         android:text="报修入口"
-        android:visibility="visible"/>
+        android:textColor="@color/white"
+        android:visibility="visible" />
 
     <Button
         android:id="@+id/bt2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:text="维修入口"/>
+        android:background="@color/blue"
+        android:text="接单入口"
+        android:textColor="@color/white" />
 
     <Button
         android:id="@+id/bt3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:text="评价入口"/>
-
+        android:background="@color/blue"
+        android:text="评价入口"
+        android:textColor="@color/white" />
 
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.msw.mesapp.activity.home.warehouse;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,11 +10,14 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
@@ -35,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -65,30 +70,53 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
     int count = 1;
     String headcode = "";
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case BarcodeAPI.BARCODE_READ:
-                    String s = (String) msg.obj;
-                    s = s.replace('\n', ' ');
-                    s = s.replace('\r', ' ');
-                    boolean tt = true;
+                    String s = msg.obj.toString().trim();
+                    boolean tt = false;
                     for (int i = 0; i < batchList.size(); i++) {
                         Map map = batchList.get(i);
-                        if (map.get("2").equals(s)) tt = false;
+                        if (map.get("2").equals(s)) tt = true;
                     }
-                    if (tt) {
+                    if (!tt) { //如果不存在该记录则添加
                         Map listmap = new HashMap<>();
                         listmap.put("1", String.valueOf(batchList.size()));
                         listmap.put("2", s);
                         batchList.add(listmap);
-                        adapter.notifyDataSetChanged();
+                        //adapter.notifyDataSetChanged();
+                        check(0);
                     }
                     break;
             }
         }
     };
+
+    public void check(int flag) {
+        for (int i = 0; i < batchList.size(); i++) {
+            Map map1 = batchList.get(i);
+            for (int j = 0; j < list.size(); j++) {
+                Map map2 = list.get(j);
+                Map map = new HashMap();
+                map.put("1", map1.get("1"));
+                map.put("2", map1.get("2"));
+                if ((map1.get("2").toString()).equals(map2.get("2").toString())) {
+                    map.put("3", "1");
+                    batchList.set(i, map);
+                    break;
+                } else if (j == list.size() - 1) { //扫描记录不存在于批号数据集中
+                    map.put("3", "0");
+                    batchList.set(i, map);
+                    if (flag == 1)
+                        BtFlag = false;
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
 
     boolean BtFlag = true;
 
@@ -111,7 +139,6 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
             map.put("1", String.valueOf(i + 1));
             map.put("2", getIntent().getExtras().get("batchNumber" + String.valueOf(i)).toString());
             list.add(map);
-            //batchList.add(getIntent().getExtras().get("batchNumber" + String.valueOf(i)).toString());
         }
     }
 
@@ -123,7 +150,7 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("样品待入库");
+        title.setText("产品收货");
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,23 +162,23 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
 
     private void initView() {
         initTitle();
+        tv2.setMovementMethod(new ScrollingMovementMethod() {
+        });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_material_in_detai_scan, batchList) {
             @Override
-            protected void convert(ViewHolder holder, Map s, final int position) {
+            protected void convert(final ViewHolder holder, Map s, final int position) {
                 holder.setText(R.id.tv1, s.get("1").toString());
                 holder.setText(R.id.tv2, s.get("2").toString());
-                if (!BtFlag)
-                    if (s.get("3").toString().equals("1"))
-                        holder.setImageResource(R.id.img, R.mipmap.cross_right);
-                    else
-                        holder.setImageResource(R.id.img, R.mipmap.cross_false);
+                if (s.get("3").toString().equals("1"))
+                    holder.setImageResource(R.id.img, R.mipmap.cross_right);
+                else
+                    holder.setImageResource(R.id.img, R.mipmap.cross_false);
                 holder.getView(R.id.img).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //ToastUtil.showToast(MaterialInActivityDetail1Scan.this, String.valueOf(position), ToastUtil.Success);
                         batchList.remove(position);
                         adapter.notifyItemRemoved(position);
                         for (int i = position; i < batchList.size(); i++) {
@@ -167,69 +194,16 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
 
         BarcodeAPI.getInstance().open();
         BarcodeAPI.getInstance().setScannerType(20);// 设置扫描头类型(10:5110; 20: N3680 40:MJ-2000)
-        int ver = Build.VERSION.SDK_INT;
+
         BarcodeAPI.getInstance().m_handler = mHandler;
-        BarcodeAPI.getInstance().setEncoding("gbk");
+        BarcodeAPI.getInstance().setEncoding("utf8");
         BarcodeAPI.getInstance().setScanMode(true);//打开连扫
         BarcodeAPI.getInstance().scan();
 
-        final String userCode = (String) SPUtil.get(SampleInActivityDetial1Scan.this, GlobalKey.Login.CODE, new String());
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                for (int i = 0; i < batchList.size(); i++) {
-                    Map map1 = batchList.get(i);
-                    for (int j = 0; j < list.size(); j++) {
-                        Map map2 = list.get(j);
-                        Map map = new HashMap();
-                        map.put("1", map1.get("1"));
-                        map.put("2", map1.get("2"));
-                        if ((map1.get("2").toString()).equals(map2.get("2").toString())) {
-                            map.put("3", "1");
-                            batchList.set(i, map);
-                            break;
-                        } else if (j == list.size() - 1) {
-                            map.put("3", "0");
-                            batchList.set(i, map);
-                            BtFlag = false;
-                        } else
-                            continue;
-                    }
-                }
-                if (!BtFlag) adapter.notifyDataSetChanged();
-                if (BtFlag && batchList.size() > 0)
-                    EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Updata)
-                            .params(GlobalApi.WareHourse.code, headcode) //
-                            .params(GlobalApi.WareHourse.status, "2") //
-                            .params(GlobalApi.WareHourse.userCode, userCode) //
-                            .sign(true)
-                            .timeStamp(true)//本次请求是否携带时间戳
-                            .execute(new SimpleCallBack<String>() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    int code = 1;
-                                    String message = "出错";
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(result);
-                                        code = jsonObject.optInt("code");
-                                        message = jsonObject.optString("message");
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (code == 0) {
-                                        ToastUtil.showToast(SampleInActivityDetial1Scan.this, message, ToastUtil.Success);
-                                        finish();
-                                    } else {
-                                        ToastUtil.showToast(SampleInActivityDetial1Scan.this, message, ToastUtil.Error);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(ApiException e) {
-                                    ToastUtil.showToast(SampleInActivityDetial1Scan.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                                }
-                            });
+                submit();
             }
         });
 
@@ -249,7 +223,6 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
     public void onDestroy() {
         BarcodeAPI.getInstance().m_handler = null;
         BarcodeAPI.getInstance().close();
-        //System.exit(0);
         super.onDestroy();
     }
 
@@ -264,6 +237,52 @@ public class SampleInActivityDetial1Scan extends AppCompatActivity {
                 return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+
+    public void submit() {
+
+        BtFlag = true;
+        check(1);
+
+        Log.i("TAG", batchList.size() + "");
+        Log.i("TAG", list.size() + "");
+        Log.i("TAG", BtFlag + "");
+
+        if (BtFlag && batchList.size() == list.size())
+            EasyHttp.post(GlobalApi.WareHourse.SampleIn.updateStatusByCode)
+                    .params(GlobalApi.WareHourse.code, headcode) //
+                    .params(GlobalApi.WareHourse.status, "1") //
+                    .sign(true)
+                    .timeStamp(true)//本次请求是否携带时间戳
+                    .execute(new SimpleCallBack<String>() {
+                        @Override
+                        public void onSuccess(String result) {
+                            int code = 1;
+                            String message = "出错";
+                            try {
+                                JSONObject jsonObject = new JSONObject(result);
+                                code = jsonObject.optInt("code");
+                                message = jsonObject.optString("message");
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            if (code == 0) {
+                                ToastUtil.showToast(SampleInActivityDetial1Scan.this, message, ToastUtil.Success);
+                                finish();
+                            } else {
+                                ToastUtil.showToast(SampleInActivityDetial1Scan.this, message, ToastUtil.Error);
+                            }
+                        }
+
+                        @Override
+                        public void onError(ApiException e) {
+                            ToastUtil.showToast(SampleInActivityDetial1Scan.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        }
+                    });
+        else {
+            ToastUtil.showToast(SampleInActivityDetial1Scan.this, "匹配数目不一致！", ToastUtil.Confusion);
+        }
     }
 
 }

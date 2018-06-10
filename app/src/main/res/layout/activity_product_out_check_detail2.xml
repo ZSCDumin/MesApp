@@ -167,6 +167,33 @@
                     android:layout_marginRight="10dp"
                     android:background="@color/color3" />
 
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp">
+
+                    <TextView
+                        android:id="@+id/tt5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="10dp"
+                        android:text="审核状态："
+                        android:textColor="@color/balack333" />
+
+                    <TextView
+                        android:id="@+id/tx5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_toRightOf="@+id/tt5"
+                        android:ellipsize="end"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="20dp"
+                        android:singleLine="true"
+                        android:text="KDHUD-8982939"
+                        android:textColor="@color/balack333" />
+                </RelativeLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"

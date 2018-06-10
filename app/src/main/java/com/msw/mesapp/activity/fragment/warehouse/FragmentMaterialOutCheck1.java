@@ -164,7 +164,7 @@ public class FragmentMaterialOutCheck1 extends Fragment {
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("3").toString());
 
-                        ActivityUtil.switchTo(getActivity(), ProductOutCheckActivityDetail1.class, map);
+                        ActivityUtil.switchTo(getActivity(), MaterialOutCheckActivityDetail1.class, map);
                     }
                 });
                 holder.setText(R.id.tv1, s.get("1").toString());
@@ -196,7 +196,7 @@ public class FragmentMaterialOutCheck1 extends Fragment {
         refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
-                refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
+                refreshlayout.finishLoadmore(1000);//传入false表示加载失败
                 getData();
             }
         });

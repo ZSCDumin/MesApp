@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:tl="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/white"
+    android:orientation="vertical"
     tools:context="com.msw.mesapp.activity.home.equipment.RepairBillActivity">
 
 
-    <include android:layout_width="wrap_content" android:layout_height="wrap_content" layout="@layout/title_layout" />
+    <include
+        layout="@layout/title_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -45,7 +48,7 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="250dp"
                     android:background="#bbffffff" />
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
@@ -58,6 +61,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
+                    android:layout_marginTop="50dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -68,7 +72,7 @@
                         android:gravity="center_vertical"
                         android:paddingLeft="10dp"
                         android:paddingRight="5dp"
-                        android:text="满意度评价:"
+                        android:text="满意度评价："
                         android:textColor="@color/black" />
 
                     <RadioGroup
@@ -85,9 +89,10 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:paddingRight="5dp"
-                            android:text="不满意"
-                            android:textSize="12dp"
-                            android:textColor="@color/blueviolet" />
+                            android:text="优"
+                            android:textColor="@color/blueviolet"
+                            android:textSize="12dp" />
+
                         <RadioButton
                             android:id="@+id/rb2"
                             android:layout_width="wrap_content"
@@ -95,9 +100,10 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:paddingRight="5dp"
-                            android:text="良好"
-                            android:textSize="12dp"
-                            android:textColor="@color/blueviolet" />
+                            android:text="良"
+                            android:textColor="@color/blueviolet"
+                            android:textSize="12dp" />
+
                         <RadioButton
                             android:id="@+id/rb3"
                             android:layout_width="wrap_content"
@@ -105,18 +111,19 @@
                             android:layout_weight="1"
                             android:gravity="center"
                             android:paddingRight="5dp"
-                            android:text="满意"
-                            android:textSize="12dp"
-                            android:textColor="@color/blueviolet" />
+                            android:text="一般"
+                            android:textColor="@color/blueviolet"
+                            android:textSize="12dp" />
+
                         <RadioButton
                             android:id="@+id/rb4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="相当满意"
-                            android:textSize="12dp"
-                            android:textColor="@color/blueviolet" />
+                            android:text="不满意"
+                            android:textColor="@color/blueviolet"
+                            android:textSize="12dp" />
                     </RadioGroup>
                 </LinearLayout>
 
@@ -128,7 +135,7 @@
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="30dp"
                 android:background="@color/white" />
 
             <Button

@@ -69,6 +69,12 @@ public class SampleOutActivityDetial1 extends AppCompatActivity {
     TextView tx7;
     @Bind(R.id.table)
     SmartTable table;
+    @Bind(R.id.ttx1)
+    TextView ttx1;
+    @Bind(R.id.ttx2)
+    TextView ttx2;
+    @Bind(R.id.ttx3)
+    TextView ttx3;
     @Bind(R.id.bt)
     Button bt;
 
@@ -77,7 +83,6 @@ public class SampleOutActivityDetial1 extends AppCompatActivity {
     String[] ss = new String[10];
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
     List<String> spinnerList = new ArrayList<>();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,9 +154,7 @@ public class SampleOutActivityDetial1 extends AppCompatActivity {
 
     public void initData() {
         getDepartment();
-
         code = getIntent().getExtras().get("code").toString();
-
         EasyHttp.post(GlobalApi.WareHourse.SampleIn.PATH_Header_ByCode)
                 .params(GlobalApi.WareHourse.code, code)
                 .sign(true)
@@ -206,6 +209,11 @@ public class SampleOutActivityDetial1 extends AppCompatActivity {
                                 tableList.add(map);
                             }
 
+                            String status = data.optString("status");
+                            String receiptor = data.optJSONObject("receiptor").optString("name");
+                            String receiveTime = DateUtil.getDateToString(Long.valueOf(data.optString("receiveTime")));
+
+
                             ss[0] = batchNumber; //入库编码
                             ss[1] = rawTypeName; //原料名称
                             ss[2] = supplier; //发货厂家
@@ -213,6 +221,9 @@ public class SampleOutActivityDetial1 extends AppCompatActivity {
                             ss[4] = createTime; //创建时间
                             ss[5] = department; //受文部门
                             ss[6] = createUser; //创建者
+                            ss[7] = status;
+                            ss[8] = receiptor;
+                            ss[9] = receiveTime;
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -238,8 +249,11 @@ public class SampleOutActivityDetial1 extends AppCompatActivity {
         tx3.setText(ss[2]);
         tx4.setText(ss[3]);
         tx5.setText(ss[4]);
-
         tx7.setText(ss[6]);
+        ttx1.setText(ss[7]);
+        ttx2.setText(ss[8]);
+        ttx3.setText(ss[9]);
+
         initTable();
 
         spinner.setOnItemSelectedListener(new Spinner.OnItemSelectedListener() {//选择item的选择点击监听事件

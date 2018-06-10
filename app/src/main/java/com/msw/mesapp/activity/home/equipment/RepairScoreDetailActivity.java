@@ -153,7 +153,6 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
                                 evaluationname[0] = evaluation.optString("name"); //评价满意度
                             }
 
-
                             Map listmap;
                             listmap = new HashMap<>();
                             listmap.put("1", "部门:");
@@ -229,17 +228,17 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
         radiogroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
-                switch (radioGroup.getCheckedRadioButtonId()){
-                    case  R.id.rb1:
+                switch (radioGroup.getCheckedRadioButtonId()) {
+                    case R.id.rb1:
                         evaluation_code = 1;
                         break;
-                    case  R.id.rb2:
+                    case R.id.rb2:
                         evaluation_code = 2;
                         break;
-                    case  R.id.rb3:
+                    case R.id.rb3:
                         evaluation_code = 3;
                         break;
-                    case  R.id.rb4:
+                    case R.id.rb4:
                         evaluation_code = 4;
                         break;
                 }
@@ -249,11 +248,14 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(evaluation_code == 0) { ToastUtil.showToast(RepairScoreDetailActivity.this,"请选择满意度", ToastUtil.Confusion);return; }
+                if (evaluation_code == 0) {
+                    ToastUtil.showToast(RepairScoreDetailActivity.this, "请选择满意度", ToastUtil.Confusion);
+                    return;
+                }
 
                 EasyHttp.post(GlobalApi.Repair.Score.PATH)
                         .params(GlobalApi.Repair.Score.code, code)
-                        .params(GlobalApi.Repair.Score.evaluation_code, String.valueOf( evaluation_code ))
+                        .params(GlobalApi.Repair.Score.evaluation_code, String.valueOf(evaluation_code))
                         .params(GlobalApi.Repair.Score.evaluator_code, id)
                         .sign(true)
                         .timeStamp(true)//本次请求是否携带时间戳
@@ -262,7 +264,7 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
                             public void onSuccess(String result) {
                                 int code = 1;
                                 String message = "出错";
-                                try{
+                                try {
 
                                     JSONObject jsonObject = new JSONObject(result);
                                     code = (int) jsonObject.get("code");
@@ -274,7 +276,7 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
                                 if (code == 0) {
                                     ToastUtil.showToast(RepairScoreDetailActivity.this, message, ToastUtil.Success);
                                     finish();
-                                    ActivityUtil.switchTo(RepairScoreDetailActivity.this,RepairScoreActivity.class);
+                                    ActivityUtil.switchTo(RepairScoreDetailActivity.this, RepairScoreActivity.class);
                                 } else {
                                     ToastUtil.showToast(RepairScoreDetailActivity.this, message, ToastUtil.Error);
                                 }
@@ -320,8 +322,8 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_repair_report_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1,s.get("1").toString());
-                holder.setText(R.id.tv2,s.get("2").toString());
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
 
 
             }

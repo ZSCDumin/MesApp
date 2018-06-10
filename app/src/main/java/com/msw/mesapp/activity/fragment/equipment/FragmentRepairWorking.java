@@ -65,8 +65,15 @@ public class FragmentRepairWorking extends Fragment {
     int totalPages = 0; //总共几页
     int totalElements = 0; //总共多少条数据
 
-    private boolean mShouldScroll;/** 目标项是否在最后一个可见项之后*/
-    private int mToPosition; /** 记录目标项位置*/
+    private boolean mShouldScroll;
+    /**
+     * 目标项是否在最后一个可见项之后
+     */
+    private int mToPosition;
+
+    /**
+     * 记录目标项位置
+     */
 
 
     @Override
@@ -88,7 +95,7 @@ public class FragmentRepairWorking extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.Repair.PATH_ByFlagInPages)
-                .params(GlobalApi.Repair.code, "0") //查找所有已完成维修的数据
+                .params(GlobalApi.Repair.code, "0") //查找所有待维修的数据
                 .params(GlobalApi.Repair.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.Repair.size, "20") //一次获取多少
                 .params(GlobalApi.Repair.sort, "applicationTime") //根据code排序
@@ -105,7 +112,7 @@ public class FragmentRepairWorking extends Fragment {
                             JSONObject jsonObject = JSON.parseObject(result);
                             code = (int) jsonObject.get("code");
                             message = (String) jsonObject.get("message");
-                            JSONObject data =  JSON.parseObject(jsonObject.get("data").toString());
+                            JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
                             JSONArray content = JSON.parseArray(data.get("content").toString());
 
                             totalPages = data.getInteger("totalPages");
@@ -126,9 +133,9 @@ public class FragmentRepairWorking extends Fragment {
                                 String codeStr = content0.getString("code"); //主键
 
                                 Map listmap = new HashMap<>();
-                                listmap.put("1","部门:"+departmentcode+" - - "+"设备:"+eqArchivecode); //部门+设备名称
-                                listmap.put("2",flagname); //是否接单
-                                listmap.put("3",codeStr); //主键
+                                listmap.put("1", "部门:" + departmentcode + " - - " + "设备:" + eqArchivecode); //部门+设备名称
+                                listmap.put("2", flagname); //是否接单
+                                listmap.put("3", codeStr); //主键
                                 list.add(listmap);
                             }
 
@@ -141,6 +148,7 @@ public class FragmentRepairWorking extends Fragment {
                             ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                         }
                     }
+
                     @Override
                     public void onError(ApiException e) {
                         ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -161,19 +169,20 @@ public class FragmentRepairWorking extends Fragment {
                     @Override
                     public void onClick(View view) {
                         //ActivityUtil.toastShow(getActivity(), "点击了" + position);
-                        Map<String,Object> map = new HashMap<>();
-                        map.put("code",s.get("3").toString());
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("code", s.get("3").toString());
 
-                        ActivityUtil.switchTo(getActivity(), RepairWorkDetailActivity.class,map);
+                        ActivityUtil.switchTo(getActivity(), RepairWorkDetailActivity.class, map);
                         getActivity().finish();
                     }
                 });
-                holder.setText(R.id.tv1,s.get("1").toString());
-                holder.setText(R.id.tv2,s.get("2").toString());
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
             }
         };
         recyclerView.setAdapter(adapter);
     }
+
     /**
      * 初始化滑动列表
      */
@@ -194,6 +203,7 @@ public class FragmentRepairWorking extends Fragment {
             }
         });
     }
+
     /**
      * 初始化搜索框
      */
@@ -203,7 +213,7 @@ public class FragmentRepairWorking extends Fragment {
         searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
         //搜索显示的提示
         List<String> listitem = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             listitem.add(list.get(i).get("2").toString());
         }
         String[] array = listitem.toArray(new String[listitem.size()]);
@@ -216,17 +226,18 @@ public class FragmentRepairWorking extends Fragment {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int i = 0;
-                for (Map<String,Object> temp : list) {
+                for (Map<String, Object> temp : list) {
                     i++;
                     if (temp.get("2").toString().contains(query)) {
                         break;
                     }
                 }
                 //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView,i);
+                smoothMoveToPosition(recyclerView, i);
                 adapter.notifyDataSetChanged();
                 return false;
             }
+
             @Override//文本内容发生改变时
             public boolean onQueryTextChange(String newText) {
                 return false;
@@ -245,11 +256,11 @@ public class FragmentRepairWorking extends Fragment {
     }
 
     private void getData() {
-        page ++;
-        if(page > totalPages)  classicsFooter.setLoadmoreFinished(true);
+        page++;
+        if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
         else {
             EasyHttp.post(GlobalApi.Repair.PATH_ByFlagInPages)
-                    .params(GlobalApi.Repair.code, "0") //人id
+                    .params(GlobalApi.Repair.code, "0") //查找所有待维修的数据
                     .params(GlobalApi.Repair.page, String.valueOf(page)) //从第0 业开始获取
                     .params(GlobalApi.Repair.size, "20") //一次获取多少
                     .params(GlobalApi.Repair.sort, "applicationTime") //根据code排序
@@ -287,9 +298,9 @@ public class FragmentRepairWorking extends Fragment {
                                     String codeStr = content0.getString("code"); //主键
 
                                     Map listmap = new HashMap<>();
-                                    listmap.put("1","部门:"+departmentcode+" - - "+"设备:"+eqArchivecode); //部门+设备名称
-                                    listmap.put("2",flagname); //是否接单
-                                    listmap.put("3",codeStr); //主键
+                                    listmap.put("1", "部门:" + departmentcode + " - - " + "设备:" + eqArchivecode); //部门+设备名称
+                                    listmap.put("2", flagname); //是否接单
+                                    listmap.put("3", codeStr); //主键
                                     list.add(listmap);
                                 }
 
@@ -302,6 +313,7 @@ public class FragmentRepairWorking extends Fragment {
                                 ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                             }
                         }
+
                         @Override
                         public void onError(ApiException e) {
                             ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -309,19 +321,11 @@ public class FragmentRepairWorking extends Fragment {
                     });
         }
 
-
-//        { //搜索显示的提示
-//            List<String> listitem = new ArrayList<>();
-//            for(int i=0;i<list.size();i++){
-//                listitem.add(list.get(i).get("2").toString());
-//            }
-//            String[] array = listitem.toArray(new String[listitem.size()]);
-//            searchView.setSuggestions(array);
-//        }
     }
 
     /**
      * 滑动到指定位置
+     *
      * @param mRecyclerView
      * @param position
      */
@@ -342,7 +346,7 @@ public class FragmentRepairWorking extends Fragment {
                 int top = mRecyclerView.getChildAt(movePosition).getTop();
                 mRecyclerView.smoothScrollBy(0, top);
             }
-        }else {
+        } else {
             // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
             // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
             mRecyclerView.smoothScrollToPosition(position);
@@ -350,6 +354,7 @@ public class FragmentRepairWorking extends Fragment {
             mShouldScroll = true;
         }
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

@@ -18,6 +18,7 @@ import android.widget.ImageView;
 
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
+import com.msw.mesapp.activity.home.warehouse.MaterialOutActivityDetail1;
 import com.msw.mesapp.activity.home.warehouse.MaterialOutActivityDetail2;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
@@ -46,7 +47,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 /**
- * 已领取
+ * 已出库
  */
 public class FragmentMaterialOut2 extends Fragment {
 
@@ -163,7 +164,7 @@ public class FragmentMaterialOut2 extends Fragment {
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("2").toString());
 
-                        ActivityUtil.switchTo(getActivity(), MaterialOutActivityDetail2.class, map);
+                        ActivityUtil.switchTo(getActivity(), MaterialOutActivityDetail1.class, map);
                     }
                 });
                 holder.setText(R.id.tv1, s.get("0").toString());

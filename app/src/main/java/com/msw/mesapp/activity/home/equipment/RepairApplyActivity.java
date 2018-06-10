@@ -1,8 +1,8 @@
 package com.msw.mesapp.activity.home.equipment;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,11 +20,9 @@ import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.base.GlobalKey;
-import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
-import com.rengwuxian.materialedittext.MaterialEditText;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.ProgressDialogCallBack;
 import com.zhouyou.http.exception.ApiException;
@@ -41,16 +39,17 @@ public class RepairApplyActivity extends AppCompatActivity {
     TextView title;
     @Bind(R.id.add)
     ImageView add;
-    @Bind(R.id.et1)
-    MaterialEditText et1;
-    @Bind(R.id.et2)
-    MaterialEditText et2;
-    @Bind(R.id.et3)
-    MaterialEditText et3;
-    @Bind(R.id.et4)
-    EditText et4;
+
     @Bind(R.id.bt)
     Button bt;
+    @Bind(R.id.tv1)
+    TextView tv1;
+    @Bind(R.id.tv2)
+    TextView tv2;
+    @Bind(R.id.tv3)
+    TextView tv3;
+    @Bind(R.id.describe_et)
+    EditText describeEt;
 
     private String t1 = "";
     private String t2 = "";
@@ -58,19 +57,18 @@ public class RepairApplyActivity extends AppCompatActivity {
     private String t4 = "";
     private String id = "";
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case BarcodeAPI.BARCODE_READ:
                     String s = (String) msg.obj;
-                    s = s.replace('\n',' '); s = s.replace('\r',' ');
                     String[] splitstr = s.split("-");
-                    et1.setText(splitstr[0]);
-                    et2.setText(splitstr[1]);
-                    et3.setText(splitstr[2]);
+                    tv1.setText(splitstr[0]);
+                    tv2.setText(splitstr[1]);
+                    tv3.setText(splitstr[2]);
                     break;
-
             }
         }
     };
@@ -81,9 +79,9 @@ public class RepairApplyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_repair_apply);
         StatusBarUtils.setActivityTranslucent(this); //设置全屏
         ButterKnife.bind(this);
-
         initData();
         initView();
+        initTitle();
 
     }
 
@@ -92,23 +90,21 @@ public class RepairApplyActivity extends AppCompatActivity {
         id = (String) SPUtil.get(RepairApplyActivity.this, GlobalKey.Login.CODE, id);
     }
 
-    public void initPermission(){
+    public void initPermission() {
         String permission_code = (String) SPUtil.get(RepairApplyActivity.this, GlobalKey.permiss.SPKEY, new String(""));
         String[] split_pc = permission_code.split("-");
         int t = 0;
-        for(int i = 0;i<split_pc.length;i++){
-            if(split_pc[i].equals(GlobalKey.permiss.Repair_Report) ) t++;
+        for (int i = 0; i < split_pc.length; i++) {
+            if (split_pc[i].equals(GlobalKey.permiss.Repair_Report)) t++;
         }
-        if(t==0){
+        if (t == 0) {
             finish();
-            ToastUtil.showToast(RepairApplyActivity.this,"权限不足！",ToastUtil.Error);
+            ToastUtil.showToast(RepairApplyActivity.this, "权限不足！", ToastUtil.Error);
         }
     }
 
-    public void initTitle(){
+    public void initTitle() {
         initPermission();
-
-
         title.setText("维修申请");
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,26 +116,21 @@ public class RepairApplyActivity extends AppCompatActivity {
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Sflag[0]){
+                if (Sflag[0]) {
                     BarcodeAPI.getInstance().setLights(true);
                     BarcodeAPI.getInstance().scan();
-                }else{
+                } else {
                     BarcodeAPI.getInstance().setLights(false);
                     BarcodeAPI.getInstance().stopScan();
                 }
             }
         });
-
-
     }
+
     private void initView() {
-        //et1.setText("001");
-        //et2.setText("3");
-        //et3.setText("001");
 
         BarcodeAPI.getInstance().open();
         BarcodeAPI.getInstance().setScannerType(20);// 设置扫描头类型(10:5110; 20: N3680 40:MJ-2000)
-        int ver= Build.VERSION.SDK_INT;
         BarcodeAPI.getInstance().m_handler = mHandler;
         BarcodeAPI.getInstance().setEncoding("gbk");
         BarcodeAPI.getInstance().setScanMode(true);//打开连扫
@@ -147,14 +138,15 @@ public class RepairApplyActivity extends AppCompatActivity {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                t1 = et1.getText().toString();
-                t2 = et2.getText().toString();
-                t3 = et3.getText().toString();
-                t4 = et4.getText().toString();
-                //if(t1.length() == 0) { et1.setError("输入不能为空"); return;}
-                //if(t2.length() == 0) { et2.setError("输入不能为空"); return;}
-                //if(t3.length() == 0) { et3.setError("输入不能为空"); return;}
-                if(t4.length() == 0) { et4.setError("输入不能为空"); return;}
+                t1 = tv1.getText().toString();
+                t2 = tv2.getText().toString();
+                t3 = tv3.getText().toString();
+                t4 = describeEt.getText().toString();
+
+                if (t4.length() == 0) {
+                    describeEt.setError("输入不能为空");
+                    return;
+                }
 
                 IProgressDialog mProgressDialog = new IProgressDialog() {
                     @Override
@@ -188,7 +180,6 @@ public class RepairApplyActivity extends AppCompatActivity {
                                 if (code == 0) {
                                     ToastUtil.showToast(RepairApplyActivity.this, message, ToastUtil.Success);
                                     finish();
-                                    ActivityUtil.switchTo(RepairApplyActivity.this, RepairApplyActivity.class);
                                 } else {
                                     ToastUtil.showToast(RepairApplyActivity.this, message, ToastUtil.Error);
                                 }

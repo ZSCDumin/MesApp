@@ -111,7 +111,7 @@
                         android:textColor="@color/balack333" />
 
                     <TextView
-                        android:id="@+id/auditStatus"
+                        android:id="@+id/auditStatus_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_toRightOf="@+id/tt3"
@@ -145,7 +145,7 @@
                         android:textColor="@color/balack333" />
 
                     <TextView
-                        android:id="@+id/processType"
+                        android:id="@+id/processType_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:layout_toRightOf="@+id/tt4"
@@ -224,157 +224,16 @@
 
                     android:layout_weight="1" />
 
-                <LinearLayout
-                    android:id="@+id/line2"
+                <com.bin.david.form.core.SmartTable
+                    android:id="@+id/table1"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginLeft="5dp"
+                    android:layout_height="match_parent"
+
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:background="@mipmap/matarialout4"
-                    android:gravity="center"
-                    android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp">
-
-                        <TextView
-                            android:id="@+id/ttt1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:text="审核结果："
-                            android:textColor="@color/balack333" />
-
-                        <TextView
-                            android:id="@+id/audit_result_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toRightOf="@+id/ttt1"
-                            android:ellipsize="end"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="20dp"
-                            android:singleLine="true"
-                            android:text="KDHUD-8982939"
-                            android:textColor="@color/balack333" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@color/color3" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp">
-
-                        <TextView
-                            android:id="@+id/ttt2"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:text="审核意见："
-                            android:textColor="@color/balack333" />
-
-                        <TextView
-                            android:id="@+id/audit_suggestion"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toRightOf="@+id/ttt2"
-                            android:ellipsize="end"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="20dp"
-                            android:singleLine="true"
-                            android:text="KDHUD-8982939"
-                            android:textColor="@color/balack333" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@color/color3" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp">
-
-                        <TextView
-                            android:id="@+id/ttt3"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:text="审核人：    "
-                            android:textColor="@color/balack333" />
-
-                        <TextView
-                            android:id="@+id/auditor"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toRightOf="@+id/ttt3"
-                            android:ellipsize="end"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="20dp"
-                            android:singleLine="true"
-                            android:text="KDHUD-8982939"
-                            android:textColor="@color/balack333" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@color/color3" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="30dp">
-
-                        <TextView
-                            android:id="@+id/ttt4"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_marginLeft="10dp"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:text="审核时间："
-                            android:textColor="@color/balack333" />
-
-                        <TextView
-                            android:id="@+id/audit_time"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_toRightOf="@+id/ttt4"
-                            android:ellipsize="end"
-                            android:gravity="center_vertical"
-                            android:paddingLeft="10dp"
-                            android:paddingRight="20dp"
-                            android:singleLine="true"
-                            android:text="KDHUD-8982939"
-                            android:textColor="@color/balack333" />
-                    </RelativeLayout>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:background="@color/color3" />
-                </LinearLayout>
+                    android:layout_weight="1" />
 
                 <Button
                     android:id="@+id/back_bt"

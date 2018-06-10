@@ -12,12 +12,7 @@ import android.widget.TextView;
 
 import com.flyco.tablayout.SlidingTabLayout;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.fragment.equipment.FragmentRepairReporting;
-import com.msw.mesapp.activity.fragment.equipment.FragmentRepairReported;
-import com.msw.mesapp.activity.fragment.equipment.FragmentRepairScoreed;
-import com.msw.mesapp.activity.fragment.equipment.FragmentRepairScoreing;
 import com.msw.mesapp.activity.fragment.equipment.FragmentRepairWorked;
-import com.msw.mesapp.activity.fragment.equipment.FragmentRepairWorking;
 import com.msw.mesapp.ui.widget.DecoratorViewPager;
 import com.msw.mesapp.utils.StatusBarUtils;
 
@@ -39,7 +34,7 @@ public class RepairScoreActivity extends AppCompatActivity {
     @Bind(R.id.viewPager)
     DecoratorViewPager viewPager;
 
-    private final String[] mTitles = {"开始评价", "评价记录"};
+    private final String[] mTitles = {"开始评价"};
 
     private ArrayList<Fragment> fragmentList = new ArrayList<>();
 
@@ -70,14 +65,13 @@ public class RepairScoreActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("维修单据");
+        title.setText("未评价维修列表");
         add.setVisibility(View.INVISIBLE);
     }
 
     public void initSlidingTabLayout() {
-        fragmentList.add(new FragmentRepairScoreing());
-        fragmentList.add(new FragmentRepairScoreed());
-        viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
+        fragmentList.add(new FragmentRepairWorked());
+        viewPager.setNestedpParent((ViewGroup) viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
         viewPager.setAdapter(new RepairScoreActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setViewPager(viewPager, mTitles);
     }

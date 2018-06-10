@@ -202,7 +202,6 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
         refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
-                //refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
                 classicsFooter.setLoadmoreFinished(true);
             }
         });

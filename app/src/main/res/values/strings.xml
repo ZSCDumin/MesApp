@@ -46,4 +46,5 @@
     <string name="defaultonedbarcode">1234567890</string>
     <string name="defaulttwodbarcode">http://www.dothantech.com/</string>
     <string name="print_param_default">随打印机设置</string>
+    <string name="title_activity_check_scales_management">CheckScalesManagement</string>
 </resources>

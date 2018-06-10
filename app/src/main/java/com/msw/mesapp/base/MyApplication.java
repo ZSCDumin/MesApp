@@ -45,19 +45,21 @@ public class MyApplication extends Application {
                 .setCertificates()//信任所有证书
                 //.addConverterFactory(GsonConverterFactory.create(gson))//本框架没有采用Retrofit的Gson转化，所以不用配置
                 .addCommonHeaders(headers);//设置全局公共头
-                //.addCommonParams(params)//设置全局公共参数
-                //.addInterceptor(new CustomSignInterceptor());//添加参数签名拦截器
-                //.addInterceptor(new HeTInterceptor());//处理自己业务的拦截器
+        //.addCommonParams(params)//设置全局公共参数
+        //.addInterceptor(new CustomSignInterceptor());//添加参数签名拦截器
+        //.addInterceptor(new HeTInterceptor());//处理自己业务的拦截器
 
 
     }
 
     public class UnSafeHostnameVerifier implements HostnameVerifier {
         private String host;
+
         public UnSafeHostnameVerifier(String host) {
             this.host = host;
             HttpLog.i("###############　UnSafeHostnameVerifier " + host);
         }
+
         @Override
         public boolean verify(String hostname, SSLSession session) {
             HttpLog.i("############### verify " + hostname + " " + this.host);
@@ -67,6 +69,7 @@ public class MyApplication extends Application {
         }
 
     }
+
     /**
      * 获取Application的Context
      **/

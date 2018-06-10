@@ -46,6 +46,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="80dp">
         <Button
+            android:background="@color/blue"
+            android:textColor="@color/white"
             android:id="@+id/open_flashlight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

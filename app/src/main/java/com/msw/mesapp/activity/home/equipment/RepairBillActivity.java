@@ -38,56 +38,59 @@ public class RepairBillActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repair);
         ButterKnife.bind(this);
-
-        initData();
         initView();
     }
 
-    public void initData() {
 
-    }
-    public void initPermission(){
-
+    public void initPermission() {
         String permission_code = (String) SPUtil.get(RepairBillActivity.this, GlobalKey.permiss.SPKEY, new String(""));
         String[] split_pc = permission_code.split("-");
-
         int p1 = 0;
         int p2 = 0;
         int p3 = 0;
-        for(int i = 0;i<split_pc.length;i++){
-            if(split_pc[i].equals( GlobalKey.permiss.Repair_Reporter) ) p1 = 1;
-            if(split_pc[i].equals(GlobalKey.permiss.Repair_Worker) ) p2 = 1;
-            if(split_pc[i].equals(GlobalKey.permiss.Repair_Soorer) ) p3=1;
+        for (int i = 0; i < split_pc.length; i++) {
+            if (split_pc[i].equals(GlobalKey.permiss.Repair_Reporter)) p1 = 1;
+            if (split_pc[i].equals(GlobalKey.permiss.Repair_Worker)) p2 = 1;
+            if (split_pc[i].equals(GlobalKey.permiss.Repair_Soorer)) p3 = 1;
         }
-        if(p1 == 0 && p2 == 0 && p3 == 0){
+        if (p1 == 0 && p2 == 0 && p3 == 0) {
             finish();
-            ToastUtil.showToast(RepairBillActivity.this,"权限不足！",ToastUtil.Error);
+            ToastUtil.showToast(RepairBillActivity.this, "权限不足！", ToastUtil.Error);
         }
-        if(p1 == 1 && p2 == 0 && p3 == 0){ finish(); ActivityUtil.switchTo(RepairBillActivity.this,RepairReportActivity.class);}
-        if(p1 == 0 && p2 == 1 && p3 == 0){ finish(); ActivityUtil.switchTo(RepairBillActivity.this,RepairWorkActivity.class);}
-        if(p1 == 0 && p2 == 0 && p3 == 1){finish(); ActivityUtil.switchTo(RepairBillActivity.this,RepairScoreActivity.class);}
+        if (p1 == 1 && p2 == 0 && p3 == 0) {
+            finish();
+            ActivityUtil.switchTo(RepairBillActivity.this, RepairApplyActivity.class);
+        }
+        if (p1 == 0 && p2 == 1 && p3 == 0) {
+            finish();
+            ActivityUtil.switchTo(RepairBillActivity.this, RepairWorkActivity.class);
+        }
+        if (p1 == 0 && p2 == 0 && p3 == 1) {
+            finish();
+            ActivityUtil.switchTo(RepairBillActivity.this, RepairScoreActivity.class);
+        }
 
     }
+
     public void initView() {
-        initPermission();
 
         initTitle();
         bt1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.switchTo(RepairBillActivity.this,RepairReportActivity.class);
+                ActivityUtil.switchTo(RepairBillActivity.this, RepairApplyActivity.class);//维修申请
             }
         });
         bt2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.switchTo(RepairBillActivity.this,RepairWorkActivity.class);
+                ActivityUtil.switchTo(RepairBillActivity.this, RepairWorkActivity.class);//开始接单
             }
         });
         bt3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.switchTo(RepairBillActivity.this,RepairScoreActivity.class);
+                ActivityUtil.switchTo(RepairBillActivity.this, RepairScoreActivity.class);//维修评价
             }
         });
 
@@ -101,9 +104,7 @@ public class RepairBillActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("设备维修");
+        title.setText("维修处理");
         add.setVisibility(View.INVISIBLE);
     }
-
-
 }

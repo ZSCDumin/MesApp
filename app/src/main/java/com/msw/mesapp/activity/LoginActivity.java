@@ -1,18 +1,8 @@
 package com.msw.mesapp.activity;
 
-
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.nfc.NfcAdapter;
-import android.nfc.Tag;
-import android.nfc.tech.MifareClassic;
-import android.nfc.tech.MifareUltralight;
-import android.nfc.tech.NfcA;
-import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableStringBuilder;
@@ -20,6 +10,7 @@ import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,13 +25,11 @@ import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.bean.LoginBean;
 import com.msw.mesapp.ui.background.FloatBackground;
-import com.msw.mesapp.ui.background.FloatCircle;
-import com.msw.mesapp.ui.background.FloatRing;
-import com.msw.mesapp.ui.background.FloatText;
 import com.msw.mesapp.ui.widget.ClearEditText;
 import com.msw.mesapp.utils.ACacheUtil;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -51,23 +40,15 @@ import com.zhouyou.http.subsciber.IProgressDialog;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-
-//https://github.com/huangdali/newkjdemo/
-//okhttp3:http://blog.csdn.net/itachi85/article/details/51190687
+import butterknife.OnClick;
 
 /**
  * 登录页面
- * (看例子之前看一遍下面直白的解释,看完之后再看一遍就更明白MVP模式了)
- * --------M层   对P层传递过来的userInfo进行登录(网络请求)判断,处理完成之后将处理结果回调给P层
- * --------P层   传递完数据给M层处理之后,实例化回调对象,成功了就通知V层登录成功,失败了就通知V层显示错误信息
- * --------V层   负责响应用户的交互(获取数据---->提示操作结果)
  */
 public class LoginActivity extends AppCompatActivity {
-    String TAG = "LoginActivity";
+
     @Bind(R.id.username)
     ClearEditText username;
     @Bind(R.id.password)
@@ -76,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
     Button Login;
     @Bind(R.id.progressbar)
     ProgressBar progressbar;
-    PendingIntent mPendingIntent;
     @Bind(R.id.float_view)
     FloatBackground floatView;
     @Bind(R.id.text_wjmm)
@@ -84,10 +64,8 @@ public class LoginActivity extends AppCompatActivity {
 
     String permission_code = "";
 
-    //nfc
-    String strUI = "";
-    Intent m_intent;
-    NfcAdapter mAdapter;
+    @Bind(R.id.setting)
+    ImageView setting;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,19 +83,28 @@ public class LoginActivity extends AppCompatActivity {
     public void isUserOn() {
 
         String name = "";
-        name = (String) SPUtil.get(LoginActivity.this, GlobalKey.Login.CODE, name);
-        if (name.length() > 0) {
-            //ToastUtil.showToast(this, "欢迎用户：" + name, ToastUtil.Success);
-            ActivityUtil.switchTo(LoginActivity.this, HomeActivity.class);
-            finish();
+        String serverUrl;
+        name = (String) SPUtil.get(this, GlobalKey.Login.CODE, name);
+        serverUrl = SharedPreferenceUtils.getString(this, SharedPreferenceUtils.BASEURL);
+        if (serverUrl != null) {
+            if (serverUrl.length() > 0)
+                GlobalApi.BASEURL = serverUrl;
         }
+        if (name != null) {
+            if (name.length() > 0) {
+                //ToastUtil.showToast(this, "欢迎用户：" + name, ToastUtil.Success);
+                ActivityUtil.switchTo(LoginActivity.this, HomeActivity.class);
+                finish();
+            }
+        }
+        ToastUtil.showToast(this, GlobalApi.BASEURL, 1);
 
     }
 
     //尝试登录
     public void tryLogin() {
-        String s1 = "请输入用户名",s2="请输入密码";
-        SpannableStringBuilder ssbuilder1 = new SpannableStringBuilder(s1),ssbuilder2 = new SpannableStringBuilder(s2);
+        String s1 = "请输入用户名", s2 = "请输入密码";
+        SpannableStringBuilder ssbuilder1 = new SpannableStringBuilder(s1), ssbuilder2 = new SpannableStringBuilder(s2);
         ssbuilder1.setSpan(new ForegroundColorSpan(Color.RED), 0, s1.length(), 0);
         ssbuilder2.setSpan(new ForegroundColorSpan(Color.RED), 0, s2.length(), 0);
 
@@ -165,14 +152,14 @@ public class LoginActivity extends AppCompatActivity {
                             JSONArray roles = data.optJSONArray("roles");
 
                             //获取权限
-                            for(int i=0;i<roles.length();i++){
+                            for (int i = 0; i < roles.length(); i++) {
                                 JSONObject rolesItem = roles.optJSONObject(i);
                                 JSONArray models = rolesItem.optJSONArray("models"); //获取模型
-                               for(int j=0;j<models.length();j++){
-                                   JSONObject modelsItem = models.optJSONObject(j);
-                                   String code = modelsItem.optString("code");
-                                   permission_code += (code + "-");
-                               }
+                                for (int j = 0; j < models.length(); j++) {
+                                    JSONObject modelsItem = models.optJSONObject(j);
+                                    String code = modelsItem.optString("code");
+                                    permission_code += (code + "-");
+                                }
                             }
 
 
@@ -181,17 +168,19 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         if (status == 0) {
                             //保存用户信息
+                            final String url = GlobalApi.BASEURL;
                             SPUtil.put(LoginActivity.this, GlobalKey.permiss.SPKEY, permission_code);
                             SPUtil.put(LoginActivity.this, GlobalKey.Login.CODE, name);
                             ACacheUtil.get(LoginActivity.this).put(GlobalKey.Login.DATA, loginModel);
                             //跳转
-                            ToastUtil.showToast(LoginActivity.this, message+loginBean.getData().getCode(), ToastUtil.Success);
+                            ToastUtil.showToast(LoginActivity.this, message + loginBean.getData().getCode(), ToastUtil.Success);
                             ActivityUtil.switchTo(LoginActivity.this, HomeActivity.class);
                             finish();
                         } else {
                             ToastUtil.showToast(LoginActivity.this, message, ToastUtil.Error);
                         }
                     }
+
                     @Override
                     public void onError(ApiException e) {
                         super.onError(e);
@@ -199,8 +188,8 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
     }
-    private void initView(){
-        //initFloatView();
+
+    private void initView() {
 
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,77 +220,28 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
-    private void initFloatView() {
-
-        floatView.addFloatView(new FloatText(0.1f, 0.2f, "M"));
-        floatView.addFloatView(new FloatText(0.2f, 0.21f, "I"));
-        floatView.addFloatView(new FloatText(0.3f, 0.18f, "N"));
-        floatView.addFloatView(new FloatText(0.4f, 0.21f, "M"));
-        floatView.addFloatView(new FloatText(0.5f, 0.19f, "E"));
-        floatView.addFloatView(new FloatText(0.6f, 0.21f, "T"));
-        floatView.addFloatView(new FloatText(0.7f, 0.2f, "A"));
-        floatView.addFloatView(new FloatText(0.8f, 0.18f, "L"));
-        floatView.addFloatView(new FloatText(0.9f, 0.2f, "S"));
-        floatView.addFloatView(new FloatCircle(0.8f, 0.6f));
-        floatView.addFloatView(new FloatCircle(0.6f, 0.8f));
-        floatView.addFloatView(new FloatRing(0.4f, 0.8f, 8, 30));
-        floatView.addFloatView(new FloatRing(0.6f, 0.5f, 15, 20));
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                floatView.startFloat();
-            }
-        }).start();
-
-    }
-
-    @Override
-    public void onResume() {// 响应intent
-        super.onResume();
-        //ToastUtil.showToast(this,"onResume触发！",ToastUtil.Default);
-    }
-    @Override
-    protected void onPause() {
-        //ToastUtil.showToast(this,"onPause触发！",ToastUtil.Default);
-        super.onPause();
-    }
-    @Override
-    public void onNewIntent(Intent intent) {
-        //ToastUtil.showToast(LoginActivity.this,"onNewIntent触发！",ToastUtil.Default);
-    }
-    @Override
-    protected void onUserLeaveHint() { //监视home建退出后，关闭程序
-        super.onUserLeaveHint();
-        //finish();
-        //System.exit(0);
-    }
-    @Override
-    protected void onDestroy() {
-        //ToastUtil.showToast(this,"onDestroy触发！",ToastUtil.Default);
-        super.onDestroy();
-    }
 
     //记录用户首次点击返回键的时间
-    private long firstTime=0;
+    private long firstTime = 0;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode==KeyEvent.KEYCODE_BACK && event.getAction()==KeyEvent.ACTION_DOWN){
-            if (System.currentTimeMillis()-firstTime>2000){
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
+            if (System.currentTimeMillis() - firstTime > 2000) {
                 //Toast.makeText(HomeActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
-                ToastUtil.showToast(LoginActivity.this,"再按一次退出程序",ToastUtil.Info);
-                firstTime=System.currentTimeMillis();
-            }else{
+                ToastUtil.showToast(LoginActivity.this, "再按一次退出程序", ToastUtil.Info);
+                firstTime = System.currentTimeMillis();
+            } else {
                 finish();
                 System.exit(0);
             }
             return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @OnClick(R.id.setting)
+    public void onViewClicked() {
+        ActivityUtil.switchTo(this, ChangeServerActivity.class);
     }
 }

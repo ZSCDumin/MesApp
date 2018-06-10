@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alibaba.fastjson.JSON;
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.core.TableConfig;
 import com.bin.david.form.data.CellInfo;
@@ -20,14 +19,12 @@ import com.bin.david.form.data.format.selected.BaseSelectFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
-import com.google.gson.JsonObject;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.HomeActivity;
-import com.msw.mesapp.activity.fragment.CardFragment;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.bean.warehouse.MaterialInBean;
 import com.msw.mesapp.bean.warehouse.MaterialOutBean;
+import com.msw.mesapp.bean.warehouse.ProductOutCheckBean;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -53,6 +50,8 @@ import butterknife.OnClick;
  */
 public class MaterialOutActivityDetail1 extends AppCompatActivity {
 
+
+    public String code = "";
     @Bind(R.id.back)
     ImageView back;
     @Bind(R.id.title)
@@ -71,18 +70,10 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
     TextView tx5;
     @Bind(R.id.table)
     SmartTable table;
-    @Bind(R.id.txc1)
-    TextView txc1;
-    @Bind(R.id.txc2)
-    TextView txc2;
-    @Bind(R.id.txc3)
-    TextView txc3;
-    @Bind(R.id.txc4)
-    TextView txc4;
+    @Bind(R.id.table1)
+    SmartTable table1;
     @Bind(R.id.bt)
     Button bt;
-
-    public String code = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +83,8 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
         code = getIntent().getExtras().get("code").toString();
         initData();
         initTitle();
-
+        initTable();
+        initTable1();
     }
 
     public void initTitle() {
@@ -107,13 +99,8 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
         add.setVisibility(View.INVISIBLE);
     }
 
-    @OnClick(R.id.bt)
-    public void onViewClicked() {
-        ActivityUtil.switchTo(this, MaterialOutActivity.class);
-    }
-
     public void initData() {
-        //获取第一块数据
+        //获取第一块和第二块的数据
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_CODE)
                 .params(GlobalApi.WareHourse.code, code)
                 .sign(true)
@@ -156,7 +143,7 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
 
                     @Override
                     public void onError(ApiException e) {
-
+                        ToastUtil.showToast(MaterialOutActivityDetail1.this, "获取数据失败", 1);
                     }
                 });
 
@@ -172,17 +159,18 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(result);
                             JSONArray data = jsonObject.optJSONArray("data");
 
-                            for(int i =0;i<data.length();i++){
+                            for (int i = 0; i < data.length(); i++) {
                                 JSONObject item = data.getJSONObject(i);
-
-                                String audit_result = item.optString("auditResult");
-                                String suggestion = item.optString("note");
-                                String member = item.optJSONObject("auditor").optString("name");
-                                String time = item.optString("auditTime");
-                                txc1.setText(audit_result);
-                                txc2.setText(suggestion);
-                                txc3.setText(member);
-                                txc4.setText(time);
+                                String auditResult = item.optString("auditResult");
+                                String auditor = item.optJSONObject("auditor").optString("name");
+                                String auditTime = DateUtil.getDateToString(Long.valueOf(item.optString("auditTime")));
+                                String note = item.optString("note");
+                                HashMap map = new HashMap();
+                                map.put("0", auditor);
+                                map.put("1", note);
+                                map.put("2", auditResult);
+                                map.put("3", auditTime);
+                                tableList1.add(map);
                             }
 
                         } catch (JSONException e) {
@@ -192,12 +180,13 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
 
                     @Override
                     public void onError(ApiException e) {
-
+                        ToastUtil.showToast(MaterialOutActivityDetail1.this, "获取数据失败", 1);
                     }
                 });
     }
 
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
+    List<HashMap<String, Objects>> tableList1 = new ArrayList<>();
 
     public void initTable() {
         //smartTable 的初始化
@@ -243,5 +232,62 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
         table.setSelectFormat(new BaseSelectFormat());
         table.getConfig().setContentCellBackgroundFormat(backgroundFormat);
         table.setTableData(tableData);
+    }
+
+    public void initTable1() {
+        //smartTable 的初始化
+        FontStyle.setDefaultTextSize(DensityUtils.sp2px(this, 15)); //设置全局字体大小
+        List<ProductOutCheckBean> testData = new ArrayList<>();
+        for (int i = 0; i < tableList1.size(); i++) {
+            Map map = tableList1.get(i);
+            ProductOutCheckBean userData = new ProductOutCheckBean(map.get("0").toString(), map.get("1").toString(), map.get("2").toString(), map.get("3").toString());
+            testData.add(userData);
+        }
+
+        WindowManager wm = this.getWindowManager();
+        int screenWith = wm.getDefaultDisplay().getWidth();
+        table1.getConfig().setMinTableWidth(screenWith - 20); //设置最小宽度=屏幕宽度-20
+
+        List<Column> columns = new ArrayList<>();
+        Column column0 = new Column<>("审核人", "auditor");
+        column0.setFixed(true);
+        column0.setAutoCount(false);
+        columns.add(column0);
+        columns.add(new Column<>("审核意见", "auditNote"));
+        columns.add(new Column<>("审核结果", "auditResult"));
+        columns.add(new Column<>("审核时间", "auditTime"));
+
+        final TableData<ProductOutCheckBean> tableData = new TableData<>("出库审核单", testData, columns);
+        tableData.setShowCount(false);
+
+        FontStyle fontStyle = new FontStyle();
+        fontStyle.setTextColor(getResources().getColor(android.R.color.white));
+
+        table1.getConfig().setTableTitleStyle(new FontStyle(this, 15, getResources().getColor(R.color.blue))).setShowXSequence(false).setShowYSequence(false).setShowTableTitle(false);
+        ICellBackgroundFormat<CellInfo> backgroundFormat = new BaseCellBackgroundFormat<CellInfo>() {
+            @Override
+            public int getBackGroundColor(CellInfo cellInfo) {
+                if (cellInfo.row % 2 == 0) {
+                    return ContextCompat.getColor(MaterialOutActivityDetail1.this, R.color.seashell);
+                } else {
+                    return TableConfig.INVALID_COLOR; //返回无效颜色，不会绘制
+                }
+            }
+        };
+        table1.setSelectFormat(new BaseSelectFormat());
+        table1.getConfig().setContentCellBackgroundFormat(backgroundFormat);
+        table1.setTableData(tableData);
+    }
+
+    @OnClick({R.id.back, R.id.bt})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.back:
+                finish();
+                break;
+            case R.id.bt:
+                ActivityUtil.switchTo(this, MaterialOutActivity.class);
+                break;
+        }
     }
 }

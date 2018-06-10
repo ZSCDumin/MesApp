@@ -1,6 +1,6 @@
 package com.msw.mesapp.activity;
 
-import android.graphics.Color;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.MenuItem;
@@ -18,21 +19,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.flyco.animation.BaseAnimatorSet;
-import com.flyco.animation.FadeEnter.FadeEnter;
-import com.flyco.animation.FadeExit.FadeExit;
-import com.flyco.animation.SlideEnter.SlideBottomEnter;
-import com.flyco.animation.SlideExit.SlideBottomExit;
-import com.flyco.dialog.listener.OnBtnClickL;
-import com.flyco.dialog.widget.NormalDialog;
-import com.flyco.dialog.widget.popup.BubblePopup;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.fragment.CardFragment;
 import com.msw.mesapp.activity.home.equipment.InspectActivity;
 import com.msw.mesapp.activity.home.equipment.QrManageActivity;
 import com.msw.mesapp.activity.home.equipment.RepairApplyActivity;
-import com.msw.mesapp.activity.home.equipment.RepairBillActivity;
+import com.msw.mesapp.activity.home.equipment.RepairReportActivity;
 import com.msw.mesapp.activity.home.id_management.IdManagementActivity;
+import com.msw.mesapp.activity.home.production_management.CheckScalesManagement.CheckScalesManagement;
+import com.msw.mesapp.activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagement;
+import com.msw.mesapp.activity.home.production_management.ShaiwangManagement.ShaiWangManagement;
 import com.msw.mesapp.activity.home.quality.TestCheckMainActivity;
 import com.msw.mesapp.activity.home.quality.TestReleaseMainActivity;
 import com.msw.mesapp.activity.home.warehouse.MaterialInActivity;
@@ -47,6 +43,7 @@ import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityManager;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -62,6 +59,7 @@ import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.panpf.sketch.SketchImageView;
 import me.panpf.sketch.display.FadeInImageDisplayer;
 import me.panpf.sketch.request.ShapeSize;
@@ -114,14 +112,7 @@ public class HomeActivity extends AppCompatActivity {
     LinearLayout output3;
     @Bind(R.id.output4)
     LinearLayout output4;
-    @Bind(R.id.output5)
-    LinearLayout output5;
-    @Bind(R.id.output6)
-    LinearLayout output6;
-    @Bind(R.id.output7)
-    LinearLayout output7;
-    @Bind(R.id.output8)
-    LinearLayout output8;
+
     @Bind(R.id.back)
     ImageView back;
     @Bind(R.id.viewPager)
@@ -167,15 +158,15 @@ public class HomeActivity extends AppCompatActivity {
         device2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ToastUtil.showToast(HomeActivity.this, "维修申请", ToastUtil.Default);
-                ActivityUtil.switchTo(HomeActivity.this, RepairApplyActivity.class);
+                ToastUtil.showToast(HomeActivity.this, "维修单", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, RepairReportActivity.class);
             }
         });
         device3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ToastUtil.showToast(HomeActivity.this, "维修单据", ToastUtil.Default);
-                ActivityUtil.switchTo(HomeActivity.this, RepairBillActivity.class);
+                ToastUtil.showToast(HomeActivity.this, "维修申请", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, RepairApplyActivity.class);
             }
         });
         device4.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +250,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initData() {
         ActivityManager.getAppManager().addActivity(this);
-
     }
 
     private void initNavView() {
@@ -270,13 +260,10 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-        navView.setItemIconTintList(null); //颜色
-
         View headerView = navView.getHeaderView(0);
-        final SketchImageView head = (SketchImageView) headerView.findViewById(R.id.head);
-        TextView id = (TextView) headerView.findViewById(R.id.tvid);
+        final SketchImageView head = headerView.findViewById(R.id.head);
+        TextView id = headerView.findViewById(R.id.tvid);
 
-        //final String jpgUrl = "http://img2.touxiang.cn/file/20171124/5c8f1c9dd6479d6d434226d1151b81b1.jpg";
         final String jpgUrl = "http://img0.imgtn.bdimg.com/it/u=1931194776,941976534&fm=200&gp=0.jpg";
         head.getOptions()
                 .setCacheInDiskDisabled(true)
@@ -288,21 +275,7 @@ public class HomeActivity extends AppCompatActivity {
                 .setDisplayer(new FadeInImageDisplayer()); //显示图片的动画
         head.displayImage(jpgUrl);
         head.setClickRetryOnDisplayErrorEnabled(true);//加载失败时点击重新加载
-        head.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                View inflate = View.inflate(HomeActivity.this, R.layout.popup_bubble_image, null);
-                ImageView iv = ButterKnife.findById(inflate, R.id.iv_bubble);
-                TextView tv = ButterKnife.findById(inflate, R.id.tv_bubble);
-                //Glide.with(getContext()).load(jpgUrl).diskCacheStrategy(DiskCacheStrategy.NONE).error(R.mipmap.defualt_head).into(iv);
-                tv.setText("好好工作，天天向上~");
-                new BubblePopup(HomeActivity.this, inflate).anchorView(head)
-                        .bubbleColor(Color.parseColor("#55C34A"))
-                        .showAnim(new SlideBottomEnter())
-                        .dismissAnim(new SlideBottomExit())
-                        .show();
-            }
-        });
+
         String code = "";
         code = (String) SPUtil.get(HomeActivity.this, GlobalKey.Login.CODE, code);
         id.setText(code);
@@ -316,31 +289,31 @@ public class HomeActivity extends AppCompatActivity {
                 if (id == R.id.nav_change) {
                     ActivityUtil.switchTo(HomeActivity.this, ModifyPasswordActivity.class);
                 } else if (id == R.id.nav_output) {
-                    BaseAnimatorSet bas_in = new FadeEnter();
-                    BaseAnimatorSet bas_out = new FadeExit();
-                    final NormalDialog dialog = new NormalDialog(HomeActivity.this);
-                    dialog.content("是否确定注销用户?")//
-                            .showAnim(bas_in)//
-                            .dismissAnim(bas_out)//
-                            .show();
-                    dialog.setOnBtnClickL(new OnBtnClickL() {
-                                              @Override
-                                              public void onBtnClick() {
-                                                  dialog.dismiss();
-                                              }
-                                          }, new OnBtnClickL() {
-                                              @Override
-                                              public void onBtnClick() {
-                                                  SPUtil.put(HomeActivity.this, GlobalKey.Login.CODE, "");
-                                                  ActivityUtil.switchTo(HomeActivity.this, LoginActivity.class);
-                                                  finish();
-                                                  dialog.dismiss();
-                                              }
-                                          }
-                    );
-                }
 
-                drawerLayout.closeDrawer(GravityCompat.START);
+                    AlertDialog.Builder build = new AlertDialog.Builder(HomeActivity.this);
+                    build.setIcon(R.mipmap.alter);
+                    build.setTitle("警告对话框");
+                    build.setMessage("您确定要注销此用户吗？");
+                    build.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SPUtil.clear(HomeActivity.this);
+                            SharedPreferenceUtils.clearPreferences(HomeActivity.this);
+                            ActivityUtil.switchTo(HomeActivity.this, LoginActivity.class);
+                            finish();
+                        }
+                    });
+                    build.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ToastUtil.showToast(HomeActivity.this, "您已取消了该操作！", ToastUtil.Default);
+                        }
+                    });
+                    build.show();
+                }
+                drawerLayout.closeDrawers();
                 return true;
             }
         });
@@ -390,6 +363,27 @@ public class HomeActivity extends AppCompatActivity {
                         ToastUtil.showToast(HomeActivity.this, "获取待办事项出错!", ToastUtil.Error);
                     }
                 });
+    }
+
+    @OnClick({R.id.output1, R.id.output2, R.id.output3, R.id.output4})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.output1:
+                ToastUtil.showToast(HomeActivity.this, "核秤管理", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, CheckScalesManagement.class);
+                break;
+            case R.id.output2:
+                ToastUtil.showToast(HomeActivity.this, "筛网检查", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, ShaiWangManagement.class);
+                break;
+            case R.id.output3:
+                ToastUtil.showToast(HomeActivity.this, "交接班", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, JiaoJieBanManagement.class);
+                break;
+            case R.id.output4:
+                //暂时为空
+                break;
+        }
     }
 
 

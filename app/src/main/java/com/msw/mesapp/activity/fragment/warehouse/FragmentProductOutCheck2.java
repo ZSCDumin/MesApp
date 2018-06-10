@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.warehouse.ProductOutCheckActivityDetail1;
+import com.msw.mesapp.activity.home.warehouse.ProductOutCheckActivityDetail2;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.ToastUtil;
@@ -95,8 +96,8 @@ public class FragmentProductOutCheck2 extends Fragment {
     private void initData() {
         list.clear();
         page = 0;
-        EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_AUDIT)
-                .params(GlobalApi.WareHourse.auditStatus, "1")
+        EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByAuditStatusByPage)
+                .params(GlobalApi.WareHourse.auditStatus, "2")
                 .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.WareHourse.size, "20") //一次获取多少
                 .params(GlobalApi.WareHourse.sort, "code") //根据code排序
@@ -113,16 +114,17 @@ public class FragmentProductOutCheck2 extends Fragment {
                             JSONObject jsonObject = new JSONObject(result);
                             code = jsonObject.optInt("code");
                             message = jsonObject.optString("message");
-                            JSONArray data = jsonObject.optJSONArray("data");
 
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject content0 = data.optJSONObject(i);
+                            JSONArray content = jsonObject.optJSONObject("data").optJSONArray("content");
+
+                            for (int i = 0; i < content.length(); i++) {
+                                JSONObject content0 = content.optJSONObject(i);
                                 String number = content0.optString("number"); //获取出库单编号
-                                String applyDate = content0.optString("applyDate");
+                                String createDate = content0.optString("createDate");
                                 String code1 = content0.optString("code");
                                 Map listmap = new HashMap<>();
                                 listmap.put("1", number); //出库单编号
-                                listmap.put("2", applyDate); //申请日期
+                                listmap.put("2", createDate); //申请日期
                                 listmap.put("3", code1); //code
                                 list.add(listmap);
                             }
@@ -157,11 +159,9 @@ public class FragmentProductOutCheck2 extends Fragment {
                 holder.setOnClickListener(R.id.item, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //ActivityUtil.toastShow(getActivity(), "点击了" + position);
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("3").toString());
-
-                        ActivityUtil.switchTo(getActivity(), ProductOutCheckActivityDetail1.class, map);
+                        ActivityUtil.switchTo(getActivity(), ProductOutCheckActivityDetail2.class, map);
                     }
                 });
                 holder.setText(R.id.tv1, s.get("1").toString());
@@ -203,7 +203,8 @@ public class FragmentProductOutCheck2 extends Fragment {
         page++;
         if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
         else {
-            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Header_ByPage)
+            EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByAuditStatusByPage)
+                    .params(GlobalApi.WareHourse.auditStatus, "2")
                     .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
                     .params(GlobalApi.WareHourse.size, "20") //一次获取多少
                     .params(GlobalApi.WareHourse.sort, "code") //根据code排序
@@ -220,39 +221,26 @@ public class FragmentProductOutCheck2 extends Fragment {
                                 JSONObject jsonObject = new JSONObject(result);
                                 code = jsonObject.optInt("code");
                                 message = jsonObject.optString("message");
-                                JSONObject data = jsonObject.optJSONObject("data");
-                                JSONArray content = data.optJSONArray("content");
-
-                                totalPages = data.optInt("totalPages");
-                                totalElements = data.optInt("totalElements");
-
+                                JSONArray content = jsonObject.optJSONObject("data").optJSONArray("content");
 
                                 for (int i = 0; i < content.length(); i++) {
                                     JSONObject content0 = content.optJSONObject(i);
-
-                                    String head_code = content0.optString("code"); //获取编码
-
-                                    JSONObject rawTypeobj = content0.optJSONObject("rawType");
-                                    String materia_name = rawTypeobj.optString("name"); //原料名字
-
-                                    String inDate = content0.optString("date"); //到货日期
-                                    String status = content0.optString("status"); //查看是否入库
-
-                                    if (status.equals("0")) { //获取所有为入库的数据
-                                        Map listmap = new HashMap<>();
-                                        listmap.put("1", materia_name); //部门+设备名称
-                                        listmap.put("2", inDate); //是否接单
-                                        listmap.put("3", head_code); //主键
-                                        list.add(listmap);
-                                    }
-
+                                    String number = content0.optString("number"); //获取出库单编号
+                                    String createDate = content0.optString("createDate");
+                                    String code1 = content0.optString("code");
+                                    Map listmap = new HashMap<>();
+                                    listmap.put("1", number); //出库单编号
+                                    listmap.put("2", createDate); //申请日期
+                                    listmap.put("3", code1); //code
+                                    list.add(listmap);
                                 }
 
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             if (code == 0) {
-                                adapter.notifyDataSetChanged(); //显示添加的数据
+                                adapter.notifyDataSetChanged();
+                                //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
                             } else {
                                 ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                             }
