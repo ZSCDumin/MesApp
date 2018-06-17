@@ -1,99 +1,56 @@
 package com.msw.mesapp.activity.home.equipment;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.flyco.tablayout.SlidingTabLayout;
 import com.msw.mesapp.R;
-import com.msw.mesapp.base.GlobalKey;
-import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.activity.fragment.equipment.FragmentRepairScoreed;
+import com.msw.mesapp.activity.fragment.equipment.FragmentRepairScoreing;
+import com.msw.mesapp.activity.fragment.equipment.FragmentRepairWorked;
+import com.msw.mesapp.activity.fragment.equipment.FragmentRepairWorking;
+import com.msw.mesapp.ui.widget.DecoratorViewPager;
 import com.msw.mesapp.utils.StatusBarUtils;
-import com.msw.mesapp.utils.ToastUtil;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class RepairBillActivity extends AppCompatActivity {
-
-
     @Bind(R.id.back)
     ImageView back;
     @Bind(R.id.title)
     TextView title;
     @Bind(R.id.add)
     ImageView add;
-    @Bind(R.id.bt1)
-    Button bt1;
-    @Bind(R.id.bt2)
-    Button bt2;
-    @Bind(R.id.bt3)
-    Button bt3;
+    @Bind(R.id.slidingTabLayout)
+    SlidingTabLayout slidingTabLayout;
+    @Bind(R.id.viewPager)
+    DecoratorViewPager viewPager;
+
+    private final String[] mTitles = {"待维修", "已维修", "已接单", "已评价"};
+
+    private ArrayList<Fragment> fragmentList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_repair);
+        setContentView(R.layout.activity_repair_bill);
         ButterKnife.bind(this);
         initView();
     }
 
-
-    public void initPermission() {
-        String permission_code = (String) SPUtil.get(RepairBillActivity.this, GlobalKey.permiss.SPKEY, new String(""));
-        String[] split_pc = permission_code.split("-");
-        int p1 = 0;
-        int p2 = 0;
-        int p3 = 0;
-        for (int i = 0; i < split_pc.length; i++) {
-            if (split_pc[i].equals(GlobalKey.permiss.Repair_Reporter)) p1 = 1;
-            if (split_pc[i].equals(GlobalKey.permiss.Repair_Worker)) p2 = 1;
-            if (split_pc[i].equals(GlobalKey.permiss.Repair_Soorer)) p3 = 1;
-        }
-        if (p1 == 0 && p2 == 0 && p3 == 0) {
-            finish();
-            ToastUtil.showToast(RepairBillActivity.this, "权限不足！", ToastUtil.Error);
-        }
-        if (p1 == 1 && p2 == 0 && p3 == 0) {
-            finish();
-            ActivityUtil.switchTo(RepairBillActivity.this, RepairApplyActivity.class);
-        }
-        if (p1 == 0 && p2 == 1 && p3 == 0) {
-            finish();
-            ActivityUtil.switchTo(RepairBillActivity.this, RepairWorkActivity.class);
-        }
-        if (p1 == 0 && p2 == 0 && p3 == 1) {
-            finish();
-            ActivityUtil.switchTo(RepairBillActivity.this, RepairScoreActivity.class);
-        }
-
-    }
-
     public void initView() {
-
         initTitle();
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityUtil.switchTo(RepairBillActivity.this, RepairApplyActivity.class);//维修申请
-            }
-        });
-        bt2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityUtil.switchTo(RepairBillActivity.this, RepairWorkActivity.class);//开始接单
-            }
-        });
-        bt3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ActivityUtil.switchTo(RepairBillActivity.this, RepairScoreActivity.class);//维修评价
-            }
-        });
-
+        initSlidingTabLayout();
     }
 
     public void initTitle() {
@@ -104,7 +61,35 @@ public class RepairBillActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("维修处理");
+        title.setText("维修单据");
         add.setVisibility(View.INVISIBLE);
+    }
+
+    public void initSlidingTabLayout() {
+        fragmentList.add(new FragmentRepairWorking());//未维修
+        fragmentList.add(new FragmentRepairWorked());//已维修
+        fragmentList.add(new FragmentRepairScoreing());//未评价
+        fragmentList.add(new FragmentRepairScoreed());//已评价
+        viewPager.setNestedpParent((ViewGroup) viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
+        viewPager.setAdapter(new RepairBillActivity.mPageAdapter(this.getSupportFragmentManager()));
+        slidingTabLayout.setViewPager(viewPager, mTitles);
+        viewPager.setClickable(false);
+    }
+
+    public class mPageAdapter extends FragmentPagerAdapter {
+
+        public mPageAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragmentList.size();
+        }
     }
 }

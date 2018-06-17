@@ -12,18 +12,17 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:layout_marginTop="20dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:gravity="center"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="250dp"
-            android:layout_height="300dp"
-            android:src="@mipmap/ic_launcher" />
+            android:layout_height="300dp" />
 
         <Button
             android:id="@+id/take_photo_bt"

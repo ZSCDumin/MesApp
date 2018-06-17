@@ -18,9 +18,8 @@ import android.widget.TextView;
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -28,10 +27,6 @@ import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -192,7 +187,7 @@ public class ProductOutActivityDetail1Scan extends AppCompatActivity {
                 String code = getIntent().getExtras().get("code").toString();
                 EasyHttp.post(GlobalApi.WareHourse.ProductOut.updateOutStatusByCode)
                         .params(GlobalApi.WareHourse.code, code)
-                        .params(GlobalApi.WareHourse.senderCode, SPUtil.get(this, GlobalKey.Login.CODE, "").toString())
+                        .params(GlobalApi.WareHourse.senderCode, GetCurrentUserIDUtil.currentUserId(this))
                         .params(GlobalApi.WareHourse.outStatus, "1")
                         .sign(true)
                         .timeStamp(true)//本次请求是否携带时间戳

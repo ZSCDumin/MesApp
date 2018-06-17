@@ -22,10 +22,9 @@ import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.bean.quality.QualityBean;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -97,7 +96,7 @@ public class TestCheckDetailingActivity extends AppCompatActivity {
     private void initData() {
 
         code = getIntent().getExtras().get("code").toString();
-        id = (String) SPUtil.get(TestCheckDetailingActivity.this, GlobalKey.Login.CODE, id);
+        id = GetCurrentUserIDUtil.currentUserId(this);
 
         EasyHttp.post(GlobalApi.Quality.RawPresoma.ByCode.PATH)
                 .params(GlobalApi.Quality.RawPresoma.ByCode.CODE, code) //主键

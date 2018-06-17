@@ -16,9 +16,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -169,24 +167,8 @@ public class QrManageActivity extends AppCompatActivity {
                     }
                 });
     }
-    public void initPermission(){
-
-        String permission_code = (String) SPUtil.get(QrManageActivity.this, GlobalKey.permiss.SPKEY, new String(""));
-        String[] split_pc = permission_code.split("-");
-
-        int p1 = 0;
-        for(int i = 0;i<split_pc.length;i++){
-            if(split_pc[i].equals( GlobalKey.permiss.QrManner) ) p1 = 1;
-        }
-        if(p1 == 0){
-            finish();
-            ToastUtil.showToast(QrManageActivity.this,"权限不足！",ToastUtil.Error);
-        }
-
-    }
 
     public void initView() {
-        initPermission();
 
         initTitle();
         initRefreshLayout();

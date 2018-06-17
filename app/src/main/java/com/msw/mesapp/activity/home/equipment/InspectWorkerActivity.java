@@ -12,11 +12,11 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.ui.widget.TitlePopup;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -69,15 +69,16 @@ public class InspectWorkerActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inspect_worker);
-        StatusBarUtils.setStatusBarColor(this,R.color.titlecolor);
+        StatusBarUtils.setStatusBarColor(this, R.color.titlecolor);
         ButterKnife.bind(this);
 
         initData();
         initView();
     }
+
     //
-    public void initData(){
-        id = (String) SPUtil.get(InspectWorkerActivity.this, GlobalKey.Login.CODE, id);
+    public void initData() {
+        id = GetCurrentUserIDUtil.currentUserId(this);
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.Inspect.Worker.ByPage.PATH)
@@ -98,18 +99,18 @@ public class InspectWorkerActivity extends AppCompatActivity {
                             JSONObject jsonObject = new JSONObject(result);
                             code = (int) jsonObject.get("code");
                             message = (String) jsonObject.get("message");
-                            JSONObject data =  jsonObject.getJSONObject("data");
+                            JSONObject data = jsonObject.getJSONObject("data");
                             JSONArray content = data.getJSONArray("content");
 
-                            for(int i=0;i<content.length();i++){
+                            for (int i = 0; i < content.length(); i++) {
                                 JSONObject content0 = new JSONObject(content.get(i).toString());
                                 Map map = new HashMap<>();
-                                map.put("1",content0.optString("code"));
-                                map.put("2",content0.optString("name")+"车间需要点检");
-                                map.put("3",content0.optString("startTime"));
-                                map.put("4",content0.optString("endTime"));
-                                map.put("5",content0.optString("updateTime"));
-                                map.put("6",content0.optString("checkCode"));
+                                map.put("1", content0.optString("code"));
+                                map.put("2", content0.optString("name") + "车间需要点检");
+                                map.put("3", content0.optString("startTime"));
+                                map.put("4", content0.optString("endTime"));
+                                map.put("5", content0.optString("updateTime"));
+                                map.put("6", content0.optString("checkCode"));
                                 list.add(map);
                             }
 
@@ -125,32 +126,31 @@ public class InspectWorkerActivity extends AppCompatActivity {
                             ToastUtil.showToast(InspectWorkerActivity.this, message, ToastUtil.Error);
                         }
                     }
+
                     @Override
                     public void onError(ApiException e) {
                         ToastUtil.showToast(InspectWorkerActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
                     }
                 });
     }
+
     //
-    public void initView(){
+    public void initView() {
         initTitle();
         initRefreshLayout();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
-        adapter = new CommonAdapter<Map<String, Object>>(this,R.layout.item_inspect,list) {
+        adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_inspect, list) {
             @Override
             protected void convert(ViewHolder holder, final Map s, final int position) {
-                holder.setText(R.id.tv1,s.get("2").toString());
-                holder.setText(R.id.tv2,s.get("4").toString());
+                holder.setText(R.id.tv1, s.get("2").toString());
+                holder.setText(R.id.tv2, s.get("4").toString());
 
                 holder.setOnClickListener(R.id.bt1, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //ActivityUtil.toastShow(InspectWorkerActivity.this, "点击了详情" + position);
-                        ActivityUtil.switchTo(InspectWorkerActivity.this,InspectWorkerDetailActivity.class,s);
-                        //SPUtil.put(InspectWorkerActivity.this, "inspectnum", "3");
-                        //finish();
+                        ActivityUtil.switchTo(InspectWorkerActivity.this, InspectWorkerDetailActivity.class, s);
                     }
                 });
                 holder.setOnClickListener(R.id.bt2, new View.OnClickListener() {
@@ -166,7 +166,7 @@ public class InspectWorkerActivity extends AppCompatActivity {
                                     public void onSuccess(String result) {
                                         int code = 1;
                                         String message = "出错";
-                                        int num =1;
+                                        int num = 1;
 
                                         try {
                                             JSONObject jsonObject = new JSONObject(result);
@@ -181,15 +181,16 @@ public class InspectWorkerActivity extends AppCompatActivity {
                                         }
                                         if (code == 0) {
                                             Map map = new HashMap();
-                                            map.put("code",s.get("6").toString()); //把code传过去
-                                            ActivityUtil.switchTo(InspectWorkerActivity.this,InspectWorkerJudgeActivity.class,map);
-                                            SPUtil.put(InspectWorkerActivity.this, "inspectnum",String.valueOf(num));
-                                            SPUtil.put(InspectWorkerActivity.this, "inspectcode",s.get("1"));
-                                            SPUtil.put(InspectWorkerActivity.this, "inspecttotal",String.valueOf(num));
+                                            map.put("code", s.get("6").toString()); //把code传过去
+                                            ActivityUtil.switchTo(InspectWorkerActivity.this, InspectWorkerJudgeActivity.class, map);
+                                            SharedPreferenceUtils.putString(InspectWorkerActivity.this, "inspectnum", String.valueOf(num));
+                                            SharedPreferenceUtils.putString(InspectWorkerActivity.this, "inspectcode", s.get("1").toString());
+                                            SharedPreferenceUtils.putString(InspectWorkerActivity.this, "inspecttotal", String.valueOf(num));
                                         } else {
                                             ToastUtil.showToast(InspectWorkerActivity.this, message, ToastUtil.Error);
                                         }
                                     }
+
                                     @Override
                                     public void onError(ApiException e) {
                                         ToastUtil.showToast(InspectWorkerActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -201,8 +202,9 @@ public class InspectWorkerActivity extends AppCompatActivity {
         };
         recyclerView.setAdapter(adapter);
     }
+
     //
-    public void initTitle(){
+    public void initTitle() {
         StatusBarUtils.setActivityTranslucent(this); //设置全屏
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,6 +221,7 @@ public class InspectWorkerActivity extends AppCompatActivity {
         });
         add.setVisibility(View.GONE);
     }
+
     /**
      * 初始化(配置)下拉刷新组件
      */
@@ -263,18 +266,18 @@ public class InspectWorkerActivity extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject(result);
                                 code = (int) jsonObject.get("code");
                                 message = (String) jsonObject.get("message");
-                                JSONObject data =  jsonObject.getJSONObject("data");
+                                JSONObject data = jsonObject.getJSONObject("data");
                                 JSONArray content = data.getJSONArray("content");
 
-                                for(int i=0;i<content.length();i++){
+                                for (int i = 0; i < content.length(); i++) {
                                     JSONObject content0 = new JSONObject(content.get(i).toString());
                                     Map map = new HashMap<>();
-                                    map.put("1",content0.optString("code"));
-                                    map.put("2",content0.optString("name")+"车间需要点检");
-                                    map.put("3",content0.optString("startTime"));
-                                    map.put("4",content0.optString("endTime"));
-                                    map.put("5",content0.optString("updateTime"));
-                                    map.put("6",content0.optString("checkCode"));
+                                    map.put("1", content0.optString("code"));
+                                    map.put("2", content0.optString("name") + "车间需要点检");
+                                    map.put("3", content0.optString("startTime"));
+                                    map.put("4", content0.optString("endTime"));
+                                    map.put("5", content0.optString("updateTime"));
+                                    map.put("6", content0.optString("checkCode"));
                                     list.add(map);
                                 }
 
@@ -298,7 +301,6 @@ public class InspectWorkerActivity extends AppCompatActivity {
                     });
         }
     }
-
 
 
 }

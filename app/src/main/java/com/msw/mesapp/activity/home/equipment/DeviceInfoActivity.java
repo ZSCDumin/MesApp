@@ -1,8 +1,10 @@
 package com.msw.mesapp.activity.home.equipment;
 
 import android.bluetooth.BluetoothAdapter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -32,8 +34,7 @@ public class DeviceInfoActivity extends AppCompatActivity {
     Button bt;
     @Bind(R.id.btn_printer)
     Button btnPrinter;
-    @Bind(R.id.qr_id_tv)
-    TextView qrIdTv;
+
     @Bind(R.id.ttv1)
     TextView ttv1;
     @Bind(R.id.ttv2)
@@ -90,9 +91,15 @@ public class DeviceInfoActivity extends AppCompatActivity {
         ttv3.setText(ss[4]);
 
         final String pss = ss[0] + "-" + ss[2] + "-" + ss[4];
-        qrIdTv.setVisibility(View.GONE);
 
-        qrCodeIv.setImageBitmap(OneCode.creatBarcode(getApplicationContext(), pss, 1000, 400, true));
+        Bitmap bitmap = OneCode.creatBarcode(getApplicationContext(), pss, 250, 100, true);
+        Log.i("TAG", bitmap.getWidth() + "");
+        Log.i("TAG", bitmap.getHeight() + "");
+
+        qrCodeIv.setImageBitmap(bitmap);
+
+        Log.i("TAG", qrCodeIv.getWidth() + "");
+        Log.i("TAG", qrCodeIv.getHeight() + "");
 
         bt.setOnClickListener(new View.OnClickListener() {
             @Override

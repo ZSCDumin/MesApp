@@ -3,50 +3,56 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:background="#00000000">
+    android:background="#00000000"
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:background="#00000000"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#00000000">
+
         <android.support.v7.widget.CardView
             android:id="@+id/cardview"
             android:layout_width="match_parent"
-            android:layout_margin="10dp"
             android:layout_height="108dp"
+            android:layout_margin="10dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="5dp">
+
                     <TextView
                         android:id="@+id/tv1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:text="设备000发生故障，设备维修"
                         android:textColor="#020202"
-                        android:textSize="18dp"
-                        android:text="设备000发生故障，设备维修"/>
+                        android:textSize="18dp" />
+
                     <View
                         android:id="@+id/tvview"
                         android:layout_width="10dp"
                         android:layout_height="10dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="10dp"
                         android:layout_alignParentRight="true"
-                        android:background="@drawable/cycle"/>
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/cycle" />
 
                 </RelativeLayout>
+
                 <TextView
                     android:id="@+id/tv2"
                     android:layout_width="match_parent"
@@ -54,42 +60,49 @@
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="20dp"
 
-                    android:singleLine="true"
                     android:gravity="end"
+                    android:singleLine="true"
+                    android:text="2017-07-07"
                     android:textColor="#020202"
-                    android:textSize="13dp"
-                    android:text="2017-07-07"/>
+                    android:textSize="13dp" />
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"
-                    android:background="@color/color3"/>
+                    android:background="@color/color3" />
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
+
                     <TextView
                         android:id="@+id/bt1"
+                        android:textColor="@color/brown"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_toLeftOf="@+id/cc"
                         android:gravity="center"
-                        android:text="查看详情"/>
+                        android:text="查看详情" />
+
                     <View
                         android:id="@+id/cc"
-                        android:layout_centerInParent="true"
                         android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
-                        android:background="@color/color3"
-                        android:layout_height="match_parent"/>
+                        android:background="@color/color3" />
+
                     <TextView
                         android:id="@+id/bt2"
+                        android:textColor="@color/brown"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_toRightOf="@+id/cc"
                         android:gravity="center"
-                        android:text="进入工作"/>
+                        android:text="进入工作" />
                 </RelativeLayout>
 
             </LinearLayout>

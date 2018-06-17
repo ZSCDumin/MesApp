@@ -34,7 +34,7 @@
                 android:id="@+id/img"
                 android:layout_width="match_parent"
                 android:layout_height="460px"
-                android:src="@mipmap/head2"/>
+                android:src="@mipmap/icon"/>
         </LinearLayout>
 
         <LinearLayout
@@ -65,7 +65,6 @@
                 android:layout_alignParentRight="true"
                 android:layout_toRightOf="@+id/t1"
                 android:singleLine="true"
-                android:ellipsize="marquee"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:lines="1"

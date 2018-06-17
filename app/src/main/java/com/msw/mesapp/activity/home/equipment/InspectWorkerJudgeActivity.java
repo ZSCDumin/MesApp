@@ -16,13 +16,13 @@ import com.flyco.animation.FadeExit.FadeExit;
 import com.flyco.animation.SlideEnter.SlideBottomEnter;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.ui.widget.EditextDialog;
 import com.msw.mesapp.ui.widget.HorizontalProgressBarWithNumber;
 import com.msw.mesapp.utils.ActivityManager;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -89,14 +89,14 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initData();
         initView();
-        horizbar.setProgress((int) (100 * ( (Float.valueOf(inspecttotal) - numInt + 1.0)  / Float.valueOf(inspecttotal))) );
+        horizbar.setProgress((int) (100 * ((Float.valueOf(inspecttotal) - numInt + 1.0) / Float.valueOf(inspecttotal))));
     }
 
     private void initData() {
         code = getIntent().getExtras().get("code").toString(); //code
-        inspectnum = (String) SPUtil.get(InspectWorkerJudgeActivity.this, "inspectnum", inspectnum);
-        inspectcode = (String) SPUtil.get(InspectWorkerJudgeActivity.this, "inspectcode", inspectcode);
-        inspecttotal = (String) SPUtil.get(InspectWorkerJudgeActivity.this, "inspecttotal", inspecttotal);
+        inspectnum = SharedPreferenceUtils.getString(InspectWorkerJudgeActivity.this, "inspectnum", inspectnum);
+        inspectcode = SharedPreferenceUtils.getString(InspectWorkerJudgeActivity.this, "inspectcode", inspectcode);
+        inspecttotal = SharedPreferenceUtils.getString(InspectWorkerJudgeActivity.this, "inspecttotal", inspecttotal);
         numInt = Integer.valueOf(inspectnum);
 
         EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH)
@@ -114,7 +114,7 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                             message = (String) jsonObject.get("message");
                             JSONObject data = jsonObject.getJSONObject("data");
 
-                            JSONObject check = data.getJSONObject("check"+String.valueOf(numInt));
+                            JSONObject check = data.getJSONObject("check" + String.valueOf(numInt));
 
                             checkHeadCode = data.optString("code");
                             picture = check.optString("picture");
@@ -130,6 +130,7 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                             ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Error);
                         }
                     }
+
                     @Override
                     public void onError(ApiException e) {
                         ToastUtil.showToast(InspectWorkerJudgeActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -211,7 +212,6 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                             if (numInt == 1) bt2.setText("完成");
                             resFlag[0] = true;
                             resStr[0] = ss;
-                            //ToastUtil.showToast(InspectWorkerJudgeActivity.this, ss, ToastUtil.Info);
                         }
                     }
                 });
@@ -243,13 +243,16 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                                         code = (int) jsonObject.get("code");
                                         message = (String) jsonObject.get("message");
 
-                                    }catch (Exception e) { e.printStackTrace(); }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     if (code == 0) {
                                         ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Success);
                                     } else {
                                         ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Error);
                                     }
                                 }
+
                                 @Override
                                 public void onError(ApiException e) {
                                     ToastUtil.showToast(InspectWorkerJudgeActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -257,7 +260,7 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                             });
 
                     int tt = new InspectVar().getInstance().workerRES1.size();
-                    for( ;tt<=14;tt++){
+                    for (; tt <= 14; tt++) {
                         new InspectVar().getInstance().workerRES1.add("");
                         new InspectVar().getInstance().workerRES2.add("");
                     }
@@ -265,38 +268,38 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
 
                     EasyHttp.post(GlobalApi.Inspect.Worker.AppCheck.PATH)
                             .params(GlobalApi.Inspect.Worker.AppCheck.checkHeadCode, checkHeadCode) //表头编码（确定从属车间）
-                            .params(GlobalApi.Inspect.Worker.AppCheck.checkPerson, (String) SPUtil.get(InspectWorkerJudgeActivity.this, GlobalKey.Login.CODE, code)) //巡检人
+                            .params(GlobalApi.Inspect.Worker.AppCheck.checkPerson, GetCurrentUserIDUtil.currentUserId(InspectWorkerJudgeActivity.this)) //巡检人
                             .params(GlobalApi.Inspect.Worker.AppCheck.time, DateUtil.getCurrentDate2()) //
                             .params(GlobalApi.Inspect.Worker.AppCheck.examState, "1") //1是已巡检但未审核
 
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state1,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal1,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state2,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal2,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state3,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal3,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state4,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal4,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state5,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal5,new InspectVar().getInstance().workerRES2.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state6,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal6,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state7,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal7,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state8,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal8,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state9,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal9,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state10,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal10,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state11,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal11,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state12,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal12,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state13,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal13,new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state14,new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal14,new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state1, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal1, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state2, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal2, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state3, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal3, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state4, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal4, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state5, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal5, new InspectVar().getInstance().workerRES2.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state6, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal6, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state7, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal7, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state8, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal8, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state9, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal9, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state10, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal10, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state11, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal11, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state12, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal12, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state13, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal13, new InspectVar().getInstance().workerRES2.get(ii++))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.state14, new InspectVar().getInstance().workerRES1.get(ii))
+                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal14, new InspectVar().getInstance().workerRES2.get(ii++))
 
                             .sign(true)
                             .timeStamp(true)//本次请求是否携带时间戳
@@ -310,7 +313,9 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                                         code = (int) jsonObject.get("code");
                                         message = (String) jsonObject.get("message");
 
-                                    }catch (Exception e) { e.printStackTrace(); }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
                                     if (code == 0) {
                                         ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Success);
                                         ActivityUtil.switchTo(InspectWorkerJudgeActivity.this, InspectWorkerActivity.class);
@@ -321,6 +326,7 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
                                         ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Error);
                                     }
                                 }
+
                                 @Override
                                 public void onError(ApiException e) {
                                     ToastUtil.showToast(InspectWorkerJudgeActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -329,9 +335,9 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
 
                 } else {
                     Map map = new HashMap();
-                    map.put("code",code); //把code传过去
-                    ActivityUtil.switchTo(InspectWorkerJudgeActivity.this, InspectWorkerJudgeActivity.class,map);
-                    SPUtil.put(InspectWorkerJudgeActivity.this, "inspectnum", String.valueOf(numInt - 1));
+                    map.put("code", code); //把code传过去
+                    ActivityUtil.switchTo(InspectWorkerJudgeActivity.this, InspectWorkerJudgeActivity.class, map);
+                    SharedPreferenceUtils.putString(InspectWorkerJudgeActivity.this, "inspectnum", String.valueOf(numInt - 1));
                     ActivityManager.getAppManager().addActivity(InspectWorkerJudgeActivity.this);
 
                 }

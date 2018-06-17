@@ -9,26 +9,37 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msw.mesapp.R;
-import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.base.GlobalApi;
+import com.msw.mesapp.utils.CompressUtil;
+import com.msw.mesapp.utils.ToastUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class ShaiWangManagementDetails2 extends AppCompatActivity {
 
@@ -48,8 +59,22 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     Button submitBt;
     private File mPhotoFile;
     private String mPhotoPath;
+    private String mPhotoPath1;
     public final static int CAMERA_RESULT = 1;
     private static final int MY_PERMISSION_REQUEST_CODE = 10000;
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0x101:
+                    ToastUtil.showToast(ShaiWangManagementDetails2.this, message, ToastUtil.Default);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +107,45 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
                 takePhoto();
                 break;
             case R.id.submit_bt:
-                //提交
-                ActivityUtil.switchTo(this, ShaiWangManagement.class);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        submitData();
+                    }
+                }).start();
+                //ActivityUtil.switchTo(this, ShaiWangManagement.class);
                 break;
+        }
+    }
+
+    public String message;
+
+    public void submitData() {
+        OkHttpClient client = new OkHttpClient();
+        File file = new File(mPhotoPath1);
+        Request request = new Request.Builder()
+                .url(GlobalApi.BASEURL + "image/upload")
+                .post(RequestBody.create(MediaType.parse("text/x-markdown; charset=utf-8"), file))
+                .build();
+        Response response = null;
+        try {
+            response = client.newCall(request).execute();
+            String result = response.body().string();
+            JSONObject jsonObject = new JSONObject(result);
+            message = jsonObject.optString("message");
+            handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
     public void takePhoto() {
         try {
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");//开始拍照
-            mPhotoPath = getSDPath() + "/" + getPhotoFileName();//设置图片文件路径，getSDPath()和getPhotoFileName()具体实现在下面
+            mPhotoPath = getSDPath() + "/" + "before.jpg";//设置图片文件路径，getSDPath()和getPhotoFileName()具体实现在下面
+            mPhotoPath1 = getSDPath() + "/" + "after.jpg";
             mPhotoFile = new File(mPhotoPath);
             if (!mPhotoFile.exists()) {
                 mPhotoFile.createNewFile();//创建新文件
@@ -117,18 +171,13 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     }
 
 
-    private String getPhotoFileName() {
-        Date date = new Date(System.currentTimeMillis());
-        @SuppressLint("SimpleDateFormat")
-        SimpleDateFormat dateFormat = new SimpleDateFormat("'IMG'_yyyyMMdd_HHmmss");
-        return dateFormat.format(date) + ".jpg";
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_RESULT) {
-            Bitmap bitmap = BitmapFactory.decodeFile(mPhotoPath, null);
+            CompressUtil.compressImage(mPhotoPath, mPhotoPath1, 50);
+            Bitmap bitmap = BitmapFactory.decodeFile(mPhotoPath1);
+            Log.i("TAG", bitmap.getRowBytes() * bitmap.getHeight() / 8 / 1024 + "KB");
             imageView.setImageBitmap(bitmap);
         }
     }
@@ -173,23 +222,5 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
             }
         }
         return true;
-    }
-
-    /**
-     * 申请权限结果返回处理
-     */
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_PERMISSION_REQUEST_CODE) {
-            boolean isAllGranted = true;
-            // 判断是否所有的权限都已经授予了
-            for (int grant : grantResults) {
-                if (grant != PackageManager.PERMISSION_GRANTED) {
-                    isAllGranted = false;
-                    break;
-                }
-            }
-        }
     }
 }

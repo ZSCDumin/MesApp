@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,10 +14,9 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -72,11 +72,15 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
     public void initData() {
         list.clear();
         code = getIntent().getExtras().get("code").toString();
-        id = (String) SPUtil.get(RepairWorkDetailActivity.this, GlobalKey.Login.CODE, id);
+
+        Log.i("RepairWorkDetail", code);
+        id = GetCurrentUserIDUtil.currentUserId(this);
         final String[] departmentcode = {""};
         final String[] eqArchivecode = {""};
         final String[] productLinecode = {""};
         final String[] applicationDescription = {""};
+        final String[] applicationPerson = {""};
+        final String[] applicationPersonContact = {""};
         final String[] applicationTime = {""};
         final String[] orderTime = {""};
         final String[] repairManname = {""};
@@ -114,6 +118,9 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
                             applicationDescription[0] = data.optString("applicationDescription"); //故障描述
                             applicationTime[0] = data.optString("applicationTime"); //申请时间
                             applicationTime[0] = DateUtil.getDateToString(Long.valueOf(applicationTime[0]));
+
+                            applicationPerson[0] = data.optJSONObject("applicationPerson").optString("name");
+                            applicationPersonContact[0] = data.optString("applicationPersonContact");
 
 
                             JSONObject flag = data.getJSONObject("flag");
@@ -161,6 +168,14 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
                             listmap.put("1", "申请时间:");
                             listmap.put("2", applicationTime[0]);
                             list.add(listmap);
+                            listmap = new HashMap<>();
+                            listmap.put("1", "报修人:");
+                            listmap.put("2", applicationPerson[0]);
+                            list.add(listmap);
+                            listmap = new HashMap<>();
+                            listmap.put("1", "报修人电话:");
+                            listmap.put("2", applicationPersonContact[0]);
+                            list.add(listmap);
                             if (flagcode >= 1) {
                                 listmap = new HashMap<>();
                                 listmap.put("1", "接单时间:");
@@ -170,10 +185,8 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
                                 listmap.put("1", "维修人:");
                                 listmap.put("2", repairManname[0]);
                                 list.add(listmap);
-
                             }
                             if (flagcode >= 2) {
-
                                 listmap = new HashMap<>();
                                 listmap.put("1", "维修时间:");
                                 listmap.put("2", finishTime[0]);
@@ -193,8 +206,6 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
                                 listmap.put("2", evaluationname[0]);
                                 list.add(listmap);
                             }
-
-
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -229,7 +240,7 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
                             public void onSuccess(String result) {
                                 int code = 1;
                                 String message = "出错";
-                                try{
+                                try {
 
                                     JSONObject jsonObject = new JSONObject(result);
                                     code = (int) jsonObject.get("code");
@@ -238,20 +249,20 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
-                            if (code == 0) {
+                                if (code == 0) {
                                     ToastUtil.showToast(RepairWorkDetailActivity.this, message, ToastUtil.Success);
-                                finish();
-                                ActivityUtil.switchTo(RepairWorkDetailActivity.this,RepairWorkActivity.class);
-                            } else {
+                                    finish();
+                                    ActivityUtil.switchTo(RepairWorkDetailActivity.this, RepairBillActivity.class);
+                                } else {
                                     ToastUtil.showToast(RepairWorkDetailActivity.this, message, ToastUtil.Error);
                                 }
                             }
 
-                @Override
-                public void onError(ApiException e) {
-                    ToastUtil.showToast(RepairWorkDetailActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                }
-            });
+                            @Override
+                            public void onError(ApiException e) {
+                                ToastUtil.showToast(RepairWorkDetailActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                            }
+                        });
 
             }
         });
@@ -263,7 +274,7 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                ActivityUtil.switchTo(RepairWorkDetailActivity.this,RepairWorkActivity.class);
+                ActivityUtil.switchTo(RepairWorkDetailActivity.this, RepairBillActivity.class);
             }
         });
         title.setText("维修进度");
@@ -287,8 +298,8 @@ public class RepairWorkDetailActivity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_repair_report_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1,s.get("1").toString());
-                holder.setText(R.id.tv2,s.get("2").toString());
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
 
 
             }

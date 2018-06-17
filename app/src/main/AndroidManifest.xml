@@ -22,9 +22,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <!-- NFC权限 -->
     <uses-permission android:name="android.permission.NFC" />
-
     <uses-feature
         android:name="android.hardware.nfc"
         android:required="true" />
@@ -44,23 +44,13 @@
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activity.LoginNfcActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleInstance">
+        <activity android:name=".activity.LoginNfcActivity">
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
-
                 <data android:mimeType="text/plain" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.nfc.action.TAG_DISCOVERED" />
-
-                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
@@ -69,11 +59,12 @@
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <activity android:name=".activity.HomeActivity" />
-        <activity android:name=".activity.home.equipment.InspectActivity" />
-        <activity android:name=".activity.home.equipment.RepairBillActivity" />
-        <activity android:name=".activity.home.equipment.OutsourceActivity" />
         <activity android:name=".activity.home.quality.TestCheckActivity" />
         <activity android:name=".activity.home.quality.TestCheck2Activity" />
         <activity android:name=".activity.home.quality.TestCheckProductActivity" />
@@ -85,7 +76,6 @@
         <activity
             android:name=".activity.me.ModifyPasswordActivity"
             android:windowSoftInputMode="adjustPan" />
-        <activity android:name=".activity.me.SettingActivity" />
         <activity android:name=".activity.home.equipment.InspectWorkerActivity" />
         <activity android:name=".activity.home.equipment.InspectWorkerDetailActivity" />
         <activity
@@ -108,12 +98,10 @@
             android:name=".activity.home.equipment.InspectMonitorJudgeActivity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.home.equipment.InspectMonitorJudgeErrActivity" />
-        <activity android:name=".activity.home.quality.TestCheckMainActivity" />
         <activity android:name=".activity.home.quality.TestCheckProcessActivity" />
         <activity android:name=".activity.home.quality.TestCheckProcessedActivity" />
         <activity android:name=".activity.home.quality.TestCheckProcessDetailActivity" />
         <activity android:name=".activity.home.quality.TestCheckProcessedDetailActivity" />
-        <activity android:name=".activity.home.quality.TestReleaseMainActivity" />
         <activity android:name=".activity.home.quality.TestRelease2Activity" />
         <activity android:name=".activity.home.quality.TestReleaseProcessDetailActivity" />
         <activity android:name=".activity.home.quality.TestReleaseProcessedDetailActivity" />
@@ -128,34 +116,45 @@
         <activity android:name=".activity.home.equipment.RepairScoreDetail2Activity" />
         <activity android:name=".activity.home.equipment.RepairScoreActivity" />
         <activity android:name=".activity.home.equipment.RepairWorkDetailActivity" />
+        <activity android:name=".activity.home.equipment.RepairBillActivity" />
         <activity
             android:name=".activity.home.equipment.RepairWorkDetail2Activity"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.home.equipment.RepairWorkActivity" />
         <activity android:name=".activity.home.equipment.RepairReportDetailActivity" />
-        <activity
-            android:name=".activity.home.equipment.RepairReportActivity"
-            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".activity.home.equipment.DeviceInfoActivity" />
         <activity android:name=".activity.home.equipment.QrManageActivity" />
         <activity android:name=".activity.home.equipment.RepairApplyActivity" />
         <activity android:name=".activity.home.id_management.IdManagementActivity" />
-        <activity android:name=".activity.home.id_management.MemberNameActivity" />
-        <activity android:name=".activity.home.warehouse.MaterialOutMainActivity" />
+        <activity android:name=".activity.home.id_management.MemberNameActivity">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.nfc.action.TECH_DISCOVERED"
+                android:resource="@xml/nfc_tech_filter" />
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity android:name=".activity.home.warehouse.MaterialOutCheckActivity" />
         <activity android:name=".activity.home.warehouse.MaterialOutActivityDetail1" />
         <activity android:name=".activity.home.warehouse.MaterialOutActivityDetail1Scan" />
         <activity android:name=".activity.home.warehouse.MaterialOutActivityDetail2" />
         <activity android:name=".activity.home.warehouse.MaterialOutCheckActivityDetail1" />
         <activity android:name=".activity.home.warehouse.MaterialOutCheckActivityDetail2" />
-        <activity android:name=".activity.home.warehouse.ProductInMainActivity" />
         <activity android:name=".activity.home.warehouse.ProductInAddActivity" />
         <activity android:name=".activity.home.warehouse.ProductInAddActivityDetail1" />
         <activity android:name=".activity.home.warehouse.ProductInAddActivityDetail1Scan" />
         <activity android:name=".activity.home.warehouse.ProductInActivityDetail1" />
         <activity android:name=".activity.home.warehouse.ProductInActivityDetail2" />
         <activity android:name=".activity.home.warehouse.ProductInActivityDetail1Scan" />
-        <activity android:name=".activity.home.warehouse.ProductOutMainActivity" />
         <activity android:name=".activity.home.warehouse.ProductOutActivityDetail1" />
         <activity android:name=".activity.home.warehouse.ProductOutActivityDetail2" />
         <activity android:name=".activity.home.warehouse.ProductOutActivityDetail1Scan" />
@@ -172,7 +171,6 @@
         <activity android:name=".activity.home.warehouse.SampleOutActivityDetial2" />
         <activity android:name=".activity.home.warehouse.MaterialOutUrgentCheckActivity" />
         <activity android:name=".activity.home.warehouse.ProductInAddActivityDetail2" />
-        <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesManagement" />
         <activity android:name=".activity.home.production_management.ShaiwangManagement.ShaiWangManagement" />
         <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagement" />
         <activity android:name=".activity.home.production_management.CheckScalesManagement.CheckScalesManagementDetails1" />

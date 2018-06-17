@@ -19,8 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -39,22 +38,21 @@ public class RepairApplyActivity extends AppCompatActivity {
     TextView title;
     @Bind(R.id.add)
     ImageView add;
-
     @Bind(R.id.bt)
     Button bt;
-    @Bind(R.id.tv1)
-    TextView tv1;
-    @Bind(R.id.tv2)
-    TextView tv2;
-    @Bind(R.id.tv3)
-    TextView tv3;
     @Bind(R.id.describe_et)
     EditText describeEt;
+    @Bind(R.id.equipment_code_tv)
+    TextView equipmentCodeTv;
+    @Bind(R.id.department_code_tv)
+    TextView departmentCodeTv;
+    @Bind(R.id.product_line_code_tv)
+    TextView productLineCodeTv;
 
-    private String t1 = "";
-    private String t2 = "";
-    private String t3 = "";
-    private String t4 = "";
+    private String equipment_code = "";
+    private String department_code = "";
+    private String product_line_code = "";
+    private String describle = "";
     private String id = "";
 
     @SuppressLint("HandlerLeak")
@@ -65,9 +63,9 @@ public class RepairApplyActivity extends AppCompatActivity {
                 case BarcodeAPI.BARCODE_READ:
                     String s = (String) msg.obj;
                     String[] splitstr = s.split("-");
-                    tv1.setText(splitstr[0]);
-                    tv2.setText(splitstr[1]);
-                    tv3.setText(splitstr[2]);
+                    equipmentCodeTv.setText(splitstr[0]);
+                    productLineCodeTv.setText(splitstr[1]);
+                    departmentCodeTv.setText(splitstr[2]);
                     break;
             }
         }
@@ -82,29 +80,15 @@ public class RepairApplyActivity extends AppCompatActivity {
         initData();
         initView();
         initTitle();
-
     }
 
 
     private void initData() {
-        id = (String) SPUtil.get(RepairApplyActivity.this, GlobalKey.Login.CODE, id);
+        id = GetCurrentUserIDUtil.currentUserId(this);
     }
 
-    public void initPermission() {
-        String permission_code = (String) SPUtil.get(RepairApplyActivity.this, GlobalKey.permiss.SPKEY, new String(""));
-        String[] split_pc = permission_code.split("-");
-        int t = 0;
-        for (int i = 0; i < split_pc.length; i++) {
-            if (split_pc[i].equals(GlobalKey.permiss.Repair_Report)) t++;
-        }
-        if (t == 0) {
-            finish();
-            ToastUtil.showToast(RepairApplyActivity.this, "权限不足！", ToastUtil.Error);
-        }
-    }
 
     public void initTitle() {
-        initPermission();
         title.setText("维修申请");
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,22 +116,20 @@ public class RepairApplyActivity extends AppCompatActivity {
         BarcodeAPI.getInstance().open();
         BarcodeAPI.getInstance().setScannerType(20);// 设置扫描头类型(10:5110; 20: N3680 40:MJ-2000)
         BarcodeAPI.getInstance().m_handler = mHandler;
-        BarcodeAPI.getInstance().setEncoding("gbk");
+        BarcodeAPI.getInstance().setEncoding("utf8");
         BarcodeAPI.getInstance().setScanMode(true);//打开连扫
 
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                t1 = tv1.getText().toString();
-                t2 = tv2.getText().toString();
-                t3 = tv3.getText().toString();
-                t4 = describeEt.getText().toString();
-
-                if (t4.length() == 0) {
-                    describeEt.setError("输入不能为空");
+                equipment_code = equipmentCodeTv.getText().toString().trim();
+                product_line_code = productLineCodeTv.getText().toString().trim();
+                department_code = departmentCodeTv.getText().toString().trim();
+                describle = describeEt.getText().toString().trim();
+                if (describle.length() == 0) {
+                    describeEt.setError("描述不能为空");
                     return;
                 }
-
                 IProgressDialog mProgressDialog = new IProgressDialog() {
                     @Override
                     public Dialog getDialog() {
@@ -157,10 +139,10 @@ public class RepairApplyActivity extends AppCompatActivity {
                     }
                 };
                 EasyHttp.post(GlobalApi.Repair.UpErr.PATH)
-                        .params(GlobalApi.Repair.UpErr.eqArchive_code, t1) //设备
-                        .params(GlobalApi.Repair.UpErr.productLine_code, t2) //生产线
-                        .params(GlobalApi.Repair.UpErr.department_code, t3) //部门
-                        .params(GlobalApi.Repair.UpErr.applicationDescription, t4) //故障描述
+                        .params(GlobalApi.Repair.UpErr.department_code, department_code) //部门
+                        .params(GlobalApi.Repair.UpErr.eqArchive_code, equipment_code) //设备
+                        .params(GlobalApi.Repair.UpErr.productLine_code, product_line_code) //生产线
+                        .params(GlobalApi.Repair.UpErr.applicationDescription, describle) //故障描述
                         .params(GlobalApi.Repair.UpErr.applicationPerson_code, id) //申请人id
                         .sign(true)
                         .timeStamp(true)//本次请求是否携带时间戳

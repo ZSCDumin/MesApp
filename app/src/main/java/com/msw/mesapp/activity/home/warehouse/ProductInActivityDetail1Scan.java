@@ -9,7 +9,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -19,8 +18,7 @@ import android.widget.TextView;
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -28,8 +26,6 @@ import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -218,7 +214,7 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
     }
 
     public void checkSubmit() {
-        final String userCode = (String) SPUtil.get(this, GlobalKey.Login.CODE, "");
+        final String userCode = GetCurrentUserIDUtil.currentUserId(this);
         for (int i = 0; i < batchList.size(); i++) {
             Map map1 = batchList.get(i);
             for (int j = 0; j < list.size(); j++) {

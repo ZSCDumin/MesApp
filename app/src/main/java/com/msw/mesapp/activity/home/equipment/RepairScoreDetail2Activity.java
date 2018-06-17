@@ -70,9 +70,9 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
     public void initData() {
         list.clear();
         code = getIntent().getExtras().get("code").toString();
-        final String[] departmentcode = {""};
-        final String[] eqArchivecode = {""};
-        final String[] productLinecode = {""};
+        final String[] departmentname = {""};
+        final String[] eqArchivename = {""};
+        final String[] productLinename = {""};
         final String[] applicationDescription = {""};
         final String[] applicationTime = {""};
         final String[] orderTime = {""};
@@ -100,13 +100,13 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
                             JSONObject data = jsonObject.getJSONObject("data");
 
                             JSONObject department = data.getJSONObject("department");
-                            departmentcode[0] = department.optString("code"); //部门
+                            departmentname[0] = department.optString("name"); //部门
 
                             JSONObject eqArchive = data.getJSONObject("eqArchive");
-                            eqArchivecode[0] = eqArchive.optString("code"); //设备
+                            eqArchivename[0] = eqArchive.optString("name"); //设备
 
                             JSONObject productLine = data.getJSONObject("productLine");
-                            productLinecode[0] = productLine.optString("code"); //生产线
+                            productLinename[0] = productLine.optString("name"); //生产线
 
                             applicationDescription[0] = data.optString("applicationDescription"); //故障描述
                             applicationTime[0] = data.optString("applicationTime"); //申请时间
@@ -138,9 +138,9 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
 
 
                             Map listmap ;
-                            listmap = new HashMap<>(); listmap.put("1","部门:"); listmap.put("2", departmentcode[0]); list.add(listmap);
-                            listmap = new HashMap<>(); listmap.put("1","设备名称:"); listmap.put("2", eqArchivecode[0]); list.add(listmap);
-                            listmap = new HashMap<>(); listmap.put("1","生产线:"); listmap.put("2", productLinecode[0]); list.add(listmap);
+                            listmap = new HashMap<>(); listmap.put("1","部门:"); listmap.put("2", departmentname[0]); list.add(listmap);
+                            listmap = new HashMap<>(); listmap.put("1","设备名称:"); listmap.put("2", eqArchivename[0]); list.add(listmap);
+                            listmap = new HashMap<>(); listmap.put("1","生产线:"); listmap.put("2", productLinename[0]); list.add(listmap);
                             listmap = new HashMap<>(); listmap.put("1","故障描述:"); listmap.put("2",applicationDescription[0]); list.add(listmap);
                             listmap = new HashMap<>(); listmap.put("1","申请时间:"); listmap.put("2", applicationTime[0]); list.add(listmap);
                             if(flagcode >= 1){
@@ -182,7 +182,7 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                ActivityUtil.switchTo(RepairScoreDetail2Activity.this,RepairScoreActivity.class);
+                ActivityUtil.switchTo(RepairScoreDetail2Activity.this,RepairBillActivity.class);
             }
         });
         title.setText("维修进度");
@@ -213,8 +213,6 @@ public class RepairScoreDetail2Activity extends AppCompatActivity {
             protected void convert(ViewHolder holder, Map s, final int position) {
                 holder.setText(R.id.tv1,s.get("1").toString());
                 holder.setText(R.id.tv2,s.get("2").toString());
-
-
             }
         };
         recyclerView.setAdapter(adapter);

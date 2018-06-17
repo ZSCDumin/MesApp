@@ -1,6 +1,5 @@
 package com.msw.mesapp.activity.home.warehouse;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -26,12 +25,11 @@ import com.bin.david.form.utils.DensityUtils;
 import com.google.gson.Gson;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.bean.warehouse.MaterialInBean;
 import com.msw.mesapp.bean.warehouse.ProductGodown;
 import com.msw.mesapp.bean.warehouse.ProductGodownBean;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -119,7 +117,7 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
 
     public void initView() {
         totalweightTv.setText(String.valueOf(totalWeight));
-        auditorTv.setText(SPUtil.get(this, GlobalKey.Login.CODE, "").toString());
+        auditorTv.setText(GetCurrentUserIDUtil.currentUserId(this));
         auditTimeTv.setText(DateUtil.getCurrentDate2());
     }
 
@@ -280,7 +278,7 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
             ProductGodown productGodown = new ProductGodown(map.get("1").toString(), map.get("2").toString());
             list.add(productGodown);
         }
-        ProductGodownBean productGodownBean = new ProductGodownBean(data_list_code.get(rawTypeSp.getSelectedItemPosition()), data_list_code.get(departmentSp.getSelectedItemPosition()), String.valueOf(totalWeight), SPUtil.get(this, GlobalKey.Login.CODE, "").toString(), list);
+        ProductGodownBean productGodownBean = new ProductGodownBean(data_list_code.get(rawTypeSp.getSelectedItemPosition()), data_list_code.get(departmentSp.getSelectedItemPosition()), String.valueOf(totalWeight), GetCurrentUserIDUtil.currentUserId(this), list);
         Gson gson = new Gson();
         //使用Gson将对象转换为json字符串
         final String json = gson.toJson(productGodownBean);

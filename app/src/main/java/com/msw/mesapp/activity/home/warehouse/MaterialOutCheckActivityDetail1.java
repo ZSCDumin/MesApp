@@ -22,9 +22,8 @@ import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.bean.warehouse.MaterialInBean;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -157,7 +156,7 @@ public class MaterialOutCheckActivityDetail1 extends AppCompatActivity {
     @OnClick({R.id.back, R.id.disagree_bt, R.id.agree_bt})
     public void onViewClicked(View view) {
         String note = suggestionEt.getText().toString();
-        String auditorCode = SPUtil.get(this, GlobalKey.Login.CODE, "").toString();
+        String auditorCode = GetCurrentUserIDUtil.currentUserId(this);
         switch (view.getId()) {
             case R.id.back:
                 finish();

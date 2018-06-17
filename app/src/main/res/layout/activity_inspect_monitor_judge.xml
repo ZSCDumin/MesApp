@@ -98,13 +98,9 @@
                         android:id="@+id/tv3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_toRightOf="@+id/t1"
-                        android:ellipsize="marquee"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        android:lines="1"
-                        android:paddingRight="10dp"
+                        android:paddingEnd="10dp"
                         android:singleLine="true"
                         android:text="检查限位器、行程开关是否正常"
                         android:textColor="@color/firebrick"
@@ -149,17 +145,14 @@
                     android:layout_height="45dp"
                     android:layout_gravity="center">
 
-                    <info.hoang8f.widget.FButton
+                    <Button
                         android:id="@+id/bt1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toLeftOf="@+id/view"
                         android:text="不合格"
-                        android:textColor="@color/fbutton_color_clouds"
-                        fbutton:buttonColor="@color/skyblue"
-                        fbutton:cornerRadius="0dp"
-                        fbutton:shadowEnabled="true"
-                        fbutton:shadowHeight="1dp" />
+                        android:background="@color/blue"
+                        android:textColor="@color/fbutton_color_clouds" />
 
                     <View
                         android:id="@+id/view"
@@ -168,17 +161,14 @@
                         android:layout_centerHorizontal="true"
                         android:background="#00000000" />
 
-                    <info.hoang8f.widget.FButton
+                    <Button
                         android:id="@+id/bt2"
+                        android:background="@color/blue"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/view"
                         android:text="合格"
-                        android:textColor="@color/fbutton_color_clouds"
-                        fbutton:buttonColor="@color/skyblue"
-                        fbutton:cornerRadius="0dp"
-                        fbutton:shadowEnabled="true"
-                        fbutton:shadowHeight="1dp" />
+                        android:textColor="@color/fbutton_color_clouds" />
                 </RelativeLayout>
             </LinearLayout>
         </LinearLayout>

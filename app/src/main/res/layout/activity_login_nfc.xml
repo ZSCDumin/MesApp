@@ -1,82 +1,115 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@mipmap/login_bg"
-  >
+    android:orientation="vertical">
+
     <com.msw.mesapp.ui.background.FloatBackground
         android:id="@+id/float_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/loginUser"
-        android:layout_width="match_parent"
-        android:layout_height="220dp">
-        <ImageView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerInParent="true"
-            android:id="@+id/imageView"
-            android:background="@mipmap/logo"
-            android:visibility="invisible"/>
 
-    </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/login"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="#00ffffff"
-        android:layout_below="@+id/loginUser"
-        android:layout_alignParentStart="true">
-        <TableLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"
-            android:paddingLeft="15dp"
-            android:paddingRight="15dp">
-            <TableRow
-               >
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:id="@+id/loginUser"
+                android:layout_width="match_parent"
+                android:layout_height="220dp">
+
                 <ImageView
-                    android:layout_marginLeft="8dp"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:layout_gravity="center_vertical"
-                    android:src="@mipmap/usernameico"/>
-                <View
+                    android:id="@+id/imageView"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_centerInParent="true"
+                    android:background="@mipmap/logo"
+                    android:visibility="invisible" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/login"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/loginUser"
+                android:background="#00ffffff">
+
+                <TableLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:layout_width="2dp"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginTop="3dp"
-                    android:background="#15ffffff"/>
-                <com.msw.mesapp.ui.widget.ClearEditText
-                    android:layout_width="300dp"
-                    android:layout_gravity="center_vertical"
-                    android:id="@+id/username"
-                    android:layout_marginLeft="8dp"
-                    android:textSize="20sp"
-                    android:background="@null"
-                    android:singleLine="true"
-                    android:imeOptions="actionDone"
-                    android:textColor="@color/white"
-                    android:hint="nfc卡号为"
-                    android:textColorHint="#555566ee"/>
-            </TableRow>
+                    android:layout_centerInParent="true"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp">
+
+                    <TableRow>
+
+                        <ImageView
+                            android:layout_width="36dp"
+                            android:layout_height="36dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="8dp"
+                            android:src="@mipmap/usernameico" />
+
+                        <View
+                            android:layout_width="2dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginBottom="3dp"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="3dp"
+                            android:background="#15ffffff" />
+
+                        <com.msw.mesapp.ui.widget.ClearEditText
+                            android:id="@+id/username"
+                            android:layout_width="300dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="8dp"
+                            android:background="@null"
+                            android:hint="nfc卡号为"
+                            android:imeOptions="actionDone"
+                            android:singleLine="true"
+                            android:textColor="@color/white"
+                            android:textColorHint="#555566ee"
+                            android:textSize="20sp" />
+                    </TableRow>
 
 
-        </TableLayout>
-    </RelativeLayout>
+                </TableLayout>
+            </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/wjmm"
-        android:layout_below="@+id/login">
-    </RelativeLayout>
-</RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/login_with_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/login"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/login_with_account_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="使用账号密码登陆"
+                    android:textColor="@color/yellow"
+                    android:textSize="15dp" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/Login"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_below="@id/login_with_account"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/buttonstyle"
+                android:text="NFC登陆"
+                android:textColor="@color/skyblue"
+                android:textSize="20dp" />
+
+        </RelativeLayout>
     </com.msw.mesapp.ui.background.FloatBackground>
 
 

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
@@ -78,7 +77,7 @@
                         android:layout_width="3dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
-                        android:background="@color/titlecolor"></View>
+                        android:background="@color/titlecolor" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -97,58 +96,56 @@
                     <TableRow>
 
                         <LinearLayout
-                            android:id="@+id/device1"
+                            android:id="@+id/device_inspection_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_inspect" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="设备巡检"
+                                android:text="执行巡检"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/device2"
+                            android:id="@+id/repair_bill_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 app:srcCompat="@mipmap/icon_home_repair" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="维修单"
+                                android:text="维修单据"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/device3"
+                            android:id="@+id/repair_apply_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical"
                             android:visibility="visible">
 
@@ -156,43 +153,118 @@
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_repairlist" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
                                 android:text="维修申请"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/device4"
+                            android:id="@+id/qr_management_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical"
-                            android:visibility="visible">
+
+                            android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_qrcode" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
                                 android:text="条码管理"
                                 android:textSize="11dp" />
                         </LinearLayout>
+                    </TableRow>
+
+                    <TableRow>
+
+                        <LinearLayout
+                            android:id="@+id/device_verify_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_inspect" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="巡检审核"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/receive_repair_order_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_repair" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="维修接单"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/repair_comment_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_repairlist" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="维修评价"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
                     </TableRow>
                 </TableLayout>
 
@@ -207,7 +279,7 @@
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="15dp"
-                    android:background="@color/barcolor"></View>
+                    android:background="@color/barcolor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -218,7 +290,7 @@
                         android:layout_width="3dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
-                        android:background="@color/titlecolor"></View>
+                        android:background="@color/titlecolor" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -237,103 +309,152 @@
                     <TableRow>
 
                         <LinearLayout
-                            android:id="@+id/quality1"
+                            android:id="@+id/product_vertify_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_testcheck" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="化验审核"
+                                android:text="产品审核"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/quality2"
+                            android:id="@+id/material_vertify_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_release" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="化验发布"
+                                android:text="原料审核"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/quality3"
+                            android:id="@+id/produce_vertify_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
+
+                            android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_release" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="化验审核"
+                                android:text="制程审核"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/quality4"
+                            android:id="@+id/product_release_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
+
+                            android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_release" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="化验审核"
+                                android:text="产品发布"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
+                    </TableRow>
+
+                    <TableRow>
+
+                        <LinearLayout
+                            android:id="@+id/material_release_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_testcheck" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="原料发布"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/produce_release_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_release" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="制程发布"
+                                android:textSize="11dp" />
+                        </LinearLayout>
                     </TableRow>
                 </TableLayout>
             </LinearLayout>
@@ -341,13 +462,12 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:orientation="vertical">
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="15dp"
-                    android:background="@color/barcolor"></View>
+                    android:background="@color/barcolor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -358,7 +478,7 @@
                         android:layout_width="3dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
-                        android:background="@color/titlecolor"></View>
+                        android:background="@color/titlecolor" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -374,157 +494,210 @@
                     android:layout_height="wrap_content"
                     android:stretchColumns="*">
 
-                    <TextView
-                        android:background="@color/barcolor"
-                        android:paddingLeft="20dp"
-                        android:text="出入库管理"
-                        android:textSize="12dp"
-                        android:visibility="gone" />
-
                     <TableRow>
 
                         <LinearLayout
-                            android:id="@+id/iokun1"
+                            android:id="@+id/material_input_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_materialin" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
                                 android:text="原料入库"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/iokun3"
+                            android:id="@+id/material_output_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_materialout" />
+                                android:src="@mipmap/icon_home_materialout" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="原料出库"
+                                android:text="原料出库执行"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/iokun2"
+                            android:id="@+id/material_output_vertify_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
+                                app:srcCompat="@mipmap/icon_home_release" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="原料出库审核"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+                    </TableRow>
+
+                    <TableRow>
+
+                        <LinearLayout
+                            android:id="@+id/product_input_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
                                 app:srcCompat="@mipmap/icon_home_productin" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
                                 android:text="产品入库"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/iokun4"
+                            android:id="@+id/product_output_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
+
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_productout" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                android:gravity="center"
-                                android:text="产品出库"
-                                android:textSize="11dp" />
-                        </LinearLayout>
-                    </TableRow>
-                </TableLayout>
-
-                <TableLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:stretchColumns="*"
-                    android:visibility="visible">
-
-                    <TextView
-                        android:background="@color/barcolor"
-                        android:paddingLeft="20dp"
-                        android:text=""
-                        android:textSize="12dp"
-                        android:visibility="gone" />
-
-                    <TableRow>
-
-                        <LinearLayout
-                            android:id="@+id/panku1"
-                            android:layout_height="@dimen/item_home_high"
-                            android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_home_size"
-                                android:layout_height="@dimen/icon_home_size"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 app:srcCompat="@mipmap/icon_home_sampmake" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
+                                android:gravity="center"
+                                android:text="产品出库执行"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/product_output_vertify_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_productout" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="产品出库审核"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:id="@+id/add_vertify_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_samptake" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="新增缴库"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+
+                    </TableRow>
+
+                    <TableRow>
+
+                        <LinearLayout
+                            android:id="@+id/sample_input_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
+
+                                app:srcCompat="@mipmap/icon_home_sampmake" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
                                 android:gravity="center"
                                 android:text="样品入库"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/panku2"
+                            android:id="@+id/sample_output_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical"
                             android:visibility="visible">
 
@@ -532,66 +705,16 @@
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 app:srcCompat="@mipmap/icon_home_samptake" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="样品出库"
-                                android:textSize="11dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/panku3"
-                            android:layout_height="@dimen/item_home_high"
-                            android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_home_size"
-                                android:layout_height="@dimen/icon_home_size"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_samptake" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                android:gravity="center"
-                                android:text="化验审核"
-                                android:textSize="11dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/panku4"
-                            android:layout_height="@dimen/item_home_high"
-                            android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_home_size"
-                                android:layout_height="@dimen/icon_home_size"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_release" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                android:gravity="center"
-                                android:text="化验审核"
+                                android:text="样品领取"
                                 android:textSize="11dp" />
                         </LinearLayout>
                     </TableRow>
@@ -603,8 +726,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:orientation="vertical">
 
                 <View
                     android:layout_width="match_parent"
@@ -639,99 +761,88 @@
                     <TableRow>
 
                         <LinearLayout
-                            android:id="@+id/output1"
+                            android:id="@+id/product_check_scale_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 app:srcCompat="@mipmap/hecheng" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+
                                 android:gravity="center"
-                                android:text="核秤管理"
+                                android:text="生产核秤"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/output2"
+                            android:id="@+id/check_scale_vertify_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
+                                app:srcCompat="@mipmap/hecheng" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center_horizontal"
+
+                                android:gravity="center"
+                                android:text="核秤审核"
+                                android:textSize="11dp" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/shaiwang_check_ll"
+                            android:layout_height="@dimen/item_home_high"
+                            android:background="@drawable/setting_item_selector"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:layout_width="@dimen/icon_home_size"
+                                android:layout_height="@dimen/icon_home_size"
+                                android:layout_gravity="center_horizontal"
                                 app:srcCompat="@mipmap/shaiwang" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
                                 android:text="筛网检查"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/output3"
+                            android:id="@+id/jiaojieban_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 app:srcCompat="@mipmap/jiaojieban" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="交接班"
-                                android:textSize="11dp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/output4"
-                            android:layout_height="@dimen/item_home_high"
-                            android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
-                            android:orientation="vertical"
-                            android:visibility="invisible">
-
-                            <ImageView
-                                android:layout_width="@dimen/icon_home_size"
-                                android:layout_height="@dimen/icon_home_size"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_release" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                android:gravity="center"
-                                android:text="岗位日志"
+                                android:text="岗位交接 "
                                 android:textSize="11dp" />
                         </LinearLayout>
 
@@ -739,15 +850,15 @@
                 </TableLayout>
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="15dp"
-                android:background="@color/barcolor" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="15dp"
+                    android:background="@color/barcolor" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -777,34 +888,29 @@
                     <TableRow>
 
                         <LinearLayout
-                            android:id="@+id/idMg1"
+                            android:id="@+id/id_bind_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 app:srcCompat="@mipmap/icon_home_idmg" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="ID绑定"
+                                android:text="卡号绑定"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/idMg2"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical"
                             android:visibility="invisible">
 
@@ -812,24 +918,20 @@
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_repair" />
+                                app:srcCompat="@mipmap/icon_home_idmg" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="维修申请"
+                                android:text="卡号绑定"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/idMg3"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical"
                             android:visibility="invisible">
 
@@ -837,24 +939,20 @@
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_repairlist" />
+                                app:srcCompat="@mipmap/icon_home_idmg" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="维修单据"
+                                android:text="卡号绑定"
                                 android:textSize="11dp" />
                         </LinearLayout>
 
                         <LinearLayout
-                            android:id="@+id/idMg4"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-                            android:clickable="true"
                             android:orientation="vertical"
                             android:visibility="invisible">
 
@@ -862,18 +960,17 @@
                                 android:layout_width="@dimen/icon_home_size"
                                 android:layout_height="@dimen/icon_home_size"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
-                                app:srcCompat="@mipmap/icon_home_qrcode" />
+                                app:srcCompat="@mipmap/icon_home_idmg" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:layout_gravity="center_horizontal"
-                                android:focusable="false"
                                 android:gravity="center"
-                                android:text="条码管理"
+                                android:text="卡号绑定"
                                 android:textSize="11dp" />
                         </LinearLayout>
+
                     </TableRow>
                 </TableLayout>
 

@@ -27,8 +27,8 @@ import com.msw.mesapp.bean.LoginBean;
 import com.msw.mesapp.ui.background.FloatBackground;
 import com.msw.mesapp.ui.widget.ClearEditText;
 import com.msw.mesapp.utils.ACacheUtil;
+import com.msw.mesapp.utils.ActivityManager;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
@@ -66,6 +66,8 @@ public class LoginActivity extends AppCompatActivity {
 
     @Bind(R.id.setting)
     ImageView setting;
+    @Bind(R.id.login_with_nfc_tv)
+    TextView loginWithNfcTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         StatusBarUtils.setActivityTranslucent(this);//全屏
         ButterKnife.bind(this);
-
+        ActivityManager.getAppManager().addActivity(this); //添加当前Activity到Activity列表中
         isUserOn();
         initView();
 
@@ -84,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
 
         String name = "";
         String serverUrl;
-        name = (String) SPUtil.get(this, GlobalKey.Login.CODE, name);
+        name = SharedPreferenceUtils.getString(this, GlobalKey.Login.CODE, name);
         serverUrl = SharedPreferenceUtils.getString(this, SharedPreferenceUtils.BASEURL);
         if (serverUrl != null) {
             if (serverUrl.length() > 0)
@@ -92,7 +94,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         if (name != null) {
             if (name.length() > 0) {
-                //ToastUtil.showToast(this, "欢迎用户：" + name, ToastUtil.Success);
                 ActivityUtil.switchTo(LoginActivity.this, HomeActivity.class);
                 finish();
             }
@@ -169,8 +170,8 @@ public class LoginActivity extends AppCompatActivity {
                         if (status == 0) {
                             //保存用户信息
                             final String url = GlobalApi.BASEURL;
-                            SPUtil.put(LoginActivity.this, GlobalKey.permiss.SPKEY, permission_code);
-                            SPUtil.put(LoginActivity.this, GlobalKey.Login.CODE, name);
+                            SharedPreferenceUtils.putString(LoginActivity.this, GlobalKey.Permission.SPKEY, permission_code);
+                            SharedPreferenceUtils.putString(LoginActivity.this, GlobalKey.Login.CODE, name);
                             ACacheUtil.get(LoginActivity.this).put(GlobalKey.Login.DATA, loginModel);
                             //跳转
                             ToastUtil.showToast(LoginActivity.this, message + loginBean.getData().getCode(), ToastUtil.Success);
@@ -206,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
                 final NormalDialog dialog = new NormalDialog(LoginActivity.this);
                 dialog.content("请联系管理人员！")//
                         .btnNum(1)
-                        .btnText("666666")
+                        .btnText("开发者：杜敏")
                         .showAnim(bas_in)//
                         .dismissAnim(bas_out)//
                         .show();
@@ -228,7 +229,6 @@ public class LoginActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN) {
             if (System.currentTimeMillis() - firstTime > 2000) {
-                //Toast.makeText(HomeActivity.this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
                 ToastUtil.showToast(LoginActivity.this, "再按一次退出程序", ToastUtil.Info);
                 firstTime = System.currentTimeMillis();
             } else {
@@ -240,8 +240,16 @@ public class LoginActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
-    @OnClick(R.id.setting)
-    public void onViewClicked() {
-        ActivityUtil.switchTo(this, ChangeServerActivity.class);
+
+    @OnClick({R.id.setting, R.id.login_with_nfc_tv})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.setting:
+                ActivityUtil.switchTo(this, ChangeServerActivity.class);
+                break;
+            case R.id.login_with_nfc_tv:
+                ActivityUtil.switchTo(this, LoginNfcActivity.class);
+                break;
+        }
     }
 }

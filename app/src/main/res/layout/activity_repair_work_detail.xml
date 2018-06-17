@@ -48,13 +48,13 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="400dp"
                     android:background="#bbffffff" />
             </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_height="50dp"
                 android:background="@color/white" />
 
             <Button

@@ -20,8 +20,6 @@ import android.widget.TextView;
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
-import com.msw.mesapp.utils.SPUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;

@@ -12,16 +12,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
+import com.msw.mesapp.activity.home.equipment.RepairBillActivity;
 import com.msw.mesapp.activity.home.equipment.RepairWorkDetailActivity;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
@@ -36,6 +35,9 @@ import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -107,39 +109,36 @@ public class FragmentRepairWorking extends Fragment {
                     public void onSuccess(String result) {
                         int code = 1;
                         String message = "出错";
-
                         try {
-                            JSONObject jsonObject = JSON.parseObject(result);
-                            code = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
-                            JSONArray content = JSON.parseArray(data.get("content").toString());
+                            JSONObject jsonObject = new JSONObject(result);
+                            code = jsonObject.optInt("code");
+                            message = jsonObject.optString("message");
+                            JSONObject data = jsonObject.optJSONObject("data");
+                            JSONArray content = data.optJSONArray("content");
+                            totalPages = data.optInt("totalPages");
+                            totalElements = data.optInt("totalElements");
 
-                            totalPages = data.getInteger("totalPages");
-                            totalElements = data.getInteger("totalElements");
-
-                            for (int i = 0; i < content.size(); i++) {
-                                JSONObject content0 = JSON.parseObject(content.get(i).toString());
-
-                                JSONObject department = content0.getJSONObject("department");
-                                String departmentcode = department.getString("code"); //部门
-
-                                JSONObject eqArchive = content0.getJSONObject("eqArchive");
-                                String eqArchivecode = eqArchive.getString("code"); //设备
-
-                                JSONObject flag = content0.getJSONObject("flag");
-                                String flagname = flag.getString("name"); //是否接单
-
-                                String codeStr = content0.getString("code"); //主键
-
+                            for (int i = 0; i < content.length(); i++) {
+                                JSONObject item = content.getJSONObject(i);
+                                JSONObject equipment = item.optJSONObject("equipment");
+                                String departmentname = item.optJSONObject("department").optString("name");
+                                String equipmentname = "空值";
+                                if (equipment != null) {
+                                    equipmentname = equipment.optString("name"); //设备名称
+                                }
+                                JSONObject flag = item.getJSONObject("flag");
+                                String flagname = flag.optString("name"); //是否接单
+                                String codeStr = item.optString("code"); //主键
                                 Map listmap = new HashMap<>();
-                                listmap.put("1", "部门:" + departmentcode + " - - " + "设备:" + eqArchivecode); //部门+设备名称
+                                listmap.put("1", "部门:" + departmentname + " - - " + "设备:" + equipmentname); //部门+设备名称
                                 listmap.put("2", flagname); //是否接单
                                 listmap.put("3", codeStr); //主键
+                                Log.i("codeStr", codeStr);
                                 list.add(listmap);
                             }
 
                         } catch (Exception e) {
+                            ToastUtil.showToast(getActivity(), "数据异常", ToastUtil.Error);
                             e.printStackTrace();
                         }
                         if (code == 0) {
@@ -168,12 +167,14 @@ public class FragmentRepairWorking extends Fragment {
                 holder.setOnClickListener(R.id.item, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //ActivityUtil.toastShow(getActivity(), "点击了" + position);
-                        Map<String, Object> map = new HashMap<>();
-                        map.put("code", s.get("3").toString());
-
-                        ActivityUtil.switchTo(getActivity(), RepairWorkDetailActivity.class, map);
-                        getActivity().finish();
+                        if (getActivity() instanceof RepairBillActivity) {
+                            ToastUtil.showToast(getActivity(), "无法查看具体内容", ToastUtil.Warning);
+                        } else {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("code", s.get("3").toString());
+                            ActivityUtil.switchTo(getActivity(), RepairWorkDetailActivity.class, map);
+                            getActivity().finish();
+                        }
                     }
                 });
                 holder.setText(R.id.tv1, s.get("1").toString());
@@ -272,43 +273,40 @@ public class FragmentRepairWorking extends Fragment {
                         public void onSuccess(String result) {
                             int code = 1;
                             String message = "出错";
-
                             try {
-                                JSONObject jsonObject = JSON.parseObject(result);
-                                code = (int) jsonObject.get("code");
-                                message = (String) jsonObject.get("message");
-                                JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
-                                JSONArray content = JSON.parseArray(data.get("content").toString());
+                                JSONObject jsonObject = new JSONObject(result);
+                                code = jsonObject.optInt("code");
+                                message = jsonObject.optString("message");
+                                JSONObject data = jsonObject.optJSONObject("data");
+                                JSONArray content = data.optJSONArray("content");
+                                totalPages = data.optInt("totalPages");
+                                totalElements = data.optInt("totalElements");
 
-                                totalPages = data.getInteger("totalPages");
-                                totalElements = data.getInteger("totalElements");
-
-                                for (int i = 0; i < content.size(); i++) {
-                                    JSONObject content0 = JSON.parseObject(content.get(i).toString());
-
-                                    JSONObject department = content0.getJSONObject("department");
-                                    String departmentcode = department.getString("code"); //部门
-
-                                    JSONObject eqArchive = content0.getJSONObject("eqArchive");
-                                    String eqArchivecode = eqArchive.getString("code"); //设备
-
-                                    JSONObject flag = content0.getJSONObject("flag");
-                                    String flagname = flag.getString("name"); //是否接单
-
-                                    String codeStr = content0.getString("code"); //主键
-
+                                for (int i = 0; i < content.length(); i++) {
+                                    JSONObject item = content.getJSONObject(i);
+                                    JSONObject equipment = item.optJSONObject("equipment");
+                                    String departmentname = item.optJSONObject("department").optString("name");
+                                    String equipmentname = "空值";
+                                    if (equipment != null) {
+                                        equipmentname = equipment.optString("name"); //设备名称
+                                    }
+                                    JSONObject flag = item.getJSONObject("flag");
+                                    String flagname = flag.optString("name"); //是否接单
+                                    String codeStr = item.optString("code"); //主键
                                     Map listmap = new HashMap<>();
-                                    listmap.put("1", "部门:" + departmentcode + " - - " + "设备:" + eqArchivecode); //部门+设备名称
+                                    listmap.put("1", "部门:" + departmentname + " - - " + "设备:" + equipmentname); //部门+设备名称
                                     listmap.put("2", flagname); //是否接单
                                     listmap.put("3", codeStr); //主键
+                                    Log.i("codeStr", codeStr);
                                     list.add(listmap);
                                 }
 
                             } catch (Exception e) {
+                                ToastUtil.showToast(getActivity(), "数据异常", ToastUtil.Error);
                                 e.printStackTrace();
                             }
                             if (code == 0) {
-                                adapter.notifyDataSetChanged(); //显示添加的数据
+                                adapter.notifyDataSetChanged();
                             } else {
                                 ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                             }

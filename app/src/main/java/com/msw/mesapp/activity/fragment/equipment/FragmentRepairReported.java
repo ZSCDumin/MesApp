@@ -24,9 +24,8 @@ import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.equipment.RepairReportDetailActivity;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -94,7 +93,7 @@ public class FragmentRepairReported extends Fragment {
     }
 
     private void initData() {
-        id = (String) SPUtil.get(getActivity(), GlobalKey.Login.CODE, id);
+        id = GetCurrentUserIDUtil.currentUserId(getActivity());
         page = 0;
         EasyHttp.post(GlobalApi.Repair.PATH_REPORT)
                 .params(GlobalApi.Repair.code, id) //人id

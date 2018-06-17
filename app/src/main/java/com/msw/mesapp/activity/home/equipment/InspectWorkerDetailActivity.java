@@ -14,12 +14,9 @@ import android.widget.TextView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
@@ -162,9 +159,9 @@ public class InspectWorkerDetailActivity extends AppCompatActivity {
                                     Map map = new HashMap();
                                     map.put("code",s6[5]); //把code传过去
                                     ActivityUtil.switchTo(InspectWorkerDetailActivity.this, InspectWorkerJudgeActivity.class,map);
-                                    SPUtil.put(InspectWorkerDetailActivity.this, "inspectnum",String.valueOf(num));
-                                    SPUtil.put(InspectWorkerDetailActivity.this, "inspectcode",s6[0]);
-                                    SPUtil.put(InspectWorkerDetailActivity.this, "inspecttotal",String.valueOf(num));
+                                    SharedPreferenceUtils.putString(InspectWorkerDetailActivity.this, "inspectnum",String.valueOf(num));
+                                    SharedPreferenceUtils.putString(InspectWorkerDetailActivity.this, "inspectcode",s6[0]);
+                                    SharedPreferenceUtils.putString(InspectWorkerDetailActivity.this, "inspecttotal",String.valueOf(num));
                                 } else {
                                     ToastUtil.showToast(InspectWorkerDetailActivity.this, message, ToastUtil.Error);
                                 }

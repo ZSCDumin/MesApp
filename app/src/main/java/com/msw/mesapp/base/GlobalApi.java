@@ -6,10 +6,19 @@ package com.msw.mesapp.base;
 
 public class GlobalApi {
 
-    public static String BASEURL = "http://115.157.192.47:8080/mes/";
+    public static String BASEURL = "http://218.77.105.241:30080/mes/";
 
     public final static class AppUpdate {
         public final static String PATH = "appUpdate/getAll";
+    }
+
+    public final static class IdManagement {
+        public final static String code = "code";
+        public final static String enableIc = "enableIc";
+        public final static String inteCircCard = "inteCircCard";
+
+        public final static String bindCard = "user/updateInteCircCard";
+        public final static String PATH = "department/getDepartmentsAndUsers";
     }
 
     //待办事项

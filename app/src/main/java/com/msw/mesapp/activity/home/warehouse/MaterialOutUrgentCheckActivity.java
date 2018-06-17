@@ -25,12 +25,11 @@ import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.bean.warehouse.MaterialInBean;
 import com.msw.mesapp.bean.warehouse.MaterialOutBean;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -103,7 +102,7 @@ public class MaterialOutUrgentCheckActivity extends AppCompatActivity {
 
     @OnClick({R.id.back, R.id.submit})
     public void onViewClicked(View view) {
-        auditorCode = SPUtil.get(this, GlobalKey.Login.CODE, "").toString();
+        auditorCode = GetCurrentUserIDUtil.currentUserId(this);
         String note = suggestionEt.getText().toString();
         String selected_item = spinner.getSelectedItem().toString();
         switch (view.getId()) {

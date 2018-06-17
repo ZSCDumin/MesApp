@@ -76,10 +76,10 @@ public class ChangeServerActivity extends AppCompatActivity {
 
     public void changeServer() {
         if (server115Rb.isChecked()) {
-            GlobalApi.BASEURL = "http://115.157.192.47:8080/mes/";
+            GlobalApi.BASEURL = server115;
             ToastUtil.showToast(this, "您选择了115服务器", 1);
         } else if (server218Rb.isChecked()) {
-            GlobalApi.BASEURL = "http://218.77.105.241:30080/mes/";
+            GlobalApi.BASEURL = server218;
             ToastUtil.showToast(this, "您选择了218服务器", 1);
         }
         SharedPreferenceUtils.putString(this, SharedPreferenceUtils.BASEURL, GlobalApi.BASEURL);
@@ -120,11 +120,12 @@ public class ChangeServerActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonObject = new JSONObject(s);
                             JSONArray data = jsonObject.optJSONArray("data");
-
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject item = data.getJSONObject(i);
-                                version = item.optString("version");
-                                url = item.optString("url");
+                            if (data != null) {
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject item = data.getJSONObject(i);
+                                    version = item.optString("version");
+                                    url = item.optString("url");
+                                }
                             }
 
                         } catch (JSONException e) {

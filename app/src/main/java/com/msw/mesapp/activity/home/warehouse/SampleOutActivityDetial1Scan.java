@@ -1,5 +1,6 @@
 package com.msw.mesapp.activity.home.warehouse;
 
+import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,8 +19,7 @@ import android.widget.TextView;
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -64,6 +64,7 @@ public class SampleOutActivityDetial1Scan extends AppCompatActivity {
     int count = 1;
     String headcode = "";
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -110,7 +111,6 @@ public class SampleOutActivityDetial1Scan extends AppCompatActivity {
             map.put("1", String.valueOf(i+1));
             map.put("2", getIntent().getExtras().get("batchNumber" + String.valueOf(i)).toString());
             list.add(map);
-            //batchList.add(getIntent().getExtras().get("batchNumber" + String.valueOf(i)).toString());
         }
     }
 
@@ -172,7 +172,7 @@ public class SampleOutActivityDetial1Scan extends AppCompatActivity {
         BarcodeAPI.getInstance().setScanMode(true);//打开连扫
         BarcodeAPI.getInstance().scan();
 
-        final String userCode = (String) SPUtil.get(SampleOutActivityDetial1Scan.this, GlobalKey.Login.CODE, new String());
+        final String userCode = GetCurrentUserIDUtil.currentUserId(this);
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -16,10 +16,9 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -86,15 +85,21 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
     public void initData() {
         list.clear();
         code = getIntent().getExtras().get("code").toString();
-        id = (String) SPUtil.get(RepairScoreDetailActivity.this, GlobalKey.Login.CODE, id);
+        id = GetCurrentUserIDUtil.currentUserId(this);
         final String[] departmentcode = {""};
+        final String[] departmentname = {""};
         final String[] eqArchivecode = {""};
+        final String[] eqArchivename = {""};
         final String[] productLinecode = {""};
+        final String[] productLinename = {""};
         final String[] applicationDescription = {""};
         final String[] applicationTime = {""};
+        final String[] applicationPerson = {""};
+        final String[] applicationPersonContact = {""};
+
         final String[] orderTime = {""};
-        final String[] repairManname = {""};
         final String[] finishTime = {""};
+        final String[] repairManname = {""};
         final String[] repairmanDescription = {""};
         final String[] evaluatorname = {""};
         final String[] evaluationname = {""};
@@ -118,21 +123,26 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
 
                             JSONObject department = data.getJSONObject("department");
                             departmentcode[0] = department.optString("code"); //部门
+                            departmentname[0] = department.optString("name"); //部门
 
                             JSONObject eqArchive = data.getJSONObject("eqArchive");
                             eqArchivecode[0] = eqArchive.optString("code"); //设备
+                            eqArchivename[0] = eqArchive.optString("name"); //设备
 
                             JSONObject productLine = data.getJSONObject("productLine");
                             productLinecode[0] = productLine.optString("code"); //生产线
+                            productLinename[0] = productLine.optString("name"); //生产线
 
                             applicationDescription[0] = data.optString("applicationDescription"); //故障描述
                             applicationTime[0] = data.optString("applicationTime"); //申请时间
                             applicationTime[0] = DateUtil.getDateToString(Long.valueOf(applicationTime[0]));
 
+                            applicationPerson[0] = data.optJSONObject("applicationPerson").optString("name");
+                            applicationPersonContact[0] = data.optString("applicationPersonContact");
 
                             JSONObject flag = data.getJSONObject("flag");
                             int flagcode = flag.optInt("code"); //是否接单
-                            String flagname = flag.optString("name"); //是否接单
+
                             if (flagcode >= 1) {
                                 orderTime[0] = data.optString("orderTime"); //接单时间
                                 orderTime[0] = DateUtil.getDateToString(Long.valueOf(orderTime[0]));
@@ -156,28 +166,41 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
                             Map listmap;
                             listmap = new HashMap<>();
                             listmap.put("1", "部门:");
-                            listmap.put("2", departmentcode[0]);
+                            listmap.put("2", departmentname[0]);
                             list.add(listmap);
                             listmap = new HashMap<>();
                             listmap.put("1", "设备名称:");
-                            listmap.put("2", eqArchivecode[0]);
+                            listmap.put("2", eqArchivename[0]);
                             list.add(listmap);
                             listmap = new HashMap<>();
                             listmap.put("1", "生产线:");
-                            listmap.put("2", productLinecode[0]);
+                            listmap.put("2", productLinename[0]);
                             list.add(listmap);
                             listmap = new HashMap<>();
                             listmap.put("1", "故障描述:");
                             listmap.put("2", applicationDescription[0]);
                             list.add(listmap);
+
                             listmap = new HashMap<>();
                             listmap.put("1", "申请时间:");
                             listmap.put("2", applicationTime[0]);
                             list.add(listmap);
+
+                            listmap = new HashMap<>();
+                            listmap.put("1", "报修人:");
+                            listmap.put("2", applicationPerson[0]);
+                            list.add(listmap);
+
+                            listmap = new HashMap<>();
+                            listmap.put("1", "报修人电话:");
+                            listmap.put("2", applicationPersonContact[0]);
+                            list.add(listmap);
+
                             if (flagcode >= 1) {
                                 listmap = new HashMap<>();
                                 listmap.put("1", "接单时间:");
                                 listmap.put("2", orderTime[0]);
+                                list.add(listmap);
                                 listmap = new HashMap<>();
                                 listmap.put("1", "维修人:");
                                 listmap.put("2", repairManname[0]);
@@ -203,7 +226,6 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
                                 listmap.put("2", evaluationname[0]);
                                 list.add(listmap);
                             }
-
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -276,7 +298,7 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
                                 if (code == 0) {
                                     ToastUtil.showToast(RepairScoreDetailActivity.this, message, ToastUtil.Success);
                                     finish();
-                                    ActivityUtil.switchTo(RepairScoreDetailActivity.this, RepairScoreActivity.class);
+                                    ActivityUtil.switchTo(RepairScoreDetailActivity.this, RepairBillActivity.class);
                                 } else {
                                     ToastUtil.showToast(RepairScoreDetailActivity.this, message, ToastUtil.Error);
                                 }
@@ -299,6 +321,7 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
+                ActivityUtil.switchTo(RepairScoreDetailActivity.this, RepairBillActivity.class);
             }
         });
         title.setText("开始评价");
@@ -324,8 +347,6 @@ public class RepairScoreDetailActivity extends AppCompatActivity {
             protected void convert(ViewHolder holder, Map s, final int position) {
                 holder.setText(R.id.tv1, s.get("1").toString());
                 holder.setText(R.id.tv2, s.get("2").toString());
-
-
             }
         };
         recyclerView.setAdapter(adapter);

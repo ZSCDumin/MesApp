@@ -21,8 +21,7 @@ import com.msw.mesapp.ui.background.FloatRect;
 import com.msw.mesapp.ui.background.FloatRing;
 import com.msw.mesapp.ui.background.FloatText;
 import com.msw.mesapp.ui.widget.ClearEditText;
-import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.SPUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -79,7 +78,7 @@ public class ModifyPasswordActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 String code = "", o = "", n0 = "", n1 = "";
-                code = (String) SPUtil.get(ModifyPasswordActivity.this, GlobalKey.Login.CODE, code);
+                code = SharedPreferenceUtils.getString(ModifyPasswordActivity.this, GlobalKey.Login.CODE, code);
                 o = changeOld.getText().toString();
                 n0 = changeNew.getText().toString();
                 n1 = changeNew2.getText().toString();

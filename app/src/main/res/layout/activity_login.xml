@@ -98,7 +98,8 @@
                 android:id="@+id/wjmm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/login">
+                android:layout_below="@+id/login"
+                android:layout_marginTop="20dp">
 
                 <TextView
                     android:id="@+id/text_wjmm"
@@ -108,7 +109,25 @@
                     android:layout_marginRight="20dp"
                     android:text="忘记密码？"
                     android:textColor="@color/yellow"
-                    android:textSize="11dp" />
+                    android:textSize="15dp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/login_with_nfc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/login"
+                android:layout_marginTop="20dp">
+
+                <TextView
+                    android:id="@+id/login_with_nfc_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20dp"
+                    android:text="使用NFC登陆"
+                    android:textColor="@color/yellow"
+                    android:textSize="15dp" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -129,7 +148,7 @@
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
                         android:background="@drawable/buttonstyle"
-                        android:text="登  陆"
+                        android:text="账号登陆"
                         android:textColor="@color/skyblue"
                         android:textSize="20dp" />
                 </LinearLayout>

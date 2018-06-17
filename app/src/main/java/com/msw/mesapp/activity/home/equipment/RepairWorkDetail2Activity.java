@@ -203,7 +203,7 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                         if (code == 0) {
-                            if(lineflag != 1) line.setVisibility(View.GONE);
+                            if (lineflag != 1) line.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged(); //显示添加的数据
                         } else {
                             ToastUtil.showToast(RepairWorkDetail2Activity.this, message, ToastUtil.Error);
@@ -223,7 +223,10 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(et.getText().toString().length() == 0) { et.setError("输入不能为空"); return; }
+                if (et.getText().toString().length() == 0) {
+                    et.setError("输入不能为空");
+                    return;
+                }
 
                 String repairmanDescription = et.getText().toString();
 
@@ -248,11 +251,12 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
                                 }
                                 if (code == 0) {
                                     finish();
-                                    ActivityUtil.switchTo(RepairWorkDetail2Activity.this,RepairWorkActivity.class);
+                                    ActivityUtil.switchTo(RepairWorkDetail2Activity.this, RepairBillActivity.class);
                                 } else {
                                     ToastUtil.showToast(RepairWorkDetail2Activity.this, message, ToastUtil.Error);
                                 }
                             }
+
                             @Override
                             public void onError(ApiException e) {
                                 ToastUtil.showToast(RepairWorkDetail2Activity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
@@ -269,7 +273,7 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 finish();
-                ActivityUtil.switchTo(RepairWorkDetail2Activity.this,RepairWorkActivity.class);
+                ActivityUtil.switchTo(RepairWorkDetail2Activity.this, RepairBillActivity.class);
             }
         });
         title.setText("维修进度");
@@ -293,10 +297,8 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_repair_report_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1,s.get("1").toString());
-                holder.setText(R.id.tv2,s.get("2").toString());
-
-
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
             }
         };
         recyclerView.setAdapter(adapter);
