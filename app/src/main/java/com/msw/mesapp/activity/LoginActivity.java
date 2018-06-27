@@ -132,62 +132,61 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
         EasyHttp.post(GlobalApi.Login.PATH)
-                .params(GlobalApi.Login.CODE, name)
-                .params(GlobalApi.Login.PASSWORD, pass)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new ProgressDialogCallBack<String>(mProgressDialog, true, true) {
-                    @Override
-                    public void onSuccess(String loginModel) {
-                        int status = 1;
-                        String message = "出错";
-                        LoginBean loginBean = null;
-                        try {
-                            JSONObject jsonObject = new JSONObject(loginModel);
-                            status = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data = new JSONObject(jsonObject.get("data").toString());
+            .params(GlobalApi.Login.CODE, name)
+            .params(GlobalApi.Login.PASSWORD, pass)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new ProgressDialogCallBack<String>(mProgressDialog, true, true) {
+                @Override
+                public void onSuccess(String loginModel) {
+                    int status = 1;
+                    String message = "出错";
+                    LoginBean loginBean = null;
+                    try {
+                        JSONObject jsonObject = new JSONObject(loginModel);
+                        status = (int) jsonObject.get("code");
+                        message = (String) jsonObject.get("message");
+                        JSONObject data = new JSONObject(jsonObject.get("data").toString());
 
-                            loginBean = JSON.parseObject(loginModel, LoginBean.class);
+                        loginBean = JSON.parseObject(loginModel, LoginBean.class);
 
-                            JSONArray roles = data.optJSONArray("roles");
+                        JSONArray roles = data.optJSONArray("roles");
 
-                            //获取权限
-                            for (int i = 0; i < roles.length(); i++) {
-                                JSONObject rolesItem = roles.optJSONObject(i);
-                                JSONArray models = rolesItem.optJSONArray("models"); //获取模型
-                                for (int j = 0; j < models.length(); j++) {
-                                    JSONObject modelsItem = models.optJSONObject(j);
-                                    String code = modelsItem.optString("code");
-                                    permission_code += (code + "-");
-                                }
+                        //获取权限
+                        for (int i = 0; i < roles.length(); i++) {
+                            JSONObject rolesItem = roles.optJSONObject(i);
+                            JSONArray models = rolesItem.optJSONArray("models"); //获取模型
+                            for (int j = 0; j < models.length(); j++) {
+                                JSONObject modelsItem = models.optJSONObject(j);
+                                String code = modelsItem.optString("code");
+                                permission_code += (code + "-");
                             }
-
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                        if (status == 0) {
-                            //保存用户信息
-                            final String url = GlobalApi.BASEURL;
-                            SharedPreferenceUtils.putString(LoginActivity.this, GlobalKey.Permission.SPKEY, permission_code);
-                            SharedPreferenceUtils.putString(LoginActivity.this, GlobalKey.Login.CODE, name);
-                            ACacheUtil.get(LoginActivity.this).put(GlobalKey.Login.DATA, loginModel);
-                            //跳转
-                            ToastUtil.showToast(LoginActivity.this, message + loginBean.getData().getCode(), ToastUtil.Success);
-                            ActivityUtil.switchTo(LoginActivity.this, HomeActivity.class);
-                            finish();
-                        } else {
-                            ToastUtil.showToast(LoginActivity.this, message, ToastUtil.Error);
-                        }
-                    }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        super.onError(e);
-                        ToastUtil.showToast(LoginActivity.this, "登录失败,请查看网络！", ToastUtil.Confusion);
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
+                    if (status == 0) {
+                        //保存用户信息
+                        SharedPreferenceUtils.putString(LoginActivity.this, GlobalKey.Permission.SPKEY, permission_code);
+                        SharedPreferenceUtils.putString(LoginActivity.this, GlobalKey.Login.CODE, name);
+                        ACacheUtil.get(LoginActivity.this).put(GlobalKey.Login.DATA, loginModel);
+                        //跳转
+                        ToastUtil.showToast(LoginActivity.this, "欢迎用户：" + loginBean.getData().getCode(), ToastUtil.Success);
+                        ActivityUtil.switchTo(LoginActivity.this, HomeActivity.class);
+                        finish();
+                    } else {
+                        ToastUtil.showToast(LoginActivity.this, message, ToastUtil.Error);
+                    }
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    super.onError(e);
+                    ToastUtil.showToast(LoginActivity.this, "登录失败,请查看网络！", ToastUtil.Confusion);
+                }
+            });
     }
 
     private void initView() {
@@ -206,11 +205,11 @@ public class LoginActivity extends AppCompatActivity {
                 BaseAnimatorSet bas_out = new FadeExit();
                 final NormalDialog dialog = new NormalDialog(LoginActivity.this);
                 dialog.content("请联系管理人员！")//
-                        .btnNum(1)
-                        .btnText("开发者：杜敏")
-                        .showAnim(bas_in)//
-                        .dismissAnim(bas_out)//
-                        .show();
+                    .btnNum(1)
+                    .btnText("开发者：杜敏")
+                    .showAnim(bas_in)//
+                    .dismissAnim(bas_out)//
+                    .show();
                 dialog.setOnBtnClickL(new OnBtnClickL() {
                                           @Override
                                           public void onBtnClick() {

@@ -7,6 +7,7 @@ package com.msw.mesapp.base;
 public class GlobalApi {
 
     public static String BASEURL = "http://218.77.105.241:30080/mes/";
+    //public static String BASEURL = "http://115.157.192.47:8080/mes/";
 
     public final static class AppUpdate {
         public final static String PATH = "appUpdate/getAll";
@@ -272,13 +273,11 @@ public class GlobalApi {
     public final static class Inspect {
         //工人巡检
         public final static class Worker {
+
             public final static class ByPage {  //通过时间查询-分页
-                public final static String PATH = "appMission/getAllByUpdateTimeByPage";
-                public final static String updateTime = "updateTime"; //时间，格式2018-04-12
-                public final static String page = "page"; //页码(从0开始，默认是0)
-                public final static String size = "size"; //每页记录数(默认是10)
-                public final static String sort = "sort"; //排序的字段名（默认是code）
-                public final static String asc = "asc"; //排序的方式（0是减序，1是增序，默认是1）
+                public final static String PATH = "tallyTaskHeader/getByUserAndStatus";
+                public final static String code = "code"; //用户编码
+                public final static String status = "status"; //状态
             }
 
             public final static class updateTime {  //更新时间
@@ -288,7 +287,11 @@ public class GlobalApi {
             }
 
             public final static class CheckHead {  //表头
-                public final static String PATH = "appCheckHead/getByCode";
+                public final static String PATH = "tallyTaskHeader/tally";
+                public final static String tallyTaskHeaderCode = "tallyTaskHeaderCode"; //指导书头部编码
+                public final static String tallyTaskCode = "tallyTaskCode"; //指导书内容编码
+                public final static String result = "result"; //结果状态码
+                public final static String PATH1 = "appCheckHead/getByCode";
                 public final static String code = "code"; //编码
             }
 
@@ -371,9 +374,12 @@ public class GlobalApi {
 
         //上报故障
         public final static class UpErr {
+            public final static String getArchiveCode = "archive/getByEquipment";
             public final static String PATH = "equipment/apply";
             public final static String department_code = "department.code"; //所属部门
             public final static String eqArchive_code = "eqArchive.code";//设备
+            public final static String equipment_code = "equipment.code";//设备
+            public final static String code = "code";//设备
             public final static String productLine_code = "productLine.code"; //所属产品线
             public final static String applicationDescription = "applicationDescription"; //故障描述
             public final static String applicationPerson_code = "applicationPerson.code"; //申请人id
@@ -504,6 +510,38 @@ public class GlobalApi {
 
         }
     }
+
+    public final static class ProductManagement {
+
+        public final static class CheckScale {
+
+
+        }
+
+        public final static class ShaiwangCheck {
+
+            public final static String getAllByPage = "screenCheck/getAllByPage";
+            public final static String add = "screenCheck/add";
+            public final static String getById = "screenCheck/getById";
+            public final static String getByShakerCodeLikeByPage = "screenCheck/getByShakerCodeLikeByPage";
+            public final static String update = "screenCheck/update";
+            public final static String code = "code";
+            public final static String shaker_code = "shaker_code";
+            public final static String shakerCode = "shakerCode";
+            public final static String picture = "picture";
+            public final static String inspector_code = "inspector_code";
+            public final static String inspector_time = "inspector_time";
+            public final static String state = "state";
+
+        }
+
+        public final static class Jiaojieban {
+            public final static String getAllByPage = "jobs/getAllByPage";
+
+        }
+
+    }
+
 
     //---------------------------------------------------------------------------
     //数据请求提示语

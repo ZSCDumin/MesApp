@@ -276,7 +276,7 @@ public class RepairWorkDetail2Activity extends AppCompatActivity {
                 ActivityUtil.switchTo(RepairWorkDetail2Activity.this, RepairBillActivity.class);
             }
         });
-        title.setText("维修进度");
+        title.setText("接单提交");
         add.setVisibility(View.INVISIBLE);
     }
 

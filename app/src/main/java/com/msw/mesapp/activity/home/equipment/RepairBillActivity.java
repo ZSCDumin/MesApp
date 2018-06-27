@@ -68,7 +68,7 @@ public class RepairBillActivity extends AppCompatActivity {
     public void initSlidingTabLayout() {
         fragmentList.add(new FragmentRepairWorking());//未维修
         fragmentList.add(new FragmentRepairWorked());//已维修
-        fragmentList.add(new FragmentRepairScoreing());//未评价
+        fragmentList.add(new FragmentRepairScoreing());//已接单
         fragmentList.add(new FragmentRepairScoreed());//已评价
         viewPager.setNestedpParent((ViewGroup) viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
         viewPager.setAdapter(new RepairBillActivity.mPageAdapter(this.getSupportFragmentManager()));

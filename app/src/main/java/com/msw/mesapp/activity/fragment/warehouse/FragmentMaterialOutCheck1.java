@@ -16,12 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.bumptech.glide.load.model.GenericLoaderFactory;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
-import com.msw.mesapp.activity.home.warehouse.MaterialOutActivityDetail1;
 import com.msw.mesapp.activity.home.warehouse.MaterialOutCheckActivityDetail1;
-import com.msw.mesapp.activity.home.warehouse.ProductOutCheckActivityDetail1;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.ToastUtil;

@@ -17,11 +17,13 @@ import android.widget.TextView;
 import com.alibaba.fastjson.JSON;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
+import com.msw.mesapp.base.GlobalKey;
 import com.msw.mesapp.bean.LoginBean;
 import com.msw.mesapp.ui.background.FloatBackground;
 import com.msw.mesapp.ui.widget.ClearEditText;
 import com.msw.mesapp.utils.ActivityManager;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -73,7 +75,7 @@ public class LoginNfcActivity extends AppCompatActivity {
             return;
         }
         mPendingIntent = PendingIntent
-                .getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+            .getActivity(this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
     }
 
 
@@ -88,54 +90,56 @@ public class LoginNfcActivity extends AppCompatActivity {
             }
         };
         EasyHttp.post(GlobalApi.Login.PATHNFC)
-                .params(GlobalApi.Login.NFC, interCardID)
-                .sign(true)
-                .timeStamp(true)
-                .execute(new ProgressDialogCallBack<String>(mProgressDialog, true, true) {
-                    @Override
-                    public void onSuccess(String loginModel) {
-                        int status = 1;
-                        String message = "出错";
-                        LoginBean loginBean = null;
-                        try {
-                            JSONObject jsonObject = new JSONObject(loginModel);
-                            status = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data = new JSONObject(jsonObject.get("data").toString());
+            .params(GlobalApi.Login.NFC, interCardID)
+            .sign(true)
+            .timeStamp(true)
+            .execute(new ProgressDialogCallBack<String>(mProgressDialog, true, true) {
+                @Override
+                public void onSuccess(String loginModel) {
+                    int status = 1;
+                    String message = "出错";
+                    LoginBean loginBean = null;
+                    try {
+                        JSONObject jsonObject = new JSONObject(loginModel);
+                        status = (int) jsonObject.get("code");
+                        message = (String) jsonObject.get("message");
+                        JSONObject data = new JSONObject(jsonObject.get("data").toString());
 
-                            loginBean = JSON.parseObject(loginModel, LoginBean.class);
+                        loginBean = JSON.parseObject(loginModel, LoginBean.class);
 
-                            JSONArray roles = data.optJSONArray("roles");
+                        JSONArray roles = data.optJSONArray("roles");
 
-                            //获取权限
-                            for (int i = 0; i < roles.length(); i++) {
-                                JSONObject rolesItem = roles.optJSONObject(i);
-                                JSONArray models = rolesItem.optJSONArray("models"); //获取模型
-                                for (int j = 0; j < models.length(); j++) {
-                                    JSONObject modelsItem = models.optJSONObject(j);
-                                    String code = modelsItem.optString("code");
-                                    permission_code += (code + "-");
-                                }
+                        //获取权限
+                        for (int i = 0; i < roles.length(); i++) {
+                            JSONObject rolesItem = roles.optJSONObject(i);
+                            JSONArray models = rolesItem.optJSONArray("models"); //获取模型
+                            for (int j = 0; j < models.length(); j++) {
+                                JSONObject modelsItem = models.optJSONObject(j);
+                                String code = modelsItem.optString("code");
+                                permission_code += (code + "-");
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                        if (status == 0) {
-                            //跳转
-                            ToastUtil.showToast(LoginNfcActivity.this, "欢迎用户：" + loginBean.getData().getCode(), ToastUtil.Success);
-                            finish();
-                            ActivityUtil.switchTo(LoginNfcActivity.this, HomeActivity.class);
-                        } else {
-                            ToastUtil.showToast(LoginNfcActivity.this, message, ToastUtil.Error);
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    if (status == 0) {
+                        //跳转
+                        ToastUtil.showToast(LoginNfcActivity.this, "欢迎用户：" + loginBean.getData().getCode(), ToastUtil.Success);
+                        SharedPreferenceUtils.putString(LoginNfcActivity.this, GlobalKey.Permission.SPKEY, permission_code);
+                        SharedPreferenceUtils.putString(LoginNfcActivity.this, GlobalKey.Login.CODE, loginBean.getData().getCode());
+                        ActivityUtil.switchTo(LoginNfcActivity.this, HomeActivity.class);
+                        finish();
+                    } else {
+                        ToastUtil.showToast(LoginNfcActivity.this, message, ToastUtil.Error);
+                    }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        super.onError(e);
-                        ToastUtil.showToast(LoginNfcActivity.this, "登录失败,请查看网络！", ToastUtil.Confusion);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    super.onError(e);
+                    ToastUtil.showToast(LoginNfcActivity.this, "登录失败,请查看网络！", ToastUtil.Confusion);
+                }
+            });
     }
 
     @Override
@@ -159,8 +163,8 @@ public class LoginNfcActivity extends AppCompatActivity {
 
         // 得到是否检测到TAG触发
         if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(intent.getAction())
-                || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())
-                || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            || NfcAdapter.ACTION_TAG_DISCOVERED.equals(intent.getAction())
+            || NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
             // 处理该intent
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             // 获取标签id数组

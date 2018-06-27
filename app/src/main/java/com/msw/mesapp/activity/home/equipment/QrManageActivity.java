@@ -6,6 +6,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -105,67 +106,68 @@ public class QrManageActivity extends AppCompatActivity {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.QrManager.PATH)
-                .params(GlobalApi.QrManager.page, String.valueOf(page)) //从第0 页开始获取
-                .params(GlobalApi.QrManager.size, "20") //一次获取多少
-                .params(GlobalApi.QrManager.sort, "code") //根据code排序
-                .params(GlobalApi.QrManager.asc, "1") //升序
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
+            .params(GlobalApi.QrManager.page, String.valueOf(page)) //从第0 页开始获取
+            .params(GlobalApi.QrManager.size, "20") //一次获取多少
+            .params(GlobalApi.QrManager.sort, "code") //根据code排序
+            .params(GlobalApi.QrManager.asc, "1") //升序
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
 
-                        try {
-                            JSONObject jsonObject = JSON.parseObject(result);
-                            code = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data =  JSON.parseObject(jsonObject.get("data").toString());
-                            JSONArray content = JSON.parseArray(data.get("content").toString());
+                    try {
+                        JSONObject jsonObject = JSON.parseObject(result);
+                        code = (int) jsonObject.get("code");
+                        message = (String) jsonObject.get("message");
+                        JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
+                        JSONArray content = JSON.parseArray(data.get("content").toString());
 
-                            totalPages = data.getInteger("totalPages");
-                            totalElements = data.getInteger("totalElements");
+                        totalPages = data.getInteger("totalPages");
+                        totalElements = data.getInteger("totalElements");
 
-                            for (int i = 0; i < content.size(); i++) {
-                                JSONObject content0 = JSON.parseObject(content.get(i).toString());
+                        for (int i = 0; i < content.size(); i++) {
+                            JSONObject content0 = JSON.parseObject(content.get(i).toString());
 
-                                eqcode = content0.getString("code");
-                                eqname = content0.getString("name");
+                            eqcode = content0.getString("code");
+                            eqname = content0.getString("name");
 
-                                JSONObject productLineobj = JSON.parseObject(content0.get("productLine").toString());
-                                productLinecode = productLineobj.getString("code");
-                                productLinename = productLineobj.getString("name");
+                            JSONObject productLineobj = JSON.parseObject(content0.get("productLine").toString());
+                            productLinecode = productLineobj.getString("code");
+                            productLinename = productLineobj.getString("name");
 
-                                JSONObject departmentobj  = JSON.parseObject(content0.get("department").toString());
-                                departmentcode = departmentobj.getString("code");
-                                departmentname = departmentobj.getString("name");
+                            JSONObject departmentobj = JSON.parseObject(content0.get("department").toString());
+                            departmentcode = departmentobj.getString("code");
+                            departmentname = departmentobj.getString("name");
 
-                                Map map = new HashMap<>();
-                                map.put("1",eqcode); //
-                                map.put("2",eqname); //
-                                map.put("3",productLinecode); //
-                                map.put("4",productLinename); //
-                                map.put("5",departmentcode); //
-                                map.put("6",departmentname); //
+                            Map map = new HashMap<>();
+                            map.put("1", eqcode); //
+                            map.put("2", eqname); //
+                            map.put("3", productLinecode); //
+                            map.put("4", productLinename); //
+                            map.put("5", departmentcode); //
+                            map.put("6", departmentname); //
 
-                                list.add(map);
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            list.add(map);
                         }
-                        if (code == 0) {
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            ToastUtil.showToast(QrManageActivity.this, message, ToastUtil.Error);
-                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(QrManageActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    if (code == 0) {
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        ToastUtil.showToast(QrManageActivity.this, message, ToastUtil.Error);
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(QrManageActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     public void initView() {
@@ -191,11 +193,11 @@ public class QrManageActivity extends AppCompatActivity {
                         map.put("5", s.get("5").toString());
                         map.put("6", s.get("6").toString());
 
-                        ActivityUtil.switchTo(QrManageActivity.this, DeviceInfoActivity.class,map);
+                        ActivityUtil.switchTo(QrManageActivity.this, DeviceInfoActivity.class, map);
                     }
                 });
-                holder.setText(R.id.tv1, s.get("1").toString() + "：" +s.get("2").toString());
-                holder.setText(R.id.tv2,s.get("6").toString());
+                holder.setText(R.id.tv1, s.get("1").toString() + "：" + s.get("2").toString());
+                holder.setText(R.id.tv2, s.get("6").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -208,7 +210,7 @@ public class QrManageActivity extends AppCompatActivity {
         searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
         //搜索显示的提示
         List<String> listitem = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
+        for (int i = 0; i < list.size(); i++) {
             listitem.add(list.get(i).get("1").toString());
         }
         String[] array = listitem.toArray(new String[listitem.size()]);
@@ -221,17 +223,18 @@ public class QrManageActivity extends AppCompatActivity {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 int i = 0;
-                for (Map<String,Object> temp : list) {
+                for (Map<String, Object> temp : list) {
                     i++;
                     if (temp.get("1").toString().contains(query)) {
                         break;
                     }
                 }
                 //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView,i);
+                smoothMoveToPosition(recyclerView, i);
                 adapter.notifyDataSetChanged();
                 return false;
             }
+
             //文本内容发生改变时
             @Override
             public boolean onQueryTextChange(String newText) {
@@ -258,7 +261,8 @@ public class QrManageActivity extends AppCompatActivity {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 refreshlayout.finishRefresh(1500);
-                getData();
+                initData();
+                Log.i("TAG", "initData");
                 classicsFooter.setLoadmoreFinished(false);
             }
         });
@@ -272,71 +276,73 @@ public class QrManageActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        page ++;
-        if(page > totalPages || list.size() > totalElements)  classicsFooter.setLoadmoreFinished(true);
+        page++;
+        if (page > totalPages || list.size() > totalElements)
+            classicsFooter.setLoadmoreFinished(true);
         else {
             EasyHttp.post(GlobalApi.QrManager.PATH)
-                    .params(GlobalApi.QrManager.page, String.valueOf(page)) //从第0 页开始获取
-                    .params(GlobalApi.QrManager.size, "20") //一次获取多少
-                    .params(GlobalApi.QrManager.sort, "code") //根据code排序
-                    .params(GlobalApi.QrManager.asc, "1") //升序
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            int code = 1;
-                            String message = "出错";
+                .params(GlobalApi.QrManager.page, String.valueOf(page)) //从第0 页开始获取
+                .params(GlobalApi.QrManager.size, "20") //一次获取多少
+                .params(GlobalApi.QrManager.sort, "code") //根据code排序
+                .params(GlobalApi.QrManager.asc, "1") //升序
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        int code = 1;
+                        String message = "出错";
 
-                            try {
-                                JSONObject jsonObject = JSON.parseObject(result);
-                                code = (int) jsonObject.get("code");
-                                message = (String) jsonObject.get("message");
-                                JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
-                                JSONArray content = JSON.parseArray(data.get("content").toString());
+                        try {
+                            JSONObject jsonObject = JSON.parseObject(result);
+                            code = (int) jsonObject.get("code");
+                            message = (String) jsonObject.get("message");
+                            JSONObject data = JSON.parseObject(jsonObject.get("data").toString());
+                            JSONArray content = JSON.parseArray(data.get("content").toString());
 
-                                totalPages = data.getInteger("totalPages");
-                                totalElements = data.getInteger("totalElements");
+                            totalPages = data.getInteger("totalPages");
+                            totalElements = data.getInteger("totalElements");
 
-                                for (int i = 0; i < content.size(); i++) {
-                                    JSONObject content0 = JSON.parseObject(content.get(i).toString());
+                            for (int i = 0; i < content.size(); i++) {
+                                JSONObject content0 = JSON.parseObject(content.get(i).toString());
 
-                                    eqcode = content0.getString("code");
-                                    eqname = content0.getString("name");
+                                eqcode = content0.getString("code");
+                                eqname = content0.getString("name");
 
-                                    JSONObject productLineobj = JSON.parseObject(content0.get("productLine").toString());
-                                    productLinecode = productLineobj.getString("code");
-                                    productLinename = productLineobj.getString("name");
+                                JSONObject productLineobj = JSON.parseObject(content0.get("productLine").toString());
+                                productLinecode = productLineobj.getString("code");
+                                productLinename = productLineobj.getString("name");
 
-                                    JSONObject departmentobj  = JSON.parseObject(content0.get("department").toString());
-                                    departmentcode = departmentobj.getString("code");
-                                    departmentname = departmentobj.getString("name");
+                                JSONObject departmentobj = JSON.parseObject(content0.get("department").toString());
+                                departmentcode = departmentobj.getString("code");
+                                departmentname = departmentobj.getString("name");
 
-                                    Map map = new HashMap<>();
-                                    map.put("1",eqcode); //
-                                    map.put("2",eqname); //
-                                    map.put("3",productLinecode); //
-                                    map.put("4",productLinename); //
-                                    map.put("5",departmentcode); //
-                                    map.put("6",departmentname); //
+                                Map map = new HashMap<>();
+                                map.put("1", eqcode); //
+                                map.put("2", eqname); //
+                                map.put("3", productLinecode); //
+                                map.put("4", productLinename); //
+                                map.put("5", departmentcode); //
+                                map.put("6", departmentname); //
 
-                                    list.add(map);
-                                }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                list.add(map);
                             }
-                            if (code == 0) {
-                                adapter.notifyDataSetChanged(); //显示添加的数据
-                            } else {
-                                ToastUtil.showToast(QrManageActivity.this, message, ToastUtil.Error);
-                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(QrManageActivity.this,GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        if (code == 0) {
+                            adapter.notifyDataSetChanged(); //显示添加的数据
+                        } else {
+                            ToastUtil.showToast(QrManageActivity.this, message, ToastUtil.Error);
                         }
-                    });
+                    }
+
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(QrManageActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    }
+                });
         }
     }
 

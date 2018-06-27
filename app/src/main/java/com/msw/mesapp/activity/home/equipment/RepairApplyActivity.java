@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -24,6 +26,7 @@ import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.ProgressDialogCallBack;
+import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 import com.zhouyou.http.subsciber.IProgressDialog;
 
@@ -50,6 +53,7 @@ public class RepairApplyActivity extends AppCompatActivity {
     TextView productLineCodeTv;
 
     private String equipment_code = "";
+    private String archive_code = "";
     private String department_code = "";
     private String product_line_code = "";
     private String describle = "";
@@ -130,6 +134,12 @@ public class RepairApplyActivity extends AppCompatActivity {
                     describeEt.setError("描述不能为空");
                     return;
                 }
+                if (archive_code.length() == 0) {
+                    getArchiveCode();
+                    Toast.makeText(RepairApplyActivity.this, "等待获取数据中...", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Log.i("TAG", archive_code);
                 IProgressDialog mProgressDialog = new IProgressDialog() {
                     @Override
                     public Dialog getDialog() {
@@ -140,7 +150,8 @@ public class RepairApplyActivity extends AppCompatActivity {
                 };
                 EasyHttp.post(GlobalApi.Repair.UpErr.PATH)
                         .params(GlobalApi.Repair.UpErr.department_code, department_code) //部门
-                        .params(GlobalApi.Repair.UpErr.eqArchive_code, equipment_code) //设备
+                        .params(GlobalApi.Repair.UpErr.eqArchive_code, archive_code) //档案编码
+                        .params(GlobalApi.Repair.UpErr.equipment_code, equipment_code) //设备
                         .params(GlobalApi.Repair.UpErr.productLine_code, product_line_code) //生产线
                         .params(GlobalApi.Repair.UpErr.applicationDescription, describle) //故障描述
                         .params(GlobalApi.Repair.UpErr.applicationPerson_code, id) //申请人id
@@ -175,6 +186,34 @@ public class RepairApplyActivity extends AppCompatActivity {
                         });
             }
         });
+    }
+
+    public void getArchiveCode() {
+
+        EasyHttp.post(GlobalApi.Repair.UpErr.getArchiveCode)
+                .params(GlobalApi.Repair.UpErr.code, equipment_code)
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(RepairApplyActivity.this, "获取数据失败", ToastUtil.Error);
+                    }
+
+                    @Override
+                    public void onSuccess(String s) {
+                        try {
+                            Log.i("TAG",equipment_code);
+                            Log.i("TAG", s);
+                            JSONObject jsonObject = JSON.parseObject(s);
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String code = data.getString("code");
+                            archive_code = code;
+                            ToastUtil.showToast(RepairApplyActivity.this, "获取数据成功", ToastUtil.Error);
+                        } catch (Exception e) {
+                            ToastUtil.showToast(RepairApplyActivity.this, "获取的数据有异常", ToastUtil.Error);
+                        }
+                    }
+                });
+
     }
 
 

@@ -11,37 +11,96 @@
         layout="@layout/title_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-    <!-- 标题 -->
-    <ScrollView
+
+    <LinearLayout
+        android:layout_marginTop="50dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="任务描述："
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/task_describe_tv"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:background="#bbffffff" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="33dp"
-                android:background="@color/white" />
-
-            <Button
-                android:id="@+id/bt"
-                android:layout_width="200dp"
-                android:layout_height="40dp"
-                android:background="@drawable/button_submit_selector"
-                android:text="进入工作"
-                android:textColor="@color/white" />
+                android:layout_height="wrap_content"
+                android:text="1111"
+                android:textSize="16dp" />
 
         </LinearLayout>
-    </ScrollView>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="任务要求："
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/task_requirement_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1111"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="发起时间："
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/task_createTime_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1111"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="执行人员："
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/task_doer_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="1111"
+                android:textSize="16dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 </LinearLayout>

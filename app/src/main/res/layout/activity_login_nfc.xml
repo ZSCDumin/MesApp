@@ -69,6 +69,8 @@
                             android:hint="nfc卡号为"
                             android:imeOptions="actionDone"
                             android:singleLine="true"
+                            android:focusable="false"
+                            android:inputType="textPassword"
                             android:textColor="@color/white"
                             android:textColorHint="#555566ee"
                             android:textSize="20sp" />

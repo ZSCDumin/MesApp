@@ -21,7 +21,8 @@ import android.widget.ImageView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.equipment.RepairBillActivity;
-import com.msw.mesapp.activity.home.equipment.RepairScoreDetailActivity;
+import com.msw.mesapp.activity.home.equipment.RepairWorkActivity;
+import com.msw.mesapp.activity.home.equipment.RepairWorkDetail2Activity;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.ToastUtil;
@@ -67,8 +68,15 @@ public class FragmentRepairScoreing extends Fragment {
     int totalPages = 0; //总共几页
     int totalElements = 0; //总共多少条数据
 
-    private boolean mShouldScroll;/** 目标项是否在最后一个可见项之后*/
-    private int mToPosition; /** 记录目标项位置*/
+    private boolean mShouldScroll;
+    /**
+     * 目标项是否在最后一个可见项之后
+     */
+    private int mToPosition;
+
+    /**
+     * 记录目标项位置
+     */
 
 
     @Override
@@ -90,7 +98,171 @@ public class FragmentRepairScoreing extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.Repair.PATH_ByFlagInPages)
-                .params(GlobalApi.Repair.code, "1") //查找所有完成维修的数据
+            .params(GlobalApi.Repair.code, "1") //查找所有已接单的数据
+            .params(GlobalApi.Repair.page, String.valueOf(page)) //从第0 业开始获取
+            .params(GlobalApi.Repair.size, "20") //一次获取多少
+            .params(GlobalApi.Repair.sort, "applicationTime") //根据code排序
+            .params(GlobalApi.Repair.asc, "0") //升序
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        JSONArray content = data.optJSONArray("content");
+                        totalPages = data.optInt("totalPages");
+                        totalElements = data.optInt("totalElements");
+
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject item = content.getJSONObject(i);
+                            JSONObject equipment = item.optJSONObject("equipment");
+                            String departmentname = item.optJSONObject("department").optString("name");
+                            String equipmentname = "空值";
+                            if (equipment != null) {
+                                equipmentname = equipment.optString("name"); //设备名称
+                            }
+                            JSONObject flag = item.getJSONObject("flag");
+                            String flagname = flag.optString("name"); //是否接单
+                            String codeStr = item.optString("code"); //主键
+                            Map listmap = new HashMap<>();
+                            listmap.put("1", "部门:" + departmentname + " - - " + "设备:" + equipmentname); //部门+设备名称
+                            listmap.put("2", flagname); //是否接单
+                            listmap.put("3", codeStr); //主键
+                            Log.i("codeStr", codeStr);
+                            list.add(listmap);
+                        }
+                    } catch (Exception e) {
+                        ToastUtil.showToast(getActivity(), "数据异常", ToastUtil.Error);
+                        e.printStackTrace();
+                    }
+                    if (code == 0) {
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
+                    }
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
+    }
+
+    private void initView() {
+        initRefreshLayout();
+        initSearchView();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
+        recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
+        adapter = new CommonAdapter<Map<String, Object>>(getActivity(), R.layout.item_repair_report, list) {
+            @Override
+            protected void convert(ViewHolder holder, final Map s, final int position) {
+                holder.setOnClickListener(R.id.item, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (getActivity() instanceof RepairBillActivity) {
+                            ToastUtil.showToast(getActivity(), "无法查看具体内容", ToastUtil.Warning);
+                        } else if (getActivity() instanceof RepairWorkActivity) {
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("code", s.get("3").toString());
+                            ActivityUtil.switchTo(getActivity(), RepairWorkDetail2Activity.class, map);
+                            getActivity().finish();
+
+                        }
+                    }
+                });
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
+            }
+        };
+        recyclerView.setAdapter(adapter);
+    }
+
+    /**
+     * 初始化滑动列表
+     */
+    private void initRefreshLayout() {
+        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(1500);
+                initData();
+                classicsFooter.setLoadmoreFinished(false);
+            }
+        });
+        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
+                getData();
+            }
+        });
+    }
+
+    /**
+     * 初始化搜索框
+     */
+    private void initSearchView() {
+        searchView.setVoiceSearch(false); //or true    ，是否支持声音的
+        searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
+        searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
+        //搜索显示的提示
+        List<String> listitem = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            listitem.add(list.get(i).get("2").toString());
+        }
+        String[] array = listitem.toArray(new String[listitem.size()]);
+        searchView.setSuggestions(array);
+
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            //数据提交时
+            //1.点击ListView的Item条目会回调这个方法
+            //2.点击系统键盘的搜索/回车后回调这个方法
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                int i = 0;
+                for (Map<String, Object> temp : list) {
+                    i++;
+                    if (temp.get("2").toString().contains(query)) {
+                        break;
+                    }
+                }
+                //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
+                smoothMoveToPosition(recyclerView, i);
+                adapter.notifyDataSetChanged();
+                return false;
+            }
+
+            @Override//文本内容发生改变时
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        imgsearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (searchView.isSearchOpen()) {
+                    searchView.closeSearch();//隐藏搜索框
+                } else {
+                    searchView.showSearch(true);//显示搜索框
+                }
+            }
+        });
+    }
+
+    private void getData() {
+        page++;
+        if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
+        else {
+            EasyHttp.post(GlobalApi.Repair.PATH_ByFlagInPages)
+                .params(GlobalApi.Repair.code, "2") //人id
                 .params(GlobalApi.Repair.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.Repair.size, "20") //一次获取多少
                 .params(GlobalApi.Repair.sort, "applicationTime") //根据code排序
@@ -129,6 +301,7 @@ public class FragmentRepairScoreing extends Fragment {
                                 Log.i("codeStr", codeStr);
                                 list.add(listmap);
                             }
+
                         } catch (Exception e) {
                             ToastUtil.showToast(getActivity(), "数据异常", ToastUtil.Error);
                             e.printStackTrace();
@@ -139,172 +312,12 @@ public class FragmentRepairScoreing extends Fragment {
                             ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                         }
                     }
+
                     @Override
                     public void onError(ApiException e) {
                         ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
                     }
                 });
-    }
-
-    private void initView() {
-        initRefreshLayout();
-        initSearchView();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
-        recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
-        adapter = new CommonAdapter<Map<String, Object>>(getActivity(), R.layout.item_repair_report, list) {
-            @Override
-            protected void convert(ViewHolder holder, final Map s, final int position) {
-                holder.setOnClickListener(R.id.item, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (getActivity() instanceof RepairBillActivity) {
-                            ToastUtil.showToast(getActivity(), "无法查看具体内容", ToastUtil.Warning);
-                        } else {
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("code", s.get("3").toString());
-
-                            ActivityUtil.switchTo(getActivity(), RepairScoreDetailActivity.class, map);
-                            getActivity().finish();
-                        }
-                    }
-                });
-                holder.setText(R.id.tv1,s.get("1").toString());
-                holder.setText(R.id.tv2,s.get("2").toString());
-            }
-        };
-        recyclerView.setAdapter(adapter);
-    }
-    /**
-     * 初始化滑动列表
-     */
-    private void initRefreshLayout() {
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                refreshlayout.finishRefresh(1500);
-                initData();
-                classicsFooter.setLoadmoreFinished(false);
-            }
-        });
-        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
-                getData();
-            }
-        });
-    }
-    /**
-     * 初始化搜索框
-     */
-    private void initSearchView() {
-        searchView.setVoiceSearch(false); //or true    ，是否支持声音的
-        searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
-        searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
-        //搜索显示的提示
-        List<String> listitem = new ArrayList<>();
-        for(int i=0;i<list.size();i++){
-            listitem.add(list.get(i).get("2").toString());
-        }
-        String[] array = listitem.toArray(new String[listitem.size()]);
-        searchView.setSuggestions(array);
-
-        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
-            //数据提交时
-            //1.点击ListView的Item条目会回调这个方法
-            //2.点击系统键盘的搜索/回车后回调这个方法
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                int i = 0;
-                for (Map<String,Object> temp : list) {
-                    i++;
-                    if (temp.get("2").toString().contains(query)) {
-                        break;
-                    }
-                }
-                //recyclerView.smoothScrollToPosition(i);//刷新完后调转到第一条内容处
-                smoothMoveToPosition(recyclerView,i);
-                adapter.notifyDataSetChanged();
-                return false;
-            }
-            @Override//文本内容发生改变时
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        imgsearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (searchView.isSearchOpen()) {
-                    searchView.closeSearch();//隐藏搜索框
-                } else {
-                    searchView.showSearch(true);//显示搜索框
-                }
-            }
-        });
-    }
-
-    private void getData() {
-        page ++;
-        if(page > totalPages)  classicsFooter.setLoadmoreFinished(true);
-        else {
-            EasyHttp.post(GlobalApi.Repair.PATH_ByFlagInPages)
-                    .params(GlobalApi.Repair.code, "2") //人id
-                    .params(GlobalApi.Repair.page, String.valueOf(page)) //从第0 业开始获取
-                    .params(GlobalApi.Repair.size, "20") //一次获取多少
-                    .params(GlobalApi.Repair.sort, "applicationTime") //根据code排序
-                    .params(GlobalApi.Repair.asc, "0") //升序
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            int code = 1;
-                            String message = "出错";
-                            try {
-                                JSONObject jsonObject = new JSONObject(result);
-                                code = jsonObject.optInt("code");
-                                message = jsonObject.optString("message");
-                                JSONObject data = jsonObject.optJSONObject("data");
-                                JSONArray content = data.optJSONArray("content");
-                                totalPages = data.optInt("totalPages");
-                                totalElements = data.optInt("totalElements");
-
-                                for (int i = 0; i < content.length(); i++) {
-                                    JSONObject item = content.getJSONObject(i);
-                                    JSONObject equipment = item.optJSONObject("equipment");
-                                    String departmentname = item.optJSONObject("department").optString("name");
-                                    String equipmentname = "空值";
-                                    if (equipment != null) {
-                                        equipmentname = equipment.optString("name"); //设备名称
-                                    }
-                                    JSONObject flag = item.getJSONObject("flag");
-                                    String flagname = flag.optString("name"); //是否接单
-                                    String codeStr = item.optString("code"); //主键
-                                    Map listmap = new HashMap<>();
-                                    listmap.put("1", "部门:" + departmentname + " - - " + "设备:" + equipmentname); //部门+设备名称
-                                    listmap.put("2", flagname); //是否接单
-                                    listmap.put("3", codeStr); //主键
-                                    Log.i("codeStr", codeStr);
-                                    list.add(listmap);
-                                }
-
-                            } catch (Exception e) {
-                                ToastUtil.showToast(getActivity(), "数据异常", ToastUtil.Error);
-                                e.printStackTrace();
-                            }
-                            if (code == 0) {
-                                adapter.notifyDataSetChanged();
-                            } else {
-                                ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
-                            }
-                        }
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                        }
-                    });
         }
 
 
@@ -320,6 +333,7 @@ public class FragmentRepairScoreing extends Fragment {
 
     /**
      * 滑动到指定位置
+     *
      * @param mRecyclerView
      * @param position
      */
@@ -340,7 +354,7 @@ public class FragmentRepairScoreing extends Fragment {
                 int top = mRecyclerView.getChildAt(movePosition).getTop();
                 mRecyclerView.smoothScrollBy(0, top);
             }
-        }else {
+        } else {
             // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
             // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
             mRecyclerView.smoothScrollToPosition(position);
@@ -348,6 +362,7 @@ public class FragmentRepairScoreing extends Fragment {
             mShouldScroll = true;
         }
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

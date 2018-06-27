@@ -21,7 +21,7 @@ import android.widget.ImageView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.equipment.RepairBillActivity;
-import com.msw.mesapp.activity.home.equipment.RepairWorkDetailActivity;
+import com.msw.mesapp.activity.home.equipment.RepairScoreDetailActivity;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.ToastUtil;
@@ -172,7 +172,7 @@ public class FragmentRepairWorked extends Fragment {
                         } else {
                             Map<String, Object> map = new HashMap<>();
                             map.put("code", s.get("3").toString());
-                            ActivityUtil.switchTo(getActivity(), RepairWorkDetailActivity.class, map);
+                            ActivityUtil.switchTo(getActivity(), RepairScoreDetailActivity.class, map);
                             getActivity().finish();
                         }
                     }

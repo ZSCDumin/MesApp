@@ -64,6 +64,7 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/device_management_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -271,6 +272,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/quality_management_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -460,6 +462,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/warehouse_management_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -724,6 +727,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/production_management_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -851,6 +855,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/id_management_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

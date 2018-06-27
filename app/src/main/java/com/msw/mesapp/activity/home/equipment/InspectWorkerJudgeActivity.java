@@ -1,44 +1,29 @@
 package com.msw.mesapp.activity.home.equipment;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.flyco.animation.BaseAnimatorSet;
-import com.flyco.animation.FadeExit.FadeExit;
-import com.flyco.animation.SlideEnter.SlideBottomEnter;
+import com.bumptech.glide.Glide;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.ui.widget.EditextDialog;
-import com.msw.mesapp.ui.widget.HorizontalProgressBarWithNumber;
-import com.msw.mesapp.utils.ActivityManager;
 import com.msw.mesapp.utils.ActivityUtil;
-import com.msw.mesapp.utils.DateUtil;
-import com.msw.mesapp.utils.GetCurrentUserIDUtil;
-import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
+import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import me.panpf.sketch.SketchImageView;
-import me.panpf.sketch.display.FadeInImageDisplayer;
-import me.panpf.sketch.request.ShapeSize;
+import butterknife.OnClick;
 
 public class InspectWorkerJudgeActivity extends AppCompatActivity {
 
@@ -48,39 +33,23 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
     TextView title;
     @Bind(R.id.add)
     ImageView add;
-    @Bind(R.id.t1)
-    TextView t1;
-    @Bind(R.id.tv1)
-    TextView tv1;
-    @Bind(R.id.t2)
-    TextView t2;
-    @Bind(R.id.tv2)
-    TextView tv2;
-    @Bind(R.id.t3)
-    TextView t3;
-    @Bind(R.id.tv3)
-    TextView tv3;
-    @Bind(R.id.line)
-    LinearLayout line;
-    @Bind(R.id.img)
-    SketchImageView img;
-    @Bind(R.id.horizbar)
-    HorizontalProgressBarWithNumber horizbar;
+    @Bind(R.id.imageView)
+    ImageView imageView;
+    @Bind(R.id.content_tv)
+    TextView contentTv;
+    @Bind(R.id.stander_tv)
+    TextView standerTv;
     @Bind(R.id.bt1)
     Button bt1;
     @Bind(R.id.bt2)
     Button bt2;
 
-    String code = "";
-    private String inspectnum = "";
-    private String inspectcode = "";
-    private String inspecttotal = "";
-    private int numInt = 0;
+    private String image = "";
+    private String content = "";
+    private String standard = "";
+    private String tallyTaskHeaderCode = "";
+    private String tallyTaskCode = "";
 
-    String checkHeadCode = "";
-    String picture = "";
-    String standard = "";
-    String content = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,55 +57,20 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inspect_judge);
         ButterKnife.bind(this);
         initData();
-        initView();
-        horizbar.setProgress((int) (100 * ((Float.valueOf(inspecttotal) - numInt + 1.0) / Float.valueOf(inspecttotal))));
+        initTitle();
     }
 
     private void initData() {
-        code = getIntent().getExtras().get("code").toString(); //code
-        inspectnum = SharedPreferenceUtils.getString(InspectWorkerJudgeActivity.this, "inspectnum", inspectnum);
-        inspectcode = SharedPreferenceUtils.getString(InspectWorkerJudgeActivity.this, "inspectcode", inspectcode);
-        inspecttotal = SharedPreferenceUtils.getString(InspectWorkerJudgeActivity.this, "inspecttotal", inspecttotal);
-        numInt = Integer.valueOf(inspectnum);
-
-        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH)
-                .params(GlobalApi.Inspect.Worker.CheckHead.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data = jsonObject.getJSONObject("data");
-
-                            JSONObject check = data.getJSONObject("check" + String.valueOf(numInt));
-
-                            checkHeadCode = data.optString("code");
-                            picture = check.optString("picture");
-                            standard = check.optString("standard");
-                            content = check.optString("content");
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (code == 0) {
-                            initView();
-                        } else {
-                            ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Error);
-                        }
-                    }
-
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(InspectWorkerJudgeActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                    }
-                });
+        image = getIntent().getExtras().get("7").toString();
+        content = getIntent().getExtras().get("1").toString();
+        standard = getIntent().getExtras().get("3").toString();
+        tallyTaskCode = getIntent().getExtras().get("5").toString();
+        tallyTaskHeaderCode = getIntent().getExtras().get("6").toString();
+        Glide.with(this).load(GlobalApi.BASEURL + "image/" + image).into(imageView);
+        contentTv.setText(content);
+        standerTv.setText(standard);
     }
+
 
     public void initTitle() {
         StatusBarUtils.setActivityTranslucent(this); //设置全屏
@@ -150,224 +84,49 @@ public class InspectWorkerJudgeActivity extends AppCompatActivity {
         add.setVisibility(View.INVISIBLE);
     }
 
-    private void initBanner() {
-        final String jpgUrl = picture;
-        img.getOptions()
-                .setCacheInDiskDisabled(false) //是否缓存
-                .setDecodeGifImage(true) //显示gif
-                .setLoadingImage(R.mipmap.ic_autorenew) //加载时的图片
-                .setErrorImage(R.mipmap.defualt_inspect)  //错误时的图片
-                //.setResize(new Resize(ActivityUtil.getScreenWidth(this),400, Resize.Mode.EXACTLY_SAME))
-                .setShapeSize(new ShapeSize(ActivityUtil.getScreenWidth(this), 460, ImageView.ScaleType.FIT_XY))
-                .setDisplayer(new FadeInImageDisplayer()); //显示图片的动画
-        img.setZoomEnabled(true); //开启手势
-        //img.setShowImageFromEnabled(true); //调试用的
-        img.displayImage(jpgUrl);
-        img.setClickRetryOnDisplayErrorEnabled(true);//加载失败时点击重新加载
-        img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(InspectWorkerJudgeActivity.this, PhotoviewActivity.class);
-                intent.putExtra("url", jpgUrl);//传递点击图片网址
-                startActivity(intent);
-            }
-        });
-
-
-    }
-
-    public void initView() {
-        initTitle();
-        initBanner();
-        setTextMarquee(tv1);
-        setTextMarquee(tv2);
-        setTextMarquee(tv3);
-        tv1.setText(content);
-        tv2.setText(standard);
-        if (numInt == 1) bt2.setText("完成");
-        final boolean[] resFlag = {false};
-        final String[] resStr = {""};
-        bt1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                BaseAnimatorSet bas_in = new SlideBottomEnter();
-                BaseAnimatorSet bas_out = new FadeExit();
-                final EditextDialog editextDialog = new EditextDialog(InspectWorkerJudgeActivity.this);
-                editextDialog.onCreateView();
-                editextDialog.setUiBeforShow();
-                editextDialog.showAnim(bas_in);
-                editextDialog.dismissAnim(bas_out);
-                editextDialog.setCanceledOnTouchOutside(true);//点击空白区域能不能退出
-                editextDialog.setCancelable(true);//按返回键能不能退出
-                editextDialog.show();
-                editextDialog.setOnClickListener(new EditextDialog.OnOKClickListener() {
-                    @Override
-                    public void onOKClick(EditText et) {
-                        String ss = et.getText().toString();
-                        if (ss.length() > 0) {
-                            line.setVisibility(View.VISIBLE);
-                            tv3.setText(ss);
-                            bt2.setText("下一项");
-                            if (numInt == 1) bt2.setText("完成");
-                            resFlag[0] = true;
-                            resStr[0] = ss;
-                        }
-                    }
-                });
-            }
-        });
-        bt2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (resFlag[0]) {
-                    new InspectVar().getInstance().workerRES1.add("1"); //不合格
-                    new InspectVar().getInstance().workerRES2.add(resStr[0]);
-                } else {
-                    new InspectVar().getInstance().workerRES1.add("0"); //合格
-                    new InspectVar().getInstance().workerRES2.add("");
-                }
-                if (numInt == 1) {
-                    EasyHttp.post(GlobalApi.Inspect.Worker.updateTime.PATH)
-                            .params(GlobalApi.Inspect.Worker.updateTime.code, inspectcode)
-                            .params(GlobalApi.Inspect.Worker.updateTime.updateTime, DateUtil.getOldorNewDate(1)) //将日期改为下一天
-                            .sign(true)
-                            .timeStamp(true)//本次请求是否携带时间戳
-                            .execute(new SimpleCallBack<String>() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    int code = 1;
-                                    String message = "出错";
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(result);
-                                        code = (int) jsonObject.get("code");
-                                        message = (String) jsonObject.get("message");
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (code == 0) {
-                                        ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Success);
-                                    } else {
-                                        ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Error);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(ApiException e) {
-                                    ToastUtil.showToast(InspectWorkerJudgeActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                                }
-                            });
-
-                    int tt = new InspectVar().getInstance().workerRES1.size();
-                    for (; tt <= 14; tt++) {
-                        new InspectVar().getInstance().workerRES1.add("");
-                        new InspectVar().getInstance().workerRES2.add("");
-                    }
-                    int ii = 0;
-
-                    EasyHttp.post(GlobalApi.Inspect.Worker.AppCheck.PATH)
-                            .params(GlobalApi.Inspect.Worker.AppCheck.checkHeadCode, checkHeadCode) //表头编码（确定从属车间）
-                            .params(GlobalApi.Inspect.Worker.AppCheck.checkPerson, GetCurrentUserIDUtil.currentUserId(InspectWorkerJudgeActivity.this)) //巡检人
-                            .params(GlobalApi.Inspect.Worker.AppCheck.time, DateUtil.getCurrentDate2()) //
-                            .params(GlobalApi.Inspect.Worker.AppCheck.examState, "1") //1是已巡检但未审核
-
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state1, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal1, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state2, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal2, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state3, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal3, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state4, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal4, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state5, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal5, new InspectVar().getInstance().workerRES2.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state6, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal6, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state7, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal7, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state8, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal8, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state9, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal9, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state10, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal10, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state11, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal11, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state12, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal12, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state13, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal13, new InspectVar().getInstance().workerRES2.get(ii++))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.state14, new InspectVar().getInstance().workerRES1.get(ii))
-                            .params(GlobalApi.Inspect.Worker.AppCheck.abnormal14, new InspectVar().getInstance().workerRES2.get(ii++))
-
-                            .sign(true)
-                            .timeStamp(true)//本次请求是否携带时间戳
-                            .execute(new SimpleCallBack<String>() {
-                                @Override
-                                public void onSuccess(String result) {
-                                    int code = 1;
-                                    String message = "出错";
-                                    try {
-                                        JSONObject jsonObject = new JSONObject(result);
-                                        code = (int) jsonObject.get("code");
-                                        message = (String) jsonObject.get("message");
-
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    if (code == 0) {
-                                        ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Success);
-                                        ActivityUtil.switchTo(InspectWorkerJudgeActivity.this, InspectWorkerActivity.class);
-
-                                        ActivityManager.getAppManager().finishAllActivity();//结束所有activity
-                                        finish();
-                                    } else {
-                                        ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Error);
-                                    }
-                                }
-
-                                @Override
-                                public void onError(ApiException e) {
-                                    ToastUtil.showToast(InspectWorkerJudgeActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                                }
-                            });
-
-                } else {
-                    Map map = new HashMap();
-                    map.put("code", code); //把code传过去
-                    ActivityUtil.switchTo(InspectWorkerJudgeActivity.this, InspectWorkerJudgeActivity.class, map);
-                    SharedPreferenceUtils.putString(InspectWorkerJudgeActivity.this, "inspectnum", String.valueOf(numInt - 1));
-                    ActivityManager.getAppManager().addActivity(InspectWorkerJudgeActivity.this);
-
-                }
-            }
-        });
-    }
-
-    public void setTextMarquee(TextView textView) {
-        if (textView != null) {
-            textView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-            textView.setSingleLine(true);
-            textView.setSelected(true);
-            textView.setFocusable(true);
-            textView.setFocusableInTouchMode(true);
+    @OnClick({R.id.back, R.id.bt1, R.id.bt2})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.back:
+                finish();
+                break;
+            case R.id.bt1://不合格
+                submitData("2");
+                break;
+            case R.id.bt2://合格
+                submitData("1");
+                break;
         }
     }
 
-    //图片加载
-//    public class ImageApp extends ImageLoader {
-//
-//        @Override
-//        public void displayImage(Context context, Object path, final ImageView imageView) {
-//            imageView.setScaleType(ImageView.ScaleType.FIT_XY);//等比例放大图片
-//            //不缓存图片，加载失败显示图片，
-//            Glide.with(context).load(path).diskCacheStrategy(DiskCacheStrategy.NONE).error(R.mipmap.defualt_inspect).into(imageView);
-//        }
-//    }
+    public void submitData(final String status) {
+        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH)
+            .params(GlobalApi.Inspect.Worker.CheckHead.tallyTaskCode, tallyTaskCode)
+            .params(GlobalApi.Inspect.Worker.CheckHead.tallyTaskHeaderCode, tallyTaskHeaderCode)
+            .params(GlobalApi.Inspect.Worker.CheckHead.result, status)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        Log.i("TAG", tallyTaskCode + " " + tallyTaskHeaderCode + " " + status);
+                        JSONObject jsonObject = new JSONObject(result);
+                        String message = jsonObject.optString("message");
+                        String code = jsonObject.optString("code");
+                        if (code.equals("0")) {
+                            ToastUtil.showToast(InspectWorkerJudgeActivity.this, "提交成功", ToastUtil.Success);
+                            ActivityUtil.switchTo(InspectWorkerJudgeActivity.this, InspectWorkerActivity.class);
+                            finish();
+                        } else
+                            ToastUtil.showToast(InspectWorkerJudgeActivity.this, message, ToastUtil.Default);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(InspectWorkerJudgeActivity.this, "提交出错", ToastUtil.Error);
+                }
+            });
     }
 }

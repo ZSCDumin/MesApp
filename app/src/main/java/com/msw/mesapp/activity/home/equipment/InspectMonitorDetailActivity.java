@@ -63,7 +63,8 @@ public class InspectMonitorDetailActivity extends AppCompatActivity {
         initData();
         initView();
     }
-    public void initData(){
+
+    public void initData() {
         list.clear();
         s6[0] = getIntent().getExtras().get("1").toString(); //code
         s6[1] = getIntent().getExtras().get("2").toString(); //name
@@ -72,61 +73,84 @@ public class InspectMonitorDetailActivity extends AppCompatActivity {
         s6[4] = getIntent().getExtras().get("5").toString(); //updateTime
         s6[5] = getIntent().getExtras().get("6").toString(); //checkCode
 
-        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH)
-                .params(GlobalApi.Inspect.Worker.CheckHead.code, s6[5])
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
+        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH1)
+            .params(GlobalApi.Inspect.Worker.CheckHead.code, s6[5])
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
 
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
 
-                            code = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data = jsonObject.getJSONObject("data");
+                        code = (int) jsonObject.get("code");
+                        message = (String) jsonObject.get("message");
+                        JSONObject data = jsonObject.getJSONObject("data");
 
 
-                            Map map;
-                            map = new HashMap(); map.put("1","车间号："); map.put("2",s6[1]); list.add(map);
-                            map = new HashMap(); map.put("1","设备名称："); map.put("2",data.optString("name")); list.add(map);
-                            map = new HashMap(); map.put("1","巡检内容："); map.put("2",data.optString("checkInfo")); list.add(map);
-                            map = new HashMap(); map.put("1","巡检标准："); map.put("2",data.optString("checkRequire")); list.add(map);
-                            map = new HashMap(); map.put("1","发起人："); map.put("2",data.optString("checkInitiator")); list.add(map);
-                            map = new HashMap(); map.put("1","发起时间："); map.put("2",s6[3]);list.add(map);
-                            map = new HashMap(); map.put("1","截止时间："); map.put("2",s6[4]);list.add(map);
+                        Map map;
+                        map = new HashMap();
+                        map.put("1", "车间号：");
+                        map.put("2", s6[1]);
+                        list.add(map);
+                        map = new HashMap();
+                        map.put("1", "设备名称：");
+                        map.put("2", data.optString("name"));
+                        list.add(map);
+                        map = new HashMap();
+                        map.put("1", "巡检内容：");
+                        map.put("2", data.optString("checkInfo"));
+                        list.add(map);
+                        map = new HashMap();
+                        map.put("1", "巡检标准：");
+                        map.put("2", data.optString("checkRequire"));
+                        list.add(map);
+                        map = new HashMap();
+                        map.put("1", "发起人：");
+                        map.put("2", data.optString("checkInitiator"));
+                        list.add(map);
+                        map = new HashMap();
+                        map.put("1", "发起时间：");
+                        map.put("2", s6[3]);
+                        list.add(map);
+                        map = new HashMap();
+                        map.put("1", "截止时间：");
+                        map.put("2", s6[4]);
+                        list.add(map);
 
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (code == 0) {
-                            adapter.notifyDataSetChanged(); //显示添加的数据
-                        } else {
-                            ToastUtil.showToast(InspectMonitorDetailActivity.this, message, ToastUtil.Error);
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(InspectMonitorDetailActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    if (code == 0) {
+                        adapter.notifyDataSetChanged(); //显示添加的数据
+                    } else {
+                        ToastUtil.showToast(InspectMonitorDetailActivity.this, message, ToastUtil.Error);
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(InspectMonitorDetailActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
 
-    private void initView(){
+    private void initView() {
         initTitle();
         initRefreshLayout();
         bt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ActivityUtil.switchTo(InspectMonitorDetailActivity.this,InspectMonitorJudgeActivity.class);
+                ActivityUtil.switchTo(InspectMonitorDetailActivity.this, InspectMonitorJudgeActivity.class);
                 finish();
             }
         });
     }
+
     private void initRefreshLayout() {
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
@@ -141,13 +165,13 @@ public class InspectMonitorDetailActivity extends AppCompatActivity {
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_repair_report_detail, list) {
             @Override
             protected void convert(ViewHolder holder, Map s, final int position) {
-                holder.setText(R.id.tv1,s.get("1").toString());
-                holder.setText(R.id.tv2,s.get("2").toString());
-
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
             }
         };
         recyclerView.setAdapter(adapter);
     }
+
     public void initTitle() {
         StatusBarUtils.setActivityTranslucent(this); //设置全屏
         back.setOnClickListener(new View.OnClickListener() {

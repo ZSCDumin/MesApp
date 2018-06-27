@@ -3,6 +3,7 @@ package com.msw.mesapp.utils;
 /**
  * Created by Mr.Meng on 2018/3/25.
  */
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -18,12 +19,14 @@ public class DateUtil {
         sf = new SimpleDateFormat("yyyy年MM月dd日");
         return sf.format(d);
     }
+
     /*获取系统时间 格式为："yyyy-MM-dd "*/
     public static String getCurrentDate2() {
         Date d = new Date();
         sf = new SimpleDateFormat("yyyy-MM-dd");
         return sf.format(d);
     }
+
     /**
      * 获取前n天日期、后n天日期
      *
@@ -53,13 +56,19 @@ public class DateUtil {
         return sf.format(d);
     }
 
+    public static String getDateToString(String time) {
+        Date d = new Date(Long.valueOf(time));
+        sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sf.format(d);
+    }
+
     /*将字符串转为时间戳*/
     public static long getStringToDate(String time) {
         sf = new SimpleDateFormat("yyyy年MM月dd日");
         Date date = new Date();
-        try{
+        try {
             date = sf.parse(time);
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
@@ -68,15 +77,16 @@ public class DateUtil {
 
     /**
      * 直接获取时间戳
+     *
      * @return
      */
     public static String getTimeStamp() {
         String currentDate = getCurrentDate();
         sf = new SimpleDateFormat("yyyy年MM月dd日");
         Date date = new Date();
-        try{
+        try {
             date = sf.parse(currentDate);
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
         }
         return String.valueOf(date.getTime());

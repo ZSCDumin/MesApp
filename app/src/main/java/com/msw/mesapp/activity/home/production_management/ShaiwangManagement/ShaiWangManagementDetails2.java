@@ -24,6 +24,7 @@ import android.widget.TextView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.CompressUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.ToastUtil;
 
 import org.json.JSONException;
@@ -31,11 +32,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -62,6 +65,8 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     private String mPhotoPath1;
     public final static int CAMERA_RESULT = 1;
     private static final int MY_PERMISSION_REQUEST_CODE = 10000;
+    private String code = "";
+    private String shakerCode = "";
 
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
@@ -81,14 +86,14 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shai_wang_management_details2);
         ButterKnife.bind(this);
+        code = getIntent().getExtras().get("code").toString();
+        shakerCode = getIntent().getExtras().get("shakerCode").toString();
         intiView();
     }
 
     public void intiView() {
-
-        title.setText("41号筛网");
+        title.setText(shakerCode + "筛网");
         add.setVisibility(View.INVISIBLE);
-
     }
 
     @OnClick({R.id.back, R.id.take_photo_bt, R.id.re_takephoto_bt, R.id.submit_bt})
@@ -113,7 +118,6 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
                         submitData();
                     }
                 }).start();
-                //ActivityUtil.switchTo(this, ShaiWangManagement.class);
                 break;
         }
     }
@@ -123,10 +127,19 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     public void submitData() {
         OkHttpClient client = new OkHttpClient();
         File file = new File(mPhotoPath1);
+        RequestBody fileBody = RequestBody.create(MediaType.parse("image/png"), file);
+        RequestBody requestBody = new MultipartBody.Builder()
+            .setType(MultipartBody.FORM)
+            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.picture, "after", fileBody)
+            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.shaker_code, shakerCode)
+            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.inspector_code, GetCurrentUserIDUtil.currentUserId(this))
+            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.inspector_time, new Date().getTime() + "")
+            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.state, "1")
+            .build();
         Request request = new Request.Builder()
-                .url(GlobalApi.BASEURL + "image/upload")
-                .post(RequestBody.create(MediaType.parse("text/x-markdown; charset=utf-8"), file))
-                .build();
+            .url(GlobalApi.BASEURL + GlobalApi.ProductManagement.ShaiwangCheck.add)
+            .post(requestBody)
+            .build();
         Response response = null;
         try {
             response = client.newCall(request).execute();
@@ -134,9 +147,7 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
             JSONObject jsonObject = new JSONObject(result);
             message = jsonObject.optString("message");
             handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
+        } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
     }
@@ -144,14 +155,14 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     public void takePhoto() {
         try {
             Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");//开始拍照
-            mPhotoPath = getSDPath() + "/" + "before.jpg";//设置图片文件路径，getSDPath()和getPhotoFileName()具体实现在下面
-            mPhotoPath1 = getSDPath() + "/" + "after.jpg";
+            mPhotoPath = getSDPath() + "/" + "before.png";//设置图片文件路径，getSDPath()和getPhotoFileName()具体实现在下面
+            mPhotoPath1 = getSDPath() + "/" + "after.png";
             mPhotoFile = new File(mPhotoPath);
             if (!mPhotoFile.exists()) {
                 mPhotoFile.createNewFile();//创建新文件
             }
             intent.putExtra(MediaStore.EXTRA_OUTPUT,//Intent有了图片的信息
-                    Uri.fromFile(mPhotoFile));
+                Uri.fromFile(mPhotoFile));
             startActivityForResult(intent, CAMERA_RESULT);//跳转界面传回拍照所得数据
         } catch (Exception e) {
             e.printStackTrace();
@@ -162,7 +173,7 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     public String getSDPath() {
         File sdDir = null;
         boolean sdCardExist = Environment.getExternalStorageState()
-                .equals(android.os.Environment.MEDIA_MOUNTED);   //判断sd卡是否存在
+            .equals(android.os.Environment.MEDIA_MOUNTED);   //判断sd卡是否存在
         if (sdCardExist) {
             sdDir = Environment.getExternalStorageDirectory();//获取跟目录
         }
@@ -187,11 +198,11 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
          * 第 1 步: 检查是否有相应的权限
          */
         boolean isAllGranted = checkPermissionAllGranted(
-                new String[]{
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                }
+            new String[]{
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }
         );
         // 如果这3个权限全都拥有, 则直接执行备份代码
         if (isAllGranted) {
@@ -202,13 +213,13 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
          */
         // 一次请求多个权限, 如果其他有权限是已经授予的将会自动忽略掉
         ActivityCompat.requestPermissions(
-                this,
-                new String[]{
-                        Manifest.permission.CAMERA,
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                },
-                MY_PERMISSION_REQUEST_CODE
+            this,
+            new String[]{
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            },
+            MY_PERMISSION_REQUEST_CODE
         );
     }
 

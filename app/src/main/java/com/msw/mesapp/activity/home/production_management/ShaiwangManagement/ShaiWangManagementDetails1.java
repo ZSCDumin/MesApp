@@ -11,9 +11,24 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msw.mesapp.R;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
+import com.msw.mesapp.utils.ToastUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,6 +52,13 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private List<Map<String, Object>> list = new ArrayList<>();
     private String code = "";
+    private String shakerCode = "";
+    @Bind(R.id.classicsFooter)
+    ClassicsFooter classicsFooter;
+    @Bind(R.id.fresh)
+    SmartRefreshLayout fresh;
+    private int page = 0;
+    private int totalPages = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,22 +66,50 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
         setContentView(R.layout.activity_shai_wang_management_details1);
         ButterKnife.bind(this);
         code = getIntent().getExtras().get("code").toString();
-        getData();
+        shakerCode = getIntent().getExtras().get("shakerCode").toString();
         intiView();
+        initRefreshLayout();
+        getData(1);
     }
 
-    public void getData() {
-        for (int i = 0; i < 10; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("1", "2018-6-6");
-            map.put("2", "" + i);
-            list.add(map);
+    public void getData(int flag) {
+        if (flag == 1) {
+            list.clear();
+            page = 0;
         }
+        EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.getByShakerCodeLikeByPage)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.shakerCode, shakerCode)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ShaiWangManagementDetails1.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        JSONArray content = data.optJSONArray("content");
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject item = content.getJSONObject(i);
+                            String inspectorTime = item.optString("inspectorTime");
+                            inspectorTime = DateUtil.getDateToString(inspectorTime);
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("1", inspectorTime);
+                            list.add(map);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public void intiView() {
 
-        title.setText("41号筛网");
+        title.setText(shakerCode + "筛网");
         add.setImageResource(R.mipmap.add);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
@@ -73,7 +123,8 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
                     public void onClick(View view) {
                         //查看详情
                         Map<String, Object> map = new HashMap<>();
-                        map.put("code", s.get("2").toString());
+                        map.put("code", code);
+                        map.put("shakerCode", shakerCode);
                         Log.i("TAG", code);
                         ActivityUtil.switchTo(ShaiWangManagementDetails1.this, ShaiWangManagementDetails3.class, map);
                     }
@@ -92,9 +143,37 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
             case R.id.add:
                 Map<String, Object> map = new HashMap<>();
                 map.put("code", code);
+                map.put("shakerCode", shakerCode);
                 Log.i("TAG", code);
                 ActivityUtil.switchTo(ShaiWangManagementDetails1.this, ShaiWangManagementDetails2.class, map);
                 break;
         }
+    }
+
+    public void loadMoreData() {
+        page = page + 1;
+        if (page > totalPages) {
+            classicsFooter.setLoadmoreFinished(true);
+        } else {
+            getData(0);
+        }
+    }
+
+    private void initRefreshLayout() {
+        fresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(1500);
+                getData(1);
+                classicsFooter.setLoadmoreFinished(false);
+            }
+        });
+        fresh.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadmore(1000);//传入false表示加载失败
+                loadMoreData();
+            }
+        });
     }
 }

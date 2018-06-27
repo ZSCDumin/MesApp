@@ -107,7 +107,7 @@ public class InspectMonitorJudgeActivity extends AppCompatActivity {
         map[0].put("2", "");
         list.add(map[0]);
 
-        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH)
+        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH1)
                 .params(GlobalApi.Inspect.Worker.CheckHead.code, CheckHeadCode)
                 .sign(true)
                 .timeStamp(true)//本次请求是否携带时间戳

@@ -14,14 +14,14 @@
         <android.support.v7.widget.CardView
             android:id="@+id/cardview"
             android:layout_width="match_parent"
-            android:layout_height="108dp"
+            android:layout_height="wrap_content"
             android:layout_margin="10dp"
             app:cardCornerRadius="10dp"
             app:cardElevation="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <RelativeLayout
@@ -37,20 +37,9 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:text="设备000发生故障，设备维修"
+                        android:text="设备000发生故障，设备维修aaaaaaassss"
                         android:textColor="#020202"
                         android:textSize="18dp" />
-
-                    <View
-                        android:id="@+id/tvview"
-                        android:layout_width="10dp"
-                        android:layout_height="10dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/cycle" />
-
                 </RelativeLayout>
 
                 <TextView
@@ -73,23 +62,26 @@
                     android:layout_marginRight="10dp"
                     android:background="@color/color3" />
 
-                <RelativeLayout
+                <LinearLayout
+                    android:id="@+id/ll"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="50dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/bt1"
-                        android:textColor="@color/brown"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toLeftOf="@+id/cc"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:background="@color/blueviolet"
                         android:gravity="center"
-                        android:text="查看详情" />
+                        android:text="查看详情"
+                        android:textColor="@color/yellow" />
 
                     <View
                         android:id="@+id/cc"
                         android:layout_width="2dp"
-                        android:layout_height="match_parent"
+                        android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:layout_marginBottom="5dp"
                         android:layout_marginTop="5dp"
@@ -97,13 +89,13 @@
 
                     <TextView
                         android:id="@+id/bt2"
-                        android:textColor="@color/brown"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toRightOf="@+id/cc"
+                        android:layout_width="200dp"
+                        android:layout_height="50dp"
+                        android:background="@color/blueviolet"
                         android:gravity="center"
-                        android:text="进入工作" />
-                </RelativeLayout>
+                        android:text="进入工作"
+                        android:textColor="@color/yellow" />
+                </LinearLayout>
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

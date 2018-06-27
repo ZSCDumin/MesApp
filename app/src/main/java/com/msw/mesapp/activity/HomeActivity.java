@@ -143,7 +143,16 @@ public class HomeActivity extends AppCompatActivity {
     DrawerLayout drawerLayout;
     @Bind(R.id.check_scale_vertify_ll)
     LinearLayout checkScaleVertifyLl;
-
+    @Bind(R.id.device_management_ll)
+    LinearLayout deviceManagementLl;
+    @Bind(R.id.quality_management_ll)
+    LinearLayout qualityManagementLl;
+    @Bind(R.id.warehouse_management_ll)
+    LinearLayout warehouseManagementLl;
+    @Bind(R.id.production_management_ll)
+    LinearLayout productionManagementLl;
+    @Bind(R.id.id_management_ll)
+    LinearLayout idManagementLl;
 
     List<CardFragment> fragmentList = new ArrayList<>();
     private String permission_code = "";
@@ -173,7 +182,10 @@ public class HomeActivity extends AppCompatActivity {
         /**
          * 设备管理模块权限控制
          */
-        {
+        if (permission_code.contains(GlobalKey.Permission.ProduceInpsect) || permission_code.contains(GlobalKey.Permission.InspectCheck) || permission_code.contains(GlobalKey.Permission.Repair_Bill)
+            || permission_code.contains(GlobalKey.Permission.Repair_Recevive) || permission_code.contains(GlobalKey.Permission.Repair_Apply) || permission_code.contains(GlobalKey.Permission.Repair_Comment) ||
+            permission_code.contains(GlobalKey.Permission.QrManagment)) {
+
             if (!permission_code.contains(GlobalKey.Permission.ProduceInpsect)) {//执行巡检
                 deviceInspectionLl.setVisibility(View.INVISIBLE);
             }
@@ -195,12 +207,15 @@ public class HomeActivity extends AppCompatActivity {
             if (!permission_code.contains(GlobalKey.Permission.QrManagment)) {//条码管理
                 qrManagementLl.setVisibility(View.INVISIBLE);
             }
+        } else {
+            deviceManagementLl.setVisibility(View.INVISIBLE);
         }
 
         /**
          * 品质管理模块权限控制
          */
-        {
+        if (permission_code.contains(GlobalKey.Permission.ProductCheck) || permission_code.contains(GlobalKey.Permission.MaterialCheck) || permission_code.contains(GlobalKey.Permission.ProcessCheck) ||
+            permission_code.contains(GlobalKey.Permission.ProductRelease) || permission_code.contains(GlobalKey.Permission.MaterialRelease) || permission_code.contains(GlobalKey.Permission.ProcessRelease)) {
             if (!permission_code.contains(GlobalKey.Permission.ProductCheck)) {//产品审核
                 productVertifyLl.setVisibility(View.INVISIBLE);
             }
@@ -219,12 +234,22 @@ public class HomeActivity extends AppCompatActivity {
             if (!permission_code.contains(GlobalKey.Permission.ProcessRelease)) {//制程发布
                 produceReleaseLl.setVisibility(View.INVISIBLE);
             }
+        } else {
+            qualityManagementLl.setVisibility(View.INVISIBLE);
         }
 
         /***
          * 仓库管理模块权限控制
          */
-        {
+        if (permission_code.contains(GlobalKey.Permission.MaterialInput) ||
+            permission_code.contains(GlobalKey.Permission.MaterialOutput) ||
+            permission_code.contains(GlobalKey.Permission.MaterialOutputCheck) ||
+            permission_code.contains(GlobalKey.Permission.ProductInput) ||
+            permission_code.contains(GlobalKey.Permission.ProductOutput) ||
+            permission_code.contains(GlobalKey.Permission.ProductOutputCheck) ||
+            permission_code.contains(GlobalKey.Permission.AddProductVertify) ||
+            permission_code.contains(GlobalKey.Permission.SampleInput) ||
+            permission_code.contains(GlobalKey.Permission.SampleOutput)) {
             if (!permission_code.contains(GlobalKey.Permission.MaterialInput)) {//原料入库
                 materialInputLl.setVisibility(View.INVISIBLE);
             }
@@ -252,12 +277,18 @@ public class HomeActivity extends AppCompatActivity {
             if (!permission_code.contains(GlobalKey.Permission.SampleOutput)) {//样品领取
                 sampleOutputLl.setVisibility(View.INVISIBLE);
             }
+        } else {
+            warehouseManagementLl.setVisibility(View.INVISIBLE);
         }
 
         /**
          * 生产管理模块的权限控制
          */
-        {
+        if (permission_code.contains(GlobalKey.Permission.ProductCheckScale) ||
+            permission_code.contains(GlobalKey.Permission.CheckScaleVertify) ||
+            permission_code.contains(GlobalKey.Permission.ShaiwangCheck) ||
+            permission_code.contains(GlobalKey.Permission.JobTransform)
+            ) {
             if (!permission_code.contains(GlobalKey.Permission.ProductCheckScale)) {//生产核秤
                 productCheckScaleLl.setVisibility(View.INVISIBLE);
             }
@@ -272,24 +303,27 @@ public class HomeActivity extends AppCompatActivity {
             if (!permission_code.contains(GlobalKey.Permission.JobTransform)) {//岗位交接
                 jiaojiebanLl.setVisibility(View.INVISIBLE);
             }
+        } else {
+            productionManagementLl.setVisibility(View.INVISIBLE);
         }
 
         /**
          * ID 管理模块的权限控制
          */
-        if (!permission_code.contains(GlobalKey.Permission.IDManagement)) {//ID管理
-            idBindLl.setVisibility(View.INVISIBLE);
+        if (permission_code.contains(GlobalKey.Permission.IDManagement)) {
+            if (!permission_code.contains(GlobalKey.Permission.IDManagement)) {//ID管理
+                idBindLl.setVisibility(View.INVISIBLE);
+            }
+        } else {
+            idManagementLl.setVisibility(View.INVISIBLE);
         }
 
     }
 
     private void initView() {
-        String name = "";
-        name = SharedPreferenceUtils.getString(HomeActivity.this, GlobalKey.Login.CODE, name);
-        ToastUtil.showToast(HomeActivity.this, "欢迎用户：" + name, ToastUtil.Success);
         initNavView();
         initCardView();
-        checkPermission();
+        checkPermission();//检查权限
     }
 
     private void initNavView() {
@@ -299,13 +333,13 @@ public class HomeActivity extends AppCompatActivity {
         TextView id = headerView.findViewById(R.id.tvid);
 
         head.getOptions()
-                .setCacheInDiskDisabled(true)
-                .setShaper(new CircleImageShaper())
-                .setDecodeGifImage(true) //显示gif
-                .setLoadingImage(R.mipmap.ic_autorenew) //加载时的图片
-                .setErrorImage(R.mipmap.defualt_head)  //错误时的图片
-                .setShapeSize(ShapeSize.byViewFixedSize()) //设置尺寸
-                .setDisplayer(new FadeInImageDisplayer()); //显示图片的动画
+            .setCacheInDiskDisabled(true)
+            .setShaper(new CircleImageShaper())
+            .setDecodeGifImage(true) //显示gif
+            .setLoadingImage(R.mipmap.ic_autorenew) //加载时的图片
+            .setErrorImage(R.mipmap.defualt_head)  //错误时的图片
+            .setShapeSize(ShapeSize.byViewFixedSize()) //设置尺寸
+            .setDisplayer(new FadeInImageDisplayer()); //显示图片的动画
         head.displayResourceImage(R.mipmap.icon);
         head.setClickRetryOnDisplayErrorEnabled(true);//加载失败时点击重新加载
 
@@ -353,44 +387,44 @@ public class HomeActivity extends AppCompatActivity {
     private void initCardView() {
         String userCode = SharedPreferenceUtils.getString(this, GlobalKey.Login.CODE, "");
         EasyHttp.post(GlobalApi.UndoThingsItems.PATH)
-                .params(GlobalApi.UndoThingsItems.STATUS, "0")
-                .params(GlobalApi.UndoThingsItems.ADDRESSEECODE, userCode)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONArray contents = jsonObject.optJSONObject("data").optJSONArray("content");
-                            for (int i = 0; i < contents.length(); i++) {
-                                JSONObject item = contents.optJSONObject(i);
-                                String code = item.optString("code");
-                                String title = item.optString("title");
-                                String content = item.optString("content"); //获取申请内容
-                                String date = item.optString("createTime");
-                                String url = item.optString("url");
-                                String status = item.optString("status");
-                                String ss[] = new String[6];
-                                ss[0] = title;
-                                ss[1] = content;
-                                ss[2] = date;
-                                ss[3] = url;
-                                ss[4] = status;
-                                ss[5] = code;
-                                fragmentList.add(CardFragment.newInstance(ss));
-                            }
-                            viewPager.setAdapter(new FrPageAdapter(HomeActivity.this.getSupportFragmentManager()));
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            .params(GlobalApi.UndoThingsItems.STATUS, "0")
+            .params(GlobalApi.UndoThingsItems.ADDRESSEECODE, userCode)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONArray contents = jsonObject.optJSONObject("data").optJSONArray("content");
+                        for (int i = 0; i < contents.length(); i++) {
+                            JSONObject item = contents.optJSONObject(i);
+                            String code = item.optString("code");
+                            String title = item.optString("title");
+                            String content = item.optString("content"); //获取申请内容
+                            String date = item.optString("createTime");
+                            String url = item.optString("url");
+                            String status = item.optString("status");
+                            String ss[] = new String[6];
+                            ss[0] = title;
+                            ss[1] = content;
+                            ss[2] = date;
+                            ss[3] = url;
+                            ss[4] = status;
+                            ss[5] = code;
+                            fragmentList.add(CardFragment.newInstance(ss));
                         }
+                        viewPager.setAdapter(new FrPageAdapter(HomeActivity.this.getSupportFragmentManager()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(HomeActivity.this, "获取待办事项出错!", ToastUtil.Error);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(HomeActivity.this, "获取待办事项出错!", ToastUtil.Error);
+                }
+            });
     }
 
 
@@ -404,6 +438,10 @@ public class HomeActivity extends AppCompatActivity {
                 ToastUtil.showToast(HomeActivity.this, "执行巡检", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, InspectWorkerActivity.class);
                 break;
+            case R.id.device_verify_ll:
+                ToastUtil.showToast(HomeActivity.this, "巡检审核", ToastUtil.Default);
+                ActivityUtil.switchTo(HomeActivity.this, InspectMonitorActivity.class);
+                break;
             case R.id.repair_bill_ll:
                 ToastUtil.showToast(HomeActivity.this, "维修单据", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, RepairBillActivity.class);
@@ -415,10 +453,6 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.qr_management_ll:
                 ToastUtil.showToast(HomeActivity.this, "条码管理", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, QrManageActivity.class);
-                break;
-            case R.id.device_verify_ll:
-                ToastUtil.showToast(HomeActivity.this, "巡检审核", ToastUtil.Default);
-                ActivityUtil.switchTo(HomeActivity.this, InspectMonitorActivity.class);
                 break;
             case R.id.receive_repair_order_ll:
                 ToastUtil.showToast(HomeActivity.this, "接维修单", ToastUtil.Default);

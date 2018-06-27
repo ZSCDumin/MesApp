@@ -5,15 +5,28 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msw.mesapp.R;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.ToastUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,27 +47,68 @@ public class JiaoJieBanManagement extends AppCompatActivity {
     ImageView add;
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
-
+    @Bind(R.id.classicsFooter)
+    ClassicsFooter classicsFooter;
+    @Bind(R.id.fresh)
+    SmartRefreshLayout fresh;
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
+    private int totalPages = 0;
+    private int page = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jiao_jie_ban_management);
         ButterKnife.bind(this);
-
-        getData();
+        getData(1);
+        initRefreshLayout();
         intiView();
     }
 
-    public void getData() {
-        for (int i = 0; i < 10; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("1", "第" + i + "号岗位");
-            map.put("2", i + "");
-            list.add(map);
+    public void loadMoreData() {
+        page = page + 1;
+        if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
+        else {
+            getData(0);
         }
+    }
+
+    public void getData(int flag) {
+        if (flag == 1) {
+            list.clear();
+            page = 0;
+        }
+        EasyHttp.post(GlobalApi.ProductManagement.Jiaojieban.getAllByPage)
+            .params("page", page + "")
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(JiaoJieBanManagement.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        JSONArray content = data.optJSONArray("content");
+                        totalPages = data.optInt("totalPages");
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject item = content.getJSONObject(i);
+                            String name = item.optString("name");
+                            String code = item.optString("code");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("1", name);
+                            map.put("2", code);
+                            list.add(map);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public void intiView() {
@@ -71,7 +125,7 @@ public class JiaoJieBanManagement extends AppCompatActivity {
                     public void onClick(View view) {
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("2").toString());
-                        Log.i("TAG", s.get("2").toString());
+                        map.put("name", s.get("1").toString());
                         ActivityUtil.switchTo(JiaoJieBanManagement.this, JiaoJieBanManagementDetails1.class, map);
                     }
                 });
@@ -85,5 +139,23 @@ public class JiaoJieBanManagement extends AppCompatActivity {
     @OnClick(R.id.back)
     public void onViewClicked() {
         finish();
+    }
+
+    private void initRefreshLayout() {
+        fresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(1500);
+                getData(1);
+                classicsFooter.setLoadmoreFinished(false);
+            }
+        });
+        fresh.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadmore(1000);//传入false表示加载失败
+                loadMoreData();
+            }
+        });
     }
 }

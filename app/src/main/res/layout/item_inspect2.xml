@@ -97,8 +97,9 @@
                         android:visibility="gone" />
 
                     <TextView
-                        android:textColor="@color/brown"
+                        android:textColor="@color/white"
                         android:id="@+id/bt2"
+                        android:background="@color/blue"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_toRightOf="@+id/cc"

@@ -1,11 +1,17 @@
 package com.msw.mesapp.activity.home.equipment;
 
+import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,14 +22,8 @@ import com.msw.mesapp.ui.widget.TitlePopup;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.GetCurrentUserIDUtil;
-import com.msw.mesapp.utils.SharedPreferenceUtils;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
-import com.scwang.smartrefresh.layout.SmartRefreshLayout;
-import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
-import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
@@ -51,159 +51,130 @@ public class InspectWorkerActivity extends AppCompatActivity {
     ImageView add;
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
-    @Bind(R.id.classicsFooter)
-    ClassicsFooter classicsFooter;
     @Bind(R.id.refreshLayout)
-    SmartRefreshLayout refreshLayout;
-    TitlePopup titlePopup;
-    private RecyclerView.Adapter adapter;
-
+    SwipeRefreshLayout refreshLayout;
     String id = "";
-    int page = 0; //获取数据的第几页
-    int totalPages = 0; //总共几页
-    int totalElements = 0; //总共多少条数据
-
     List<Map<String, Object>> list = new ArrayList<>();
+    TitlePopup titlePopup;
+    private CommonAdapter adapter;
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0x101:
+                    if (refreshLayout.isRefreshing()) {
+                        adapter.notifyDataSetChanged();
+                        refreshLayout.setRefreshing(false);//设置不刷新
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inspect_worker);
-        StatusBarUtils.setStatusBarColor(this, R.color.titlecolor);
         ButterKnife.bind(this);
-
+        StatusBarUtils.setStatusBarColor(this, R.color.titlecolor);
         initData();
         initView();
     }
 
-    //
     public void initData() {
         id = GetCurrentUserIDUtil.currentUserId(this);
         list.clear();
-        page = 0;
         EasyHttp.post(GlobalApi.Inspect.Worker.ByPage.PATH)
-                .params(GlobalApi.Inspect.Worker.ByPage.updateTime, DateUtil.getCurrentDate2()) //获取当天时间,格式：2018-04-012
-                .params(GlobalApi.Inspect.Worker.ByPage.page, String.valueOf(page)) //从第0 业开始获取
-                .params(GlobalApi.Inspect.Worker.ByPage.size, "20") //一次获取多少
-                .params(GlobalApi.Inspect.Worker.ByPage.sort, "code") //根据code排序
-                .params(GlobalApi.Inspect.Worker.ByPage.asc, "1") //升序
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = (int) jsonObject.get("code");
-                            message = (String) jsonObject.get("message");
-                            JSONObject data = jsonObject.getJSONObject("data");
-                            JSONArray content = data.getJSONArray("content");
-
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject content0 = new JSONObject(content.get(i).toString());
-                                Map map = new HashMap<>();
-                                map.put("1", content0.optString("code"));
-                                map.put("2", content0.optString("name") + "车间需要点检");
-                                map.put("3", content0.optString("startTime"));
-                                map.put("4", content0.optString("endTime"));
-                                map.put("5", content0.optString("updateTime"));
-                                map.put("6", content0.optString("checkCode"));
+            .params(GlobalApi.Inspect.Worker.ByPage.code, GetCurrentUserIDUtil.currentUserId(this)) //获取当天时间,格式：2018-04-012
+            .params(GlobalApi.Inspect.Worker.ByPage.status, "0") //从第0 业开始获取
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONArray data = jsonObject.getJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String tallyTaskHeaderCode = item.optString("code");
+                            JSONArray tallyTasks = item.optJSONArray("tallyTasks");
+                            for (int j = 0; j < tallyTasks.length(); j++) {
+                                JSONObject tallyTask = tallyTasks.getJSONObject(j);
+                                String tallyTaskCode = tallyTask.optString("code");
+                                String status = tallyTask.optString("status");
+                                String content = tallyTask.optJSONObject("guide").optString("content");
+                                String standard = tallyTask.optJSONObject("guide").optString("standard");
+                                String imageCode = tallyTask.optJSONObject("guide").optString("imageCode");
+                                String createTime = DateUtil.getDateToString(Long.valueOf(tallyTask.optString("createTime")));
+                                Map map = new HashMap();
+                                map.put("1", content);
+                                map.put("2", createTime);
+                                map.put("3", standard);
+                                map.put("4", id);
+                                map.put("5", tallyTaskCode);
+                                map.put("6", tallyTaskHeaderCode);
+                                map.put("7", imageCode);
+                                map.put("8", status);
                                 list.add(map);
                             }
-
-                            totalPages = data.optInt("totalPages");
-                            totalElements = data.optInt("totalElements");
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                        if (code == 0) {
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            ToastUtil.showToast(InspectWorkerActivity.this, message, ToastUtil.Error);
-                        }
+                        adapter.notifyDataSetChanged();
+                        handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ToastUtil.showToast(InspectWorkerActivity.this, message, ToastUtil.Error);
                     }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(InspectWorkerActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(InspectWorkerActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
-    //
     public void initView() {
         initTitle();
-        initRefreshLayout();
+        refreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light,
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
         adapter = new CommonAdapter<Map<String, Object>>(this, R.layout.item_inspect, list) {
             @Override
             protected void convert(ViewHolder holder, final Map s, final int position) {
-                holder.setText(R.id.tv1, s.get("2").toString());
-                holder.setText(R.id.tv2, s.get("4").toString());
+                holder.setIsRecyclable(false);
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
 
-                holder.setOnClickListener(R.id.bt1, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ActivityUtil.switchTo(InspectWorkerActivity.this, InspectWorkerDetailActivity.class, s);
-                    }
-                });
-                holder.setOnClickListener(R.id.bt2, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        //ActivityUtil.toastShow(InspectWorkerActivity.this, "点击了进入" + position);
-                        EasyHttp.post(GlobalApi.Inspect.Worker.CheckHead.PATH)
-                                .params(GlobalApi.Inspect.Worker.CheckHead.code, s.get("6").toString())
-                                .sign(true)
-                                .timeStamp(true)//本次请求是否携带时间戳
-                                .execute(new SimpleCallBack<String>() {
-                                    @Override
-                                    public void onSuccess(String result) {
-                                        int code = 1;
-                                        String message = "出错";
-                                        int num = 1;
-
-                                        try {
-                                            JSONObject jsonObject = new JSONObject(result);
-
-                                            code = (int) jsonObject.get("code");
-                                            message = (String) jsonObject.get("message");
-                                            JSONObject data = jsonObject.getJSONObject("data");
-                                            num = Integer.valueOf(data.optString("num"));
-
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                        if (code == 0) {
-                                            Map map = new HashMap();
-                                            map.put("code", s.get("6").toString()); //把code传过去
-                                            ActivityUtil.switchTo(InspectWorkerActivity.this, InspectWorkerJudgeActivity.class, map);
-                                            SharedPreferenceUtils.putString(InspectWorkerActivity.this, "inspectnum", String.valueOf(num));
-                                            SharedPreferenceUtils.putString(InspectWorkerActivity.this, "inspectcode", s.get("1").toString());
-                                            SharedPreferenceUtils.putString(InspectWorkerActivity.this, "inspecttotal", String.valueOf(num));
-                                        } else {
-                                            ToastUtil.showToast(InspectWorkerActivity.this, message, ToastUtil.Error);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(ApiException e) {
-                                        ToastUtil.showToast(InspectWorkerActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                                    }
-                                });
-                    }
-                });
+                if (s.get("8").toString().equals("1")) {
+                    holder.getView(R.id.ll).setEnabled(false);
+                    holder.getView(R.id.bt1).setBackgroundColor(Color.BLACK);
+                    holder.getView(R.id.bt2).setBackgroundColor(Color.BLACK);
+                } else {
+                    holder.setOnClickListener(R.id.bt1, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) { //查看详情
+                            ActivityUtil.switchTo(InspectWorkerActivity.this, InspectWorkerDetailActivity.class, s);
+                        }
+                    });
+                    holder.setOnClickListener(R.id.bt2, new View.OnClickListener() { //进入工作
+                        @Override
+                        public void onClick(View view) {
+                            ActivityUtil.switchTo(InspectWorkerActivity.this, InspectWorkerJudgeActivity.class, s);
+                            finish();
+                        }
+                    });
+                }
             }
         };
         recyclerView.setAdapter(adapter);
+        initRefreshLayout();
     }
 
-    //
     public void initTitle() {
         StatusBarUtils.setActivityTranslucent(this); //设置全屏
         back.setOnClickListener(new View.OnClickListener() {
@@ -226,81 +197,13 @@ public class InspectWorkerActivity extends AppCompatActivity {
      * 初始化(配置)下拉刷新组件
      */
     private void initRefreshLayout() {
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                refreshlayout.finishRefresh(1500);
+            public void onRefresh() {
+                Log.i("fresh", "..........");
                 initData();
-                classicsFooter.setLoadmoreFinished(false);
-            }
-        });
-        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                refreshlayout.finishLoadmore(1000/*,false*/);//传入false表示加载失败
-                getData();
             }
         });
     }
-
-
-    private void getData() {
-        page++;
-        if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
-        else {
-            EasyHttp.post(GlobalApi.Inspect.Worker.ByPage.PATH)
-                    .params(GlobalApi.Inspect.Worker.ByPage.updateTime, DateUtil.getCurrentDate2()) //获取当天时间,格式：2018-04-012
-                    .params(GlobalApi.Inspect.Worker.ByPage.page, String.valueOf(page)) //从第0 业开始获取
-                    .params(GlobalApi.Inspect.Worker.ByPage.size, "20") //一次获取多少
-                    .params(GlobalApi.Inspect.Worker.ByPage.sort, "code") //根据code排序
-                    .params(GlobalApi.Inspect.Worker.ByPage.asc, "1") //升序
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            int code = 1;
-                            String message = "出错";
-
-                            try {
-                                JSONObject jsonObject = new JSONObject(result);
-                                code = (int) jsonObject.get("code");
-                                message = (String) jsonObject.get("message");
-                                JSONObject data = jsonObject.getJSONObject("data");
-                                JSONArray content = data.getJSONArray("content");
-
-                                for (int i = 0; i < content.length(); i++) {
-                                    JSONObject content0 = new JSONObject(content.get(i).toString());
-                                    Map map = new HashMap<>();
-                                    map.put("1", content0.optString("code"));
-                                    map.put("2", content0.optString("name") + "车间需要点检");
-                                    map.put("3", content0.optString("startTime"));
-                                    map.put("4", content0.optString("endTime"));
-                                    map.put("5", content0.optString("updateTime"));
-                                    map.put("6", content0.optString("checkCode"));
-                                    list.add(map);
-                                }
-
-                                totalPages = data.optInt("totalPages");
-                                totalElements = data.optInt("totalElements");
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (code == 0) {
-                                adapter.notifyDataSetChanged(); //显示添加的数据
-                            } else {
-                                ToastUtil.showToast(InspectWorkerActivity.this, message, ToastUtil.Error);
-                            }
-                        }
-
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(InspectWorkerActivity.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                        }
-                    });
-        }
-    }
-
 
 }
