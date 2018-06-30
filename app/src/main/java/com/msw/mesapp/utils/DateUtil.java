@@ -56,6 +56,18 @@ public class DateUtil {
         return sf.format(d);
     }
 
+    /**
+     * 返回当前日期
+     *
+     * @param time
+     * @return
+     */
+    public static String getDateToString1(long time) {
+        Date d = new Date(time);
+        sf = new SimpleDateFormat("yyyy-MM-dd");
+        return sf.format(d);
+    }
+
     public static String getDateToString(String time) {
         Date d = new Date(Long.valueOf(time));
         sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

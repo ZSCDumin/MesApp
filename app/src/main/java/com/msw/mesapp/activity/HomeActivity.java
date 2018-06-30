@@ -323,7 +323,7 @@ public class HomeActivity extends AppCompatActivity {
     private void initView() {
         initNavView();
         initCardView();
-        checkPermission();//检查权限
+        //checkPermission();//检查权限
     }
 
     private void initNavView() {

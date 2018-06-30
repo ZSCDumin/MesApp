@@ -6,8 +6,8 @@ package com.msw.mesapp.base;
 
 public class GlobalApi {
 
-    public static String BASEURL = "http://218.77.105.241:30080/mes/";
-    //public static String BASEURL = "http://115.157.192.47:8080/mes/";
+    //public static String BASEURL = "http://218.77.105.241:30080/mes/";
+    public static String BASEURL = "http://115.157.192.47:8080/mes/";
 
     public final static class AppUpdate {
         public final static String PATH = "appUpdate/getAll";
@@ -536,8 +536,26 @@ public class GlobalApi {
         }
 
         public final static class Jiaojieban {
-            public final static String getAllByPage = "jobs/getAllByPage";
 
+            public final static String jobsCode = "jobsCode";
+            public final static String headerCode = "headerCode";
+            public final static String contentCode = "contentCode";
+            public final static String stateCode = "stateCode";
+            public final static String handover_date = "handoverDate";
+            public final static String handoverTypeCode = "handoverTypeCode";
+            public final static String duty_code = "dutyCode";
+            public final static String shifter_code = "shifterCode";
+            public final static String successor_code = "successorCode";
+            public final static String code = "code";
+            public final static String getAllByPage = "jobs/getAllByPage";
+            public final static String getByJobsCodeAndShifterCode = "jobsHandover/getByJobsCodeAndShifterCode";
+            public final static String jobsHandoverAdd = "jobsHandover/add";
+            public final static String handoverHeaderAdd = "handoverHeader/add";
+            public final static String handoverRecordAdd = "handoverRecord/add";
+            public final static String deleteByCode = "handoverHeader/deleteByCode";
+            public final static String getByCode = "jobsHandover/getByCode";
+            public final static String getAllPerson = "user/getAllDepartmentUserByUserCode";
+            public final static String getByHandoverTypeCode = "jobsHandover/getByHandoverTypeCode";
         }
 
     }

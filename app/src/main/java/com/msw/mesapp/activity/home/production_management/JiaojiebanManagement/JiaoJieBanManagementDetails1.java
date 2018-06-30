@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -26,7 +27,6 @@ import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -48,12 +48,13 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
     ImageView add;
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
-    List<Map<String, Object>> list = new ArrayList<>();
     @Bind(R.id.classicsFooter)
     ClassicsFooter classicsFooter;
     @Bind(R.id.fresh)
     SmartRefreshLayout fresh;
+
+    List<Map<String, Object>> list = new ArrayList<>();
+    private RecyclerView.Adapter adapter;
     private String code = "";
     private String name = "";
     private int totalPages = 0;
@@ -73,7 +74,7 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
 
     public void loadMoreData() {
         page = page + 1;
-        if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
+        if (page >= totalPages) classicsFooter.setLoadmoreFinished(true);
         else {
             getData(0);
         }
@@ -84,8 +85,9 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
             list.clear();
             page = 0;
         }
-        EasyHttp.post(GlobalApi.ProductManagement.Jiaojieban.getAllByPage)
-            .params("page", page + "")
+        EasyHttp.post(GlobalApi.ProductManagement.Jiaojieban.getByJobsCodeAndShifterCode)
+            .params(GlobalApi.ProductManagement.Jiaojieban.jobsCode, code)
+            .params(GlobalApi.ProductManagement.Jiaojieban.shifter_code, GetCurrentUserIDUtil.currentUserId(this))
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
@@ -97,19 +99,29 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(s);
                         JSONObject data = jsonObject.optJSONObject("data");
-                        JSONArray content = data.optJSONArray("content");
-                        totalPages = data.optInt("totalPages");
-                        for (int i = 0; i < content.length(); i++) {
-                            JSONObject item = content.getJSONObject(i);
-                            String name = item.optString("name");
-                            String code = item.optString("code");
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("1", name);
-                            map.put("2", code);
-                            list.add(map);
+                        if (data != null) {
+                            JSONArray content = data.optJSONArray("content");
+                            totalPages = data.optInt("totalPages");
+                            for (int i = 0; i < content.length(); i++) {
+                                JSONObject item = content.getJSONObject(i);
+                                JSONObject recordCode = item.optJSONObject("recordCode");
+                                String handoverTime = recordCode.optJSONObject("headerCode").optString("handoverDate");
+                                String duty = recordCode.optJSONObject("headerCode").optJSONObject("dutyCode").optString("name");
+                                String handoverTypeName = item.optJSONObject("handoverType").optString("name");
+                                String handoverContentName = item.optJSONObject("handoverContent").optString("name");
+                                String handoverStatus = recordCode.optJSONObject("stateCode").optString("name");
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("1", name);
+                                map.put("2", handoverTypeName);
+                                map.put("3", handoverContentName);
+                                map.put("4", handoverStatus);
+                                map.put("5", handoverTime);
+                                map.put("6", duty);
+                                list.add(map);
+                            }
+                            adapter.notifyDataSetChanged();
                         }
-                        adapter.notifyDataSetChanged();
-                    } catch (JSONException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -129,17 +141,15 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("code", s.get("3").toString());
-                        Log.i("TAG", s.get("3").toString());
+                        map.put("name", s.get("1").toString());
+                        map.put("handoverTypeName", s.get("2").toString());
+                        map.put("handoverContentName", s.get("3").toString());
+                        map.put("handoverStatus", s.get("4").toString());
                         ActivityUtil.switchTo(JiaoJieBanManagementDetails1.this, JiaoJieBanManagementDetails3.class, map);
                     }
                 });
-                holder.setText(R.id.tv1, s.get("1").toString());
-                holder.setText(R.id.tv2, "");
-                if (s.get("2").toString().equals("1"))
-                    holder.setImageResource(R.id.imageView, R.mipmap.checked);
-                else
-                    holder.setImageResource(R.id.imageView, R.mipmap.unchecked);
+                holder.setText(R.id.tv1, s.get("6").toString());
+                holder.setText(R.id.tv2, s.get("5").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -155,11 +165,14 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
             case R.id.add:
                 Map<String, Object> map = new HashMap<>();
                 map.put("code", code);
-                Log.i("TAG", code);
-                ActivityUtil.switchTo(JiaoJieBanManagementDetails1.this, JiaoJieBanManagementDetails2.class, map);
+                map.put("name", name);
+
+                Log.i("TAG", code + name);
+                ActivityUtil.switchTo(JiaoJieBanManagementDetails1.this, JiaojiebanManagementDetails4.class, map);
                 break;
         }
     }
+
 
     private void initRefreshLayout() {
         fresh.setOnRefreshListener(new OnRefreshListener() {

@@ -30,17 +30,30 @@ public class JiaoJieBanManagementDetails3 extends AppCompatActivity {
     @Bind(R.id.back_bt)
     Button backBt;
 
+    private String name = "";
+    private String handoverTypeName = "";
+    private String handoverContentName = "";
+    private String handoverStatus = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_jiao_jie_ban_management_details3);
         ButterKnife.bind(this);
+        name = getIntent().getExtras().get("name").toString();
+        handoverTypeName = getIntent().getExtras().get("handoverTypeName").toString();
+        handoverContentName = getIntent().getExtras().get("handoverContentName").toString();
+        handoverStatus = getIntent().getExtras().get("handoverStatus").toString();
         initTitle();
     }
 
+
     public void initTitle() {
-        title.setText("交接班");
+        title.setText(name);
         add.setVisibility(View.INVISIBLE);
+        typeTv.setText(handoverTypeName);
+        contentTv.setText(handoverContentName);
+        resultTv.setText(handoverStatus);
     }
 
     @OnClick({R.id.back, R.id.back_bt})
