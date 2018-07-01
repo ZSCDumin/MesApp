@@ -11,9 +11,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msw.mesapp.R;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
+import com.msw.mesapp.utils.ToastUtil;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
+import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,17 +40,27 @@ import butterknife.OnClick;
 
 public class CheckScalesManagementDetails1 extends Activity {
 
+
     @Bind(R.id.back)
     ImageView back;
     @Bind(R.id.title)
     TextView title;
     @Bind(R.id.add)
     ImageView add;
+    @Bind(R.id.viewright)
+    View viewright;
     @Bind(R.id.recyclerView)
     RecyclerView recyclerView;
+    @Bind(R.id.classicsFooter)
+    ClassicsFooter classicsFooter;
+    @Bind(R.id.fresh)
+    SmartRefreshLayout fresh;
     private RecyclerView.Adapter adapter;
     private List<Map<String, Object>> list = new ArrayList<>();
     private String code = "";
+    private String name = "";
+    private int totalPages = 0;
+    private int page = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,23 +68,62 @@ public class CheckScalesManagementDetails1 extends Activity {
         setContentView(R.layout.activity_check_scales_management_details);
         ButterKnife.bind(this);
         code = getIntent().getExtras().get("code").toString();
-        getData();
+        name = getIntent().getExtras().get("name").toString();
+        getData(1);
+        initRefreshLayout();
         intiView();
     }
 
-    public void getData() {
-        for (int i = 0; i < 10; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("1", "2018-6-6");
-            map.put("2", "白班");
-            map.put("3", "" + i);
-            list.add(map);
+    public void loadMoreData() {
+        page = page + 1;
+        if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
+        else {
+            getData(0);
         }
+    }
+
+
+    public void getData(int flag) {
+        if (flag == 1) {
+            list.clear();
+            page = 0;
+        }
+        EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByEquipmentCodeByPage)
+            .params("equipmentCode", code)
+            .params("page", page + "")
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(CheckScalesManagementDetails1.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONArray content = jsonObject.optJSONObject("data").optJSONArray("content");
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject item = content.getJSONObject(i);
+                            String code = item.optString("code");
+                            String name = item.optJSONObject("dutyCode").optString("name");
+                            String auditTime = DateUtil.getDateToString1(item.optLong("auditTime"));
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("1", auditTime);
+                            map.put("2", name);
+                            map.put("3", code);
+                            list.add(map);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public void intiView() {
 
-        title.setText("41号秤");
+        title.setText(name);
         add.setImageResource(R.mipmap.add);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
@@ -74,6 +137,7 @@ public class CheckScalesManagementDetails1 extends Activity {
                     public void onClick(View view) {
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("3").toString());
+                        map.put("name", name);
                         Log.i("TAG", s.get("3").toString());
                         ActivityUtil.switchTo(CheckScalesManagementDetails1.this, CheckScalesManagementDetails3.class, map);
                     }
@@ -92,9 +156,27 @@ public class CheckScalesManagementDetails1 extends Activity {
             case R.id.add:
                 Map<String, Object> map = new HashMap<>();
                 map.put("code", code);
-                Log.i("TAG", code);
+                map.put("name", name);
                 ActivityUtil.switchTo(CheckScalesManagementDetails1.this, CheckScalesManagementDetails2.class, map);
                 break;
         }
+    }
+
+    private void initRefreshLayout() {
+        fresh.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                refreshlayout.finishRefresh(1500);
+                getData(1);
+                classicsFooter.setLoadmoreFinished(false);
+            }
+        });
+        fresh.setOnLoadmoreListener(new OnLoadmoreListener() {
+            @Override
+            public void onLoadmore(RefreshLayout refreshlayout) {
+                refreshlayout.finishLoadmore(1000);//传入false表示加载失败
+                loadMoreData();
+            }
+        });
     }
 }

@@ -14,11 +14,18 @@ import android.view.ViewGroup;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.production_management.CheckScalesManagement.CheckScalesCheckDetails2;
-
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
-
+import com.msw.mesapp.utils.DateUtil;
+import com.msw.mesapp.utils.ToastUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,15 +61,7 @@ public class FragmentNotCheckedScales extends Fragment {
     }
 
     private void initView() {
-
-        for (int i = 0; i < 20; i++) {
-            Map map = new HashMap();
-            map.put("1", "2018-6-6");
-            map.put("2", "白班");
-            map.put("3", i + "");
-            list.add(map);
-        }
-
+        getData();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
@@ -74,15 +73,51 @@ public class FragmentNotCheckedScales extends Fragment {
                     public void onClick(View view) {
                         //ActivityUtil.toastShow(getActivity(), "点击了" + position);
                         Map<String, Object> map = new HashMap<>();
-                        map.put("code", s.get("3").toString());
+                        map.put("code", s.get("1").toString());
+                        map.put("equipmentName", s.get("4").toString());
                         ActivityUtil.switchTo(getActivity(), CheckScalesCheckDetails2.class, map);
                     }
                 });
-                holder.setText(R.id.tv1, s.get("1").toString());
-                holder.setText(R.id.tv2, s.get("2").toString());
+                holder.setText(R.id.tv1, s.get("2").toString());
+                holder.setText(R.id.tv2, s.get("3").toString());
             }
         };
         recyclerView.setAdapter(adapter);
+    }
+
+    public void getData() {
+        EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByConfirm)
+            .params("confirm", "0")
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(getActivity(), "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String code = item.optString("code");
+                            String dutyCode = item.optJSONObject("dutyCode").optString("name");
+                            String equipmentName = item.optJSONObject("equipmentCode").optString("name");
+                            String auditTime = DateUtil.getDateToString1(item.optLong("auditTime"));
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("1", code);
+                            map.put("2", auditTime);
+                            map.put("3", dutyCode);
+                            map.put("4", equipmentName);
+                            list.add(map);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     @Override

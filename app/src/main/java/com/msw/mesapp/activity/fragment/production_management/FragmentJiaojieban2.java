@@ -136,7 +136,9 @@ public class FragmentJiaojieban2 extends Fragment {
 
     @OnClick({R.id.backward_bt, R.id.forward_bt, R.id.bt1, R.id.bt2, R.id.bt3})
     public void onViewClicked(View view) {
-        String contentCode = list.get(location).get("code");
+        String contentCode = "";
+        if (location < list.size())
+            contentCode = list.get(location).get("code");
         switch (view.getId()) {
             case R.id.backward_bt:
                 if (location > 0) {
@@ -156,22 +158,28 @@ public class FragmentJiaojieban2 extends Fragment {
                 }
                 break;
             case R.id.bt1: //4
-                if (location == list.size() - 1) {
+                if (location == list.size()) {
                     ToastUtil.showToast(getActivity(), "请切换下一个交接类型", ToastUtil.Warning);
-                } else
+                } else {
                     submit(contentCode, "4");
+                    location = location + 1;
+                }
                 break;
             case R.id.bt2: //5
-                if (location == list.size() - 1) {
+                if (location == list.size()) {
                     ToastUtil.showToast(getActivity(), "请切换下一个交接类型", ToastUtil.Warning);
-                } else
+                } else {
                     submit(contentCode, "5");
+                    location = location + 1;
+                }
                 break;
             case R.id.bt3: //6
-                if (location == list.size() - 1) {
+                if (location == list.size()) {
                     ToastUtil.showToast(getActivity(), "请切换下一个交接类型", ToastUtil.Warning);
-                } else
+                } else {
                     submit(contentCode, "6");
+                    location = location + 1;
+                }
                 break;
         }
     }
@@ -195,8 +203,8 @@ public class FragmentJiaojieban2 extends Fragment {
                         int code = jsonObject.optInt("code");
                         if (code == 0) {
                             ToastUtil.showToast(getActivity(), "提交成功", ToastUtil.Success);
-                            location = location + 1;
-                            setContent(location);
+                            if (location < list.size())
+                                setContent(location);
                         } else
                             ToastUtil.showToast(getActivity(), message, ToastUtil.Success);
                     } catch (JSONException e) {

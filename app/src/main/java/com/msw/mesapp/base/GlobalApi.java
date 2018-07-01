@@ -514,8 +514,11 @@ public class GlobalApi {
     public final static class ProductManagement {
 
         public final static class CheckScale {
-
-
+            public final static String getAllScales = "electronicBalance/getAll";
+            public final static String getByEquipmentCodeByPage = "audit/getByEquipmentCodeByPage";
+            public final static String getByCode = "audit/getByCode";
+            public final static String add = "audit/add";
+            public final static String getByConfirm = "getByEquipmentCodeAndConfirm";
         }
 
         public final static class ShaiwangCheck {
@@ -548,12 +551,14 @@ public class GlobalApi {
             public final static String successor_code = "successorCode";
             public final static String code = "code";
             public final static String getAllByPage = "jobs/getAllByPage";
-            public final static String getByJobsCodeAndShifterCode = "jobsHandover/getByJobsCodeAndShifterCode";
+            public final static String getByJobsCodeAndShifterCode = "handoverHeader/getByJobsCodeAndShifterCode";
+            public final static String getByJobsCodeAndSuccessorCode = "handoverHeader/getByJobsCodeAndSuccessorCode";
             public final static String jobsHandoverAdd = "jobsHandover/add";
             public final static String handoverHeaderAdd = "handoverHeader/add";
             public final static String handoverRecordAdd = "handoverRecord/add";
             public final static String deleteByCode = "handoverHeader/deleteByCode";
             public final static String getByCode = "jobsHandover/getByCode";
+            public final static String getByCode1 = "handoverHeader/getByCode";
             public final static String getAllPerson = "user/getAllDepartmentUserByUserCode";
             public final static String getByHandoverTypeCode = "jobsHandover/getByHandoverTypeCode";
         }

@@ -51,7 +51,8 @@ public class FragmentJiaojieban6 extends Fragment {
     Button bt1;
     @Bind(R.id.bt2)
     Button bt2;
-
+    @Bind(R.id.bt3)
+    Button bt3;
     private String handoverHeaderCode = "";
     private List<Map<String, String>> list;
     private int location = 0;
@@ -132,9 +133,11 @@ public class FragmentJiaojieban6 extends Fragment {
         content.setText(list.get(i).get("name"));
     }
 
-    @OnClick({R.id.backward_bt, R.id.forward_bt, R.id.bt1, R.id.bt2})
+    @OnClick({R.id.backward_bt, R.id.forward_bt, R.id.bt1, R.id.bt2, R.id.bt3})
     public void onViewClicked(View view) {
-        String contentCode = list.get(location).get("code");
+        String contentCode = "";
+        if (location < list.size())
+            contentCode = list.get(location).get("code");
         switch (view.getId()) {
             case R.id.backward_bt:
                 if (location > 0) {
@@ -154,16 +157,23 @@ public class FragmentJiaojieban6 extends Fragment {
                 }
                 break;
             case R.id.bt1: //14
-                if (location == list.size() - 1) {
+                if (location == list.size()) {
                     ToastUtil.showToast(getActivity(), "请切换下一个交接类型", ToastUtil.Warning);
-                } else
+                } else {
                     submit(contentCode, "14");
+                    location = location + 1;
+                }
                 break;
             case R.id.bt2: //15
-                if (location == list.size() - 1) {
+                if (location == list.size()) {
                     ToastUtil.showToast(getActivity(), "请切换下一个交接类型", ToastUtil.Warning);
-                } else
+                } else {
                     submit(contentCode, "15");
+                    location = location + 1;
+                }
+                break;
+            case R.id.bt3:
+                getActivity().finish();
                 break;
         }
     }
@@ -187,8 +197,8 @@ public class FragmentJiaojieban6 extends Fragment {
                         int code = jsonObject.optInt("code");
                         if (code == 0) {
                             ToastUtil.showToast(getActivity(), "提交成功", ToastUtil.Success);
-                            location = location + 1;
-                            setContent(location);
+                            if (location < list.size())
+                                setContent(location);
                         } else
                             ToastUtil.showToast(getActivity(), message, ToastUtil.Success);
                     } catch (JSONException e) {

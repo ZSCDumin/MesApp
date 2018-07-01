@@ -57,8 +57,7 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     private String code = "";
     private String name = "";
-    private int totalPages = 0;
-    private int page = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,25 +68,13 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
         name = getIntent().getExtras().get("name").toString();
         intiView();
         initRefreshLayout();
-        getData(1);
+        getData();
     }
 
-    public void loadMoreData() {
-        page = page + 1;
-        if (page >= totalPages) classicsFooter.setLoadmoreFinished(true);
-        else {
-            getData(0);
-        }
-    }
-
-    public void getData(int flag) {
-        if (flag == 1) {
-            list.clear();
-            page = 0;
-        }
-        EasyHttp.post(GlobalApi.ProductManagement.Jiaojieban.getByJobsCodeAndShifterCode)
+    public void getData() {
+        EasyHttp.post(GlobalApi.ProductManagement.Jiaojieban.getByJobsCodeAndSuccessorCode)
             .params(GlobalApi.ProductManagement.Jiaojieban.jobsCode, code)
-            .params(GlobalApi.ProductManagement.Jiaojieban.shifter_code, GetCurrentUserIDUtil.currentUserId(this))
+            .params(GlobalApi.ProductManagement.Jiaojieban.successor_code, GetCurrentUserIDUtil.currentUserId(this))
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
@@ -96,31 +83,24 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(String s) {
+
+                    Log.i("TAG", code + "----" + GetCurrentUserIDUtil.currentUserId(JiaoJieBanManagementDetails1.this));
                     try {
                         JSONObject jsonObject = new JSONObject(s);
-                        JSONObject data = jsonObject.optJSONObject("data");
-                        if (data != null) {
-                            JSONArray content = data.optJSONArray("content");
-                            totalPages = data.optInt("totalPages");
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject item = content.getJSONObject(i);
-                                JSONObject recordCode = item.optJSONObject("recordCode");
-                                String handoverTime = recordCode.optJSONObject("headerCode").optString("handoverDate");
-                                String duty = recordCode.optJSONObject("headerCode").optJSONObject("dutyCode").optString("name");
-                                String handoverTypeName = item.optJSONObject("handoverType").optString("name");
-                                String handoverContentName = item.optJSONObject("handoverContent").optString("name");
-                                String handoverStatus = recordCode.optJSONObject("stateCode").optString("name");
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("1", name);
-                                map.put("2", handoverTypeName);
-                                map.put("3", handoverContentName);
-                                map.put("4", handoverStatus);
-                                map.put("5", handoverTime);
-                                map.put("6", duty);
-                                list.add(map);
-                            }
-                            adapter.notifyDataSetChanged();
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String handoverTime = item.optString("handoverDate");
+                            String duty = item.optJSONObject("dutyCode").optString("name");
+                            String headerCode1 = item.optString("code");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("1", handoverTime);
+                            map.put("2", duty);
+                            map.put("3", headerCode1);
+                            list.add(map);
                         }
+                        adapter.notifyDataSetChanged();
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -141,15 +121,13 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("name", s.get("1").toString());
-                        map.put("handoverTypeName", s.get("2").toString());
-                        map.put("handoverContentName", s.get("3").toString());
-                        map.put("handoverStatus", s.get("4").toString());
+                        map.put("headerCode", s.get("3").toString());
+                        map.put("name", name);
                         ActivityUtil.switchTo(JiaoJieBanManagementDetails1.this, JiaoJieBanManagementDetails3.class, map);
                     }
                 });
-                holder.setText(R.id.tv1, s.get("6").toString());
-                holder.setText(R.id.tv2, s.get("5").toString());
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -179,7 +157,7 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 refreshlayout.finishRefresh(1500);
-                getData(1);
+                getData();
                 classicsFooter.setLoadmoreFinished(false);
             }
         });
@@ -187,7 +165,6 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
                 refreshlayout.finishLoadmore(1000);//传入false表示加载失败
-                loadMoreData();
             }
         });
     }

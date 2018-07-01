@@ -5,15 +5,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msw.mesapp.R;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.ToastUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,12 +56,33 @@ public class CheckScalesMemberActivity extends AppCompatActivity {
     }
 
     public void getData() {
-        for (int i = 0; i < 10; i++) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("1", "第" + i + "号秤");
-            map.put("2", i + "");
-            list.add(map);
-        }
+        EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getAllScales)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(CheckScalesMemberActivity.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONArray content = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject item = content.getJSONObject(i);
+                            String code = item.optString("code");
+                            String name = item.optString("name");
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("1", code);
+                            map.put("2", name);
+                            list.add(map);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public void intiView() {
@@ -70,12 +98,12 @@ public class CheckScalesMemberActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Map<String, Object> map = new HashMap<>();
-                        map.put("code", s.get("2").toString());
-                        Log.i("TAG", s.get("2").toString());
+                        map.put("code", s.get("1").toString());
+                        map.put("name", s.get("2").toString());
                         ActivityUtil.switchTo(CheckScalesMemberActivity.this, CheckScalesManagementDetails1.class, map);
                     }
                 });
-                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv1, s.get("2").toString());
                 holder.setText(R.id.tv2, "");
             }
         };

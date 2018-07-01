@@ -8,7 +8,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.msw.mesapp.R;
+import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
+import com.msw.mesapp.utils.ToastUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
+
+import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,16 +55,76 @@ public class CheckScalesManagementDetails3 extends Activity {
     @Bind(R.id.back_bt)
     Button backBt;
 
+    private String code = "";
+    private String name = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_check_scales_management_details3);
         ButterKnife.bind(this);
+        code = getIntent().getExtras().get("code").toString();
+        name = getIntent().getExtras().get("name").toString();
         initView();
+        getData();
+    }
+
+    public void getData() {
+        EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByCode)
+            .params("code", code)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(CheckScalesManagementDetails3.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String auditTime = DateUtil.getDateToString1(data.optLong("auditTime"));
+                        String dutyName = data.optJSONObject("dutyCode").optString("name");
+                        String leftUp = data.optString("leftUp");
+                        String rightUp = data.optString("rightUp");
+                        String center = data.optString("center");
+                        String leftDown = data.optString("leftDown");
+                        String rightDown = data.optString("rightDown");
+                        String judgment = data.optString("judgment");
+                        String auditorCode = data.optJSONObject("auditorCode").optString("name");
+
+                        String confirmorCode = "";
+                        if (data.optJSONObject("confirmorCode") != null) {
+                            data.optJSONObject("confirmorCode").optString("name");
+                        }
+                        String confirmTime = "";
+                        if (data.optString("confirmTime") != null)
+                            DateUtil.getDateToString1(data.optLong("confirmTime"));
+
+                        tv1.setText(auditTime);
+                        tv2.setText(dutyName);
+                        tv3.setText(leftUp);
+                        tv4.setText(rightUp);
+                        tv5.setText(center);
+                        tv6.setText(leftDown);
+                        tv7.setText(rightDown);
+                        if (judgment.equals("0")) {
+                            tv8.setText("不合格");
+                        } else {
+                            tv8.setText("合格");
+                        }
+                        tv9.setText(auditorCode);
+                        tv10.setText(confirmorCode);
+                        tv11.setText(confirmTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
     }
 
     public void initView() {
-        title.setText("41号秤");
+        title.setText(name);
         add.setVisibility(View.INVISIBLE);
     }
 
