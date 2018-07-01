@@ -10,14 +10,12 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import butterknife.Bind;
@@ -120,7 +118,7 @@ public class CheckScalesManagementDetails2 extends Activity {
                 } else if (wanban.isChecked()) {
                     dutyCode = "2";
                 }
-                ActivityUtil.switchTo(this, CheckScalesManagementDetails3.class);
+                submit();
                 break;
         }
     }
@@ -136,6 +134,7 @@ public class CheckScalesManagementDetails2 extends Activity {
             .params("rightDown", tv5.getText().toString())
             .params("judgment", flag + "")
             .params("auditorCode", GetCurrentUserIDUtil.currentUserId(this))
+            .params("confirm", "0")
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
@@ -148,9 +147,10 @@ public class CheckScalesManagementDetails2 extends Activity {
                         JSONObject jsonObject = new JSONObject(s);
                         int code = jsonObject.optInt("code");
                         String message = jsonObject.optString("message");
-                        if (code == 0)
+                        if (code == 0) {
                             ToastUtil.showToast(CheckScalesManagementDetails2.this, "提交成功", ToastUtil.Success);
-                        else
+                            finish();
+                        } else
                             ToastUtil.showToast(CheckScalesManagementDetails2.this, message, ToastUtil.Success);
 
                     } catch (Exception e) {
@@ -160,8 +160,7 @@ public class CheckScalesManagementDetails2 extends Activity {
             });
     }
 
-    public void getData()
-    {
+    public void getData() {
         EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByEquipmentCodeByPage)
             .params("equipmentCode", code)
             .execute(new SimpleCallBack<String>() {
@@ -174,7 +173,12 @@ public class CheckScalesManagementDetails2 extends Activity {
                 public void onSuccess(String s) {
                     try {
                         JSONObject jsonObject = new JSONObject(s);
-                        JSONArray content = jsonObject.optJSONObject("data").optJSONArray("content");
+                        int code = jsonObject.optInt("code");
+                        String message = jsonObject.optString("message");
+                        if (code == 0)
+                            ToastUtil.showToast(CheckScalesManagementDetails2.this, "提交成功", ToastUtil.Success);
+                        else
+                            ToastUtil.showToast(CheckScalesManagementDetails2.this, message, ToastUtil.Success);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

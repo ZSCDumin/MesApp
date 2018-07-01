@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
-import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -135,7 +134,7 @@ public class CheckScalesCheckDetails3 extends AppCompatActivity {
                 finish();
                 break;
             case R.id.back_bt:
-                ActivityUtil.switchTo(this, CheckScalesCheckDetails1.class);
+                finish();
                 break;
         }
     }

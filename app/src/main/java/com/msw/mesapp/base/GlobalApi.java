@@ -518,7 +518,8 @@ public class GlobalApi {
             public final static String getByEquipmentCodeByPage = "audit/getByEquipmentCodeByPage";
             public final static String getByCode = "audit/getByCode";
             public final static String add = "audit/add";
-            public final static String getByConfirm = "getByEquipmentCodeAndConfirm";
+            public final static String update = "audit/update";
+            public final static String getByConfirm = "audit/getByEquipmentCodeAndConfirm";
         }
 
         public final static class ShaiwangCheck {

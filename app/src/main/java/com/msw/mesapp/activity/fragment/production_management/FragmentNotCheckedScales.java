@@ -45,12 +45,14 @@ public class FragmentNotCheckedScales extends Fragment {
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
 
+    private String eqiupmentCode = "";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //引用创建好的xml布局
         View view = inflater.inflate(R.layout.viewpaper_checkscale, container, false);
         ButterKnife.bind(this, view);
+        eqiupmentCode = getActivity().getIntent().getExtras().get("code").toString();
         initView();
         return view;
     }
@@ -71,10 +73,10 @@ public class FragmentNotCheckedScales extends Fragment {
                 holder.setOnClickListener(R.id.item, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //ActivityUtil.toastShow(getActivity(), "点击了" + position);
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("1").toString());
                         map.put("equipmentName", s.get("4").toString());
+                        map.put("eqiupmentCode", eqiupmentCode);
                         ActivityUtil.switchTo(getActivity(), CheckScalesCheckDetails2.class, map);
                     }
                 });
@@ -88,6 +90,7 @@ public class FragmentNotCheckedScales extends Fragment {
     public void getData() {
         EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByConfirm)
             .params("confirm", "0")
+            .params("equipmentCode", eqiupmentCode)
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
