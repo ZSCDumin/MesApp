@@ -1,9 +1,13 @@
 package com.msw.mesapp.activity.fragment.production_management;
 
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -39,13 +43,30 @@ import butterknife.ButterKnife;
 public class FragmentNotCheckedScales extends Fragment {
 
 
-    @Bind(R.id.recyclerView)
-    RecyclerView recyclerView;
-
+    @Bind(R.id.recycleView)
+    RecyclerView recycleView;
+    @Bind(R.id.fresh)
+    SwipeRefreshLayout fresh;
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
 
     private String eqiupmentCode = "";
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0x101:
+                    if (fresh.isRefreshing()) {
+                        adapter.notifyDataSetChanged();
+                        fresh.setRefreshing(false);//设置不刷新
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,9 +85,9 @@ public class FragmentNotCheckedScales extends Fragment {
 
     private void initView() {
         getData();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
-        recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
+        recycleView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
+        recycleView.setItemAnimator(new DefaultItemAnimator());//设置动画
+        recycleView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
         adapter = new CommonAdapter<Map<String, Object>>(getActivity(), R.layout.item_materialin, list) {
             @Override
             protected void convert(ViewHolder holder, final Map s, final int position) {
@@ -84,10 +105,19 @@ public class FragmentNotCheckedScales extends Fragment {
                 holder.setText(R.id.tv2, s.get("3").toString());
             }
         };
-        recyclerView.setAdapter(adapter);
+        recycleView.setAdapter(adapter);
+        fresh.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light,
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        fresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData();
+            }
+        });
     }
 
     public void getData() {
+        list.clear();
         EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByConfirm)
             .params("confirm", "0")
             .params("equipmentCode", eqiupmentCode)
@@ -115,7 +145,7 @@ public class FragmentNotCheckedScales extends Fragment {
                             map.put("4", equipmentName);
                             list.add(map);
                         }
-                        adapter.notifyDataSetChanged();
+                        handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

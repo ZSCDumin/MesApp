@@ -4,9 +4,13 @@ package com.msw.mesapp.activity.fragment.production_management;
  * Created by Mr.Meng on 2017/12/31.
  */
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -41,12 +45,29 @@ import butterknife.ButterKnife;
 
 public class FragmentCheckedScales extends Fragment {
 
-    @Bind(R.id.recyclerView)
+    @Bind(R.id.recycleView)
     RecyclerView recyclerView;
-
+    @Bind(R.id.fresh)
+    SwipeRefreshLayout fresh;
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
     private String eqiupmentCode = "";
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0x101:
+                    if (fresh.isRefreshing()) {
+                        adapter.notifyDataSetChanged();
+                        fresh.setRefreshing(false);//设置不刷新
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,9 +106,18 @@ public class FragmentCheckedScales extends Fragment {
             }
         };
         recyclerView.setAdapter(adapter);
+        fresh.setColorSchemeResources(android.R.color.holo_blue_bright, android.R.color.holo_green_light,
+            android.R.color.holo_orange_light, android.R.color.holo_red_light);
+        fresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getData();
+            }
+        });
     }
 
     public void getData() {
+        list.clear();
         EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getByConfirm)
             .params("confirm", "1")
             .params("equipmentCode", eqiupmentCode)
@@ -115,7 +145,7 @@ public class FragmentCheckedScales extends Fragment {
                             map.put("4", equipmentName);
                             list.add(map);
                         }
-                        adapter.notifyDataSetChanged();
+                        handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
