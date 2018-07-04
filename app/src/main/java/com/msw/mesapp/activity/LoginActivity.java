@@ -10,7 +10,6 @@ import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -61,11 +60,8 @@ public class LoginActivity extends AppCompatActivity {
     FloatBackground floatView;
     @Bind(R.id.text_wjmm)
     TextView textWjmm;
-
     String permission_code = "";
 
-    @Bind(R.id.setting)
-    ImageView setting;
     @Bind(R.id.login_with_nfc_tv)
     TextView loginWithNfcTv;
 
@@ -240,12 +236,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-    @OnClick({R.id.setting, R.id.login_with_nfc_tv})
+    @OnClick(R.id.login_with_nfc_tv)
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.setting:
-                ActivityUtil.switchTo(this, ChangeServerActivity.class);
-                break;
             case R.id.login_with_nfc_tv:
                 ActivityUtil.switchTo(this, LoginNfcActivity.class);
                 break;

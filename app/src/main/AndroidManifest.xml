@@ -198,8 +198,7 @@
         <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagementDetails1" />
         <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagementDetails2" />
         <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaoJieBanManagementDetails3" />
-        <activity android:name=".activity.ChangeServerActivity" />
-        <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaojiebanManagementDetails4"></activity>
+        <activity android:name=".activity.home.production_management.JiaojiebanManagement.JiaojiebanManagementDetails4" />
     </application>
 
 </manifest>

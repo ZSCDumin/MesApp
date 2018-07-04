@@ -2,20 +2,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <group android:id="@+id/g1" android:checkableBehavior="single">
+    <group
+        android:id="@+id/g1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_change"
             android:icon="@mipmap/ic_pw"
-            app:itemIconTint="@color/titlecolor"
-            android:title="修改密码" />
+            android:title="修改密码"
+            app:itemIconTint="@color/titlecolor" />
     </group>
-    <group android:id="@+id/g2" android:checkableBehavior="single">
+    <group
+        android:id="@+id/g2"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_output"
             android:icon="@mipmap/ic_out"
-            app:itemIconTint="@color/titlecolor"
             android:title="注销用户"
-        />
+            app:itemIconTint="@color/titlecolor" />
+    </group>
+
+    <group
+        android:id="@+id/g3"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_update"
+            android:icon="@mipmap/ic_update"
+            android:title="检查更新"
+            app:itemIconTint="@color/titlecolor" />
     </group>
 
 </menu>

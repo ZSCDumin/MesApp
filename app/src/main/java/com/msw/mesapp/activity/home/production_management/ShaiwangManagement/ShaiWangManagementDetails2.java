@@ -24,8 +24,12 @@ import android.widget.TextView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.CompressUtil;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.ToastUtil;
+import com.zhouyou.http.EasyHttp;
+import com.zhouyou.http.callback.SimpleCallBack;
+import com.zhouyou.http.exception.ApiException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -66,8 +70,9 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     public final static int CAMERA_RESULT = 1;
     private static final int MY_PERMISSION_REQUEST_CODE = 10000;
     private String code = "";
+    public String message;
+    private String imageCode = "";
     private String shakerCode = "";
-
     @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
         @Override
@@ -75,7 +80,14 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0x101:
-                    ToastUtil.showToast(ShaiWangManagementDetails2.this, message, ToastUtil.Default);
+                    Log.i("TAG", message);
+                    if (message.equals("成功")) {
+                        ToastUtil.showToast(ShaiWangManagementDetails2.this, message, ToastUtil.Success);
+                        finish();
+                    }
+                    break;
+                case 0x102:
+                    submitData();
                     break;
             }
         }
@@ -115,29 +127,24 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        submitData();
+                        updateImage();
                     }
                 }).start();
                 break;
         }
     }
 
-    public String message;
 
-    public void submitData() {
+    public void updateImage() {
         OkHttpClient client = new OkHttpClient();
         File file = new File(mPhotoPath1);
         RequestBody fileBody = RequestBody.create(MediaType.parse("image/png"), file);
         RequestBody requestBody = new MultipartBody.Builder()
             .setType(MultipartBody.FORM)
-            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.picture, "after", fileBody)
-            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.shaker_code, shakerCode)
-            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.inspector_code, GetCurrentUserIDUtil.currentUserId(this))
-            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.inspector_time, new Date().getTime() + "")
-            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.state, "1")
+            .addFormDataPart(GlobalApi.ProductManagement.ShaiwangCheck.file, "after", fileBody)
             .build();
         Request request = new Request.Builder()
-            .url(GlobalApi.BASEURL + GlobalApi.ProductManagement.ShaiwangCheck.add)
+            .url(GlobalApi.BASEURL + GlobalApi.ProductManagement.ShaiwangCheck.upload)
             .post(requestBody)
             .build();
         Response response = null;
@@ -145,11 +152,45 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
             response = client.newCall(request).execute();
             String result = response.body().string();
             JSONObject jsonObject = new JSONObject(result);
-            message = jsonObject.optString("message");
-            handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
+            imageCode = jsonObject.optJSONObject("data").optString("code");
+            if (imageCode.length() > 0)
+                handler.sendEmptyMessage(0x102);//通过handler发送一个更新数据的标记
         } catch (IOException | JSONException e) {
             e.printStackTrace();
         }
+
+    }
+
+
+    public void submitData() {
+
+        Log.i("TAG", imageCode + "---" + shakerCode + "---" + GetCurrentUserIDUtil.currentUserId(this) + "---" + new Date().getTime() + "---" + "1");
+
+        EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.add)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.picture, imageCode)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.shakerCode, shakerCode)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.inspectorCode, GetCurrentUserIDUtil.currentUserId(this))
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.inspectorTime, DateUtil.getDateToString(new Date().getTime()))
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.state, "1")
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ShaiWangManagementDetails2.this, "提交失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(s);
+                        message = jsonObject.optString("message");
+                        handler.sendEmptyMessage(0x101);//通过handler发送一个更新数据的标记
+                    } catch (JSONException e1) {
+                        e1.printStackTrace();
+                    }
+
+                }
+            });
     }
 
     public void takePhoto() {

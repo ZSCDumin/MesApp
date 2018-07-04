@@ -72,6 +72,7 @@ public class JiaoJieBanManagementDetails1 extends AppCompatActivity {
     }
 
     public void getData() {
+        list.clear();
         EasyHttp.post(GlobalApi.ProductManagement.Jiaojieban.getByJobsCodeAndSuccessorCode)
             .params(GlobalApi.ProductManagement.Jiaojieban.jobsCode, code)
             .params(GlobalApi.ProductManagement.Jiaojieban.successor_code, GetCurrentUserIDUtil.currentUserId(this))

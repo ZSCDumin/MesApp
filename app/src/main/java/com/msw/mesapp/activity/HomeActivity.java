@@ -1,6 +1,8 @@
 package com.msw.mesapp.activity;
 
 import android.content.DialogInterface;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -60,6 +62,7 @@ import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -74,10 +77,10 @@ import me.panpf.sketch.SketchImageView;
 import me.panpf.sketch.display.FadeInImageDisplayer;
 import me.panpf.sketch.request.ShapeSize;
 import me.panpf.sketch.shaper.CircleImageShaper;
+import util.UpdateAppUtils;
 
 
 public class HomeActivity extends AppCompatActivity {
-
 
     @Bind(R.id.back)
     ImageView back;
@@ -157,25 +160,7 @@ public class HomeActivity extends AppCompatActivity {
     List<CardFragment> fragmentList = new ArrayList<>();
     private String permission_code = "";
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
-        permission_code = SharedPreferenceUtils.getString(this, GlobalKey.Permission.SPKEY, "");//获取当前用户的权限码
-        Log.i("permission_code", permission_code);
-        ActivityManager.getAppManager().addActivity(this); //添加当前Activity到Activity列表中
-        initView();
-        //定时获取待办事项（5s一次)
-        new Timer().schedule(new TimerTask() {
-                                 @Override
-                                 public void run() {
-                                     fragmentList.clear();
-                                     initCardView();
-                                 }
-                             }, 0, 5000
-        );
-    }
+    private String version = "";
 
     public void checkPermission() {
 
@@ -319,69 +304,27 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
+    private String url = "";
 
-    private void initView() {
-        initNavView();
-        initCardView();
-        //checkPermission();//检查权限
-    }
-
-    private void initNavView() {
-
-        View headerView = navView.getHeaderView(0);
-        SketchImageView head = headerView.findViewById(R.id.head);
-        TextView id = headerView.findViewById(R.id.tvid);
-
-        head.getOptions()
-            .setCacheInDiskDisabled(true)
-            .setShaper(new CircleImageShaper())
-            .setDecodeGifImage(true) //显示gif
-            .setLoadingImage(R.mipmap.ic_autorenew) //加载时的图片
-            .setErrorImage(R.mipmap.defualt_head)  //错误时的图片
-            .setShapeSize(ShapeSize.byViewFixedSize()) //设置尺寸
-            .setDisplayer(new FadeInImageDisplayer()); //显示图片的动画
-        head.displayResourceImage(R.mipmap.icon);
-        head.setClickRetryOnDisplayErrorEnabled(true);//加载失败时点击重新加载
-
-        String code = "";
-        code = SharedPreferenceUtils.getString(HomeActivity.this, GlobalKey.Login.CODE, code);
-        id.setText(code);
-
-        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                int id = item.getItemId();
-                if (id == R.id.nav_change) {
-                    ActivityUtil.switchTo(HomeActivity.this, ModifyPasswordActivity.class);
-                } else if (id == R.id.nav_output) {
-
-                    AlertDialog.Builder build = new AlertDialog.Builder(HomeActivity.this);
-                    build.setIcon(R.mipmap.alter);
-                    build.setTitle("警告对话框");
-                    build.setMessage("您确定要注销此用户吗？");
-                    build.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            SharedPreferenceUtils.clearPreferences(HomeActivity.this);
-                            ActivityUtil.switchTo(HomeActivity.this, LoginActivity.class);
-                            finish();
-                        }
-                    });
-                    build.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ToastUtil.showToast(HomeActivity.this, "您已取消了该操作！", ToastUtil.Default);
-                        }
-                    });
-                    build.show();
-                }
-                drawerLayout.closeDrawers();
-                return true;
-            }
-        });
-
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        permission_code = SharedPreferenceUtils.getString(this, GlobalKey.Permission.SPKEY, "");//获取当前用户的权限码
+        Log.i("permission_code", "111" + permission_code);
+        ActivityManager.getAppManager().addActivity(this); //添加当前Activity到Activity列表中
+        initView();
+        getData();
+        //定时获取待办事项（5s一次)
+        new Timer().schedule(new TimerTask() {
+                                 @Override
+                                 public void run() {
+                                     fragmentList.clear();
+                                     initCardView();
+                                 }
+                             }, 0, 5000
+        );
     }
 
     private void initCardView() {
@@ -585,6 +528,147 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         finish();
         super.onDestroy();
+    }
+
+    private void initView() {
+        initNavView();
+        initCardView();
+        checkPermission();//检查权限
+    }
+
+    private void initNavView() {
+
+        View headerView = navView.getHeaderView(0);
+        SketchImageView head = headerView.findViewById(R.id.head);
+        TextView id = headerView.findViewById(R.id.tvid);
+
+        head.getOptions()
+            .setCacheInDiskDisabled(true)
+            .setShaper(new CircleImageShaper())
+            .setDecodeGifImage(true) //显示gif
+            .setLoadingImage(R.mipmap.ic_autorenew) //加载时的图片
+            .setErrorImage(R.mipmap.defualt_head)  //错误时的图片
+            .setShapeSize(ShapeSize.byViewFixedSize()) //设置尺寸
+            .setDisplayer(new FadeInImageDisplayer()); //显示图片的动画
+        head.displayResourceImage(R.mipmap.icon);
+        head.setClickRetryOnDisplayErrorEnabled(true);//加载失败时点击重新加载
+
+        String code = "";
+        code = SharedPreferenceUtils.getString(HomeActivity.this, GlobalKey.Login.CODE, code);
+        id.setText(code);
+
+        navView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                if (id == R.id.nav_change) {
+                    ActivityUtil.switchTo(HomeActivity.this, ModifyPasswordActivity.class);
+                } else if (id == R.id.nav_update) {
+                    //检查更新
+                    if (checkUpdate() == 1) {
+                        updateApp();
+                    } else {
+                        ToastUtil.showToast(HomeActivity.this, "应用已是最新版本！", 1);
+                    }
+                } else if (id == R.id.nav_output) {
+
+                    AlertDialog.Builder build = new AlertDialog.Builder(HomeActivity.this);
+                    build.setIcon(R.mipmap.alter);
+                    build.setTitle("警告对话框");
+                    build.setMessage("您确定要注销此用户吗？");
+                    build.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            SharedPreferenceUtils.clearPreferences(HomeActivity.this);
+                            ActivityUtil.switchTo(HomeActivity.this, LoginActivity.class);
+                            finish();
+                        }
+                    });
+                    build.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ToastUtil.showToast(HomeActivity.this, "您已取消了该操作！", ToastUtil.Default);
+                        }
+                    });
+                    build.show();
+                }
+                drawerLayout.closeDrawers();
+                return true;
+            }
+        });
+
+    }
+
+    public void getData() {
+        EasyHttp.post(GlobalApi.AppUpdate.PATH)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(HomeActivity.this, "获取数据出错", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        if (data != null) {
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject item = data.getJSONObject(i);
+                                version = item.optString("version");
+                                url = item.optString("url");
+                            }
+                        }
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
+
+
+    private String getVersionName() throws Exception {
+        PackageManager packageManager = getPackageManager();
+        PackageInfo packInfo = packageManager.getPackageInfo(getPackageName(), 0);
+        return packInfo.versionName;
+    }
+
+    /**
+     * 检查是否需要更新
+     */
+    public int checkUpdate() {
+        int flag = 1;
+        try {
+            String version1 = getVersionName();
+            if (Double.valueOf(version1) >= Double.valueOf(version)) {
+                flag = 0;
+            } else {
+                flag = 1;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+    /**
+     * 下载更新包
+     */
+    public void updateApp() {
+
+        Log.i("TAG", version + url);
+        UpdateAppUtils.from(this)
+            .checkBy(UpdateAppUtils.CHECK_BY_VERSION_NAME) //更新检测方式，默认为VersionCode
+            .serverVersionCode(1)
+            .serverVersionName(version)
+            .apkPath(url)
+            .showNotification(true) //是否显示下载进度到通知栏，默认为true
+            .update();
     }
 
 }

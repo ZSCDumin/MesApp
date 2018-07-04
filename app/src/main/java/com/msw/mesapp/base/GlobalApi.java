@@ -6,8 +6,7 @@ package com.msw.mesapp.base;
 
 public class GlobalApi {
 
-    //public static String BASEURL = "http://218.77.105.241:30080/mes/";
-    public static String BASEURL = "http://115.157.192.47:8080/mes/";
+    public static String BASEURL = "http://218.77.105.241:30080/mes/";
 
     public final static class AppUpdate {
         public final static String PATH = "appUpdate/getAll";
@@ -526,15 +525,16 @@ public class GlobalApi {
 
             public final static String getAllByPage = "screenCheck/getAllByPage";
             public final static String add = "screenCheck/add";
+            public final static String upload = "image/upload";
             public final static String getById = "screenCheck/getById";
             public final static String getByShakerCodeLikeByPage = "screenCheck/getByShakerCodeLikeByPage";
             public final static String update = "screenCheck/update";
             public final static String code = "code";
-            public final static String shaker_code = "shaker_code";
             public final static String shakerCode = "shakerCode";
             public final static String picture = "picture";
-            public final static String inspector_code = "inspector_code";
-            public final static String inspector_time = "inspector_time";
+            public final static String file = "file";
+            public final static String inspectorCode = "inspector";
+            public final static String inspectorTime = "inspectorTime";
             public final static String state = "state";
 
         }

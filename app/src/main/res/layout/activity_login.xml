@@ -4,16 +4,6 @@
     android:background="@mipmap/login_bg"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/setting"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="30dp"
-        android:background="@mipmap/setting" />
-
-
     <com.msw.mesapp.ui.background.FloatBackground
         android:id="@+id/float_view"
         android:layout_width="match_parent"
