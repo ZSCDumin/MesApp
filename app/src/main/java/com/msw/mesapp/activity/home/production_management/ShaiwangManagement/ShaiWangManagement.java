@@ -74,7 +74,7 @@ public class ShaiWangManagement extends AppCompatActivity {
             list.clear();
             page = 0;
         }
-        EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.getAllByPage)
+        EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.getAll)
             .params("page", page + "")
             .execute(new SimpleCallBack<String>() {
                 @Override

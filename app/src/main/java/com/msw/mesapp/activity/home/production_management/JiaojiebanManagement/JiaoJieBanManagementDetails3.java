@@ -98,7 +98,18 @@ public class JiaoJieBanManagementDetails3 extends AppCompatActivity {
                             String content = item.optJSONObject("contentCode").optString("name");
                             String status = item.optJSONObject("stateCode").optString("name");
                             Map<String, Object> map = new HashMap<>();
-                            map.put("1", "");
+                            if (content.contains("YG-41"))
+                                map.put("1", "工具交接");
+                            else if (content.contains("CYLC"))
+                                map.put("1", "记录交接");
+                            else if (content.contains("窑炉") || content.contains("外轨线"))
+                                map.put("1", "设备交接");
+                            else if (content.contains("工艺单"))
+                                map.put("1", "任务交接");
+                            else if (content.contains("空值"))
+                                map.put("1", "安全环保");
+                            else
+                                map.put("1", "6S交接");
                             map.put("2", content);
                             map.put("3", status);
                             list.add(map);

@@ -523,7 +523,7 @@ public class GlobalApi {
 
         public final static class ShaiwangCheck {
 
-            public final static String getAllByPage = "screenCheck/getAllByPage";
+            public final static String getAll = "screenCheck/getAll";
             public final static String add = "screenCheck/add";
             public final static String upload = "image/upload";
             public final static String getById = "screenCheck/getById";
