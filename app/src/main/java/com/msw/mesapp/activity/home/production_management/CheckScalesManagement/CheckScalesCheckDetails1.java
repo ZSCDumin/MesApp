@@ -38,6 +38,7 @@ public class CheckScalesCheckDetails1 extends AppCompatActivity {
     private final String[] mTitles = {"待确认", "已确认"};
     private ArrayList<Fragment> fragmentList = new ArrayList<>();
     private String code = "";
+    private String name = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class CheckScalesCheckDetails1 extends AppCompatActivity {
         setContentView(R.layout.activity_check_scales_management_details4);
         ButterKnife.bind(this);
         code = getIntent().getExtras().get("code").toString();
+        name = getIntent().getExtras().get("name").toString();
         initView();
     }
 
@@ -56,7 +58,7 @@ public class CheckScalesCheckDetails1 extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("41号秤");
+        title.setText(name);
         add.setVisibility(View.INVISIBLE);
     }
 

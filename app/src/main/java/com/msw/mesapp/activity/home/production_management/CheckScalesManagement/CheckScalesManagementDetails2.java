@@ -1,7 +1,10 @@
 package com.msw.mesapp.activity.home.production_management.CheckScalesManagement;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -63,6 +66,38 @@ public class CheckScalesManagementDetails2 extends Activity {
     private String dutyCode = "1"; //是否合格的标记，1为合格
     private String code = "";
     private String name = "";
+    private String scale_value = "";
+
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x011:
+                    tv1.setText(scale_value);
+                    check(tv1.getText().toString());
+                    break;
+                case 0x012:
+                    tv2.setText(scale_value);
+                    check(tv2.getText().toString());
+                    break;
+                case 0x013:
+                    tv3.setText(scale_value);
+                    check(tv3.getText().toString());
+                    break;
+                case 0x014:
+                    tv4.setText(scale_value);
+                    check(tv4.getText().toString());
+                    break;
+                case 0x015:
+                    tv5.setText(scale_value);
+                    check(tv5.getText().toString());
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,19 +133,19 @@ public class CheckScalesManagementDetails2 extends Activity {
                 finish();
                 break;
             case R.id.bt1:
-                check(tv1.getText().toString());
+                getScaleData(1);
                 break;
             case R.id.bt2:
-                check(tv2.getText().toString());
+                getScaleData(2);
                 break;
             case R.id.bt3:
-                check(tv3.getText().toString());
+                getScaleData(3);
                 break;
             case R.id.bt4:
-                check(tv4.getText().toString());
+                getScaleData(4);
                 break;
             case R.id.bt5:
-                check(tv5.getText().toString());
+                getScaleData(5);
                 break;
             case R.id.submit_bt:
                 if (baiban.isChecked()) {
@@ -158,6 +193,44 @@ public class CheckScalesManagementDetails2 extends Activity {
                     }
                 }
             });
+    }
+
+    public void getScaleData(final int n) {
+        EasyHttp.post(GlobalApi.ProductManagement.CheckScale.getRealDateByEquipmentCode)
+            .params("equipmentCode", code)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(CheckScalesManagementDetails2.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String s) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(s);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String message = jsonObject.optString("message");
+                        scale_value = data.optString("value");
+                        if (message.equals("成功")) {
+                            ToastUtil.showToast(CheckScalesManagementDetails2.this, "提交成功", ToastUtil.Success);
+                            if (n == 1)
+                                handler.sendEmptyMessage(0x011);
+                            else if (n == 2)
+                                handler.sendEmptyMessage(0x012);
+                            else if (n == 3)
+                                handler.sendEmptyMessage(0x013);
+                            else if (n == 4)
+                                handler.sendEmptyMessage(0x014);
+                            else if (n == 5)
+                                handler.sendEmptyMessage(0x015);
+                        } else
+                            ToastUtil.showToast(CheckScalesManagementDetails2.this, message, ToastUtil.Success);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+
     }
 
     public void getData() {

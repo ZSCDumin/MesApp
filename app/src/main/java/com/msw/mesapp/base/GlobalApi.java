@@ -513,7 +513,9 @@ public class GlobalApi {
     public final static class ProductManagement {
 
         public final static class CheckScale {
+
             public final static String getAllScales = "electronicBalance/getAll";
+            public final static String getRealDateByEquipmentCode = "audit/getRealDateByEquipmentCode";
             public final static String getByEquipmentCodeByPage = "audit/getByEquipmentCodeByPage";
             public final static String getByCode = "audit/getByCode";
             public final static String add = "audit/add";
