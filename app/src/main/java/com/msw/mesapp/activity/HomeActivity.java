@@ -66,7 +66,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -304,6 +306,7 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
+
     private String url = "";
 
     @Override
@@ -373,6 +376,7 @@ public class HomeActivity extends AppCompatActivity {
 
     @OnClick({R.id.back, R.id.device_inspection_ll, R.id.repair_bill_ll, R.id.repair_apply_ll, R.id.qr_management_ll, R.id.device_verify_ll, R.id.receive_repair_order_ll, R.id.repair_comment_ll, R.id.product_vertify_ll, R.id.material_vertify_ll, R.id.produce_vertify_ll, R.id.product_release_ll, R.id.material_release_ll, R.id.produce_release_ll, R.id.material_input_ll, R.id.material_output_ll, R.id.product_input_ll, R.id.product_output_vertify_ll, R.id.sample_input_ll, R.id.sample_output_ll, R.id.add_vertify_ll, R.id.material_output_vertify_ll, R.id.product_output_ll, R.id.product_check_scale_ll, R.id.shaiwang_check_ll, R.id.jiaojieban_ll, R.id.id_bind_ll, R.id.check_scale_vertify_ll})
     public void onViewClicked(View view) {
+        Map map = new HashMap<>();
         switch (view.getId()) {
             case R.id.back:
                 drawerLayout.openDrawer(GravityCompat.START);
@@ -419,11 +423,13 @@ public class HomeActivity extends AppCompatActivity {
                 break;
             case R.id.product_release_ll:
                 ToastUtil.showToast(HomeActivity.this, "产品发布", ToastUtil.Default);
-                ActivityUtil.switchTo(HomeActivity.this, TestReleaseActivity.class);
+                map.put("1", "产品发布");
+                ActivityUtil.switchTo(HomeActivity.this, TestReleaseActivity.class, map);
                 break;
             case R.id.material_release_ll:
                 ToastUtil.showToast(HomeActivity.this, "原料发布", ToastUtil.Default);
-                ActivityUtil.switchTo(HomeActivity.this, TestReleaseActivity.class);
+                map.put("1", "原料发布");
+                ActivityUtil.switchTo(HomeActivity.this, TestReleaseActivity.class, map);
                 break;
             case R.id.produce_release_ll:
                 ToastUtil.showToast(HomeActivity.this, "制程发布", ToastUtil.Default);
@@ -484,6 +490,8 @@ public class HomeActivity extends AppCompatActivity {
             case R.id.id_bind_ll:
                 ToastUtil.showToast(HomeActivity.this, "ID绑定", ToastUtil.Default);
                 ActivityUtil.switchTo(HomeActivity.this, IdManagementActivity.class);
+                break;
+            default:
                 break;
         }
     }

@@ -100,69 +100,69 @@ public class MaterialInActivityDetail1 extends AppCompatActivity {
         code = getIntent().getExtras().get("code").toString();
 
         EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Header_ByCode)
-                .params(GlobalApi.WareHourse.code, code) //
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
+            .params(GlobalApi.WareHourse.code, code) //
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
 
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = jsonObject.optInt("code");
-                            message = jsonObject.optString("message");
-                            JSONObject data = jsonObject.optJSONObject("data");
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
 
-                            headcode = data.optString("code");
-                            String contractNumber = data.optString("contractNumber"); //合同号
+                        headcode = data.optString("code");
+                        String contractNumber = data.optString("contractNumber"); //合同号
 
-                            JSONObject supplierobj = data.optJSONObject("supplier");
-                            String supplier = supplierobj.optString("name"); //发货厂家
+                        JSONObject supplierobj = data.optJSONObject("supplier");
+                        String supplier = supplierobj.optString("name"); //发货厂家
 
-                            JSONObject senderobj = data.optJSONObject("sender");
-                            String senderName = senderobj.optString("name"); //发货人
+                        JSONObject senderobj = data.optJSONObject("sender");
+                        String senderName = senderobj.optString("name"); //发货人
 
-                            String sendDate = data.optString("sendDate"); //发货日期
-                            String contact = data.optString("contact"); //联系电话
-                            String materia_name = data.optString("name"); //物料名称
-                            String weight = data.optString("weight"); //总量
-                            JSONArray sendEntriesArr = data.getJSONArray("sendEntries");
-                            for (int i = 0; i < sendEntriesArr.length(); i++) {
-                                JSONObject godwon0 = new JSONObject(sendEntriesArr.opt(i).toString());
-                                HashMap map = new HashMap();
-                                map.put("0", godwon0.optString("code"));
-                                map.put("1", godwon0.optString("batchNumber")); //批号
-                                map.put("2", godwon0.optString("unit")); //单位
-                                map.put("3", godwon0.optString("weight")); //重量
-                                map.put("4", godwon0.optString("status")); //状态:0未收;1已收
-                                tableList.add(map);
-                            }
-
-                            ss[0] = contractNumber; //合同号
-                            ss[1] = supplier; //发货厂家
-                            ss[2] = senderName; //发货人
-                            ss[3] = sendDate; //发货时间
-                            ss[4] = contact; //电话
-                            ss[5] = materia_name; //物料名称
-                            ss[6] = weight; //总量
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        String sendDate = data.optString("sendDate"); //发货日期
+                        String contact = data.optString("contact"); //联系电话
+                        String materia_name = data.optString("name"); //物料名称
+                        String weight = data.optString("weight"); //总量
+                        JSONArray sendEntriesArr = data.getJSONArray("sendEntries");
+                        for (int i = 0; i < sendEntriesArr.length(); i++) {
+                            JSONObject godwon0 = new JSONObject(sendEntriesArr.opt(i).toString());
+                            HashMap map = new HashMap();
+                            map.put("0", godwon0.optString("code"));
+                            map.put("1", godwon0.optString("batchNumber").trim()); //批号
+                            map.put("2", godwon0.optString("unit")); //单位
+                            map.put("3", godwon0.optString("weight")); //重量
+                            map.put("4", godwon0.optString("status")); //状态:0未收;1已收
+                            tableList.add(map);
                         }
-                        if (code == 0) {
-                            initView();
-                        } else {
-                            ToastUtil.showToast(MaterialInActivityDetail1.this, message, ToastUtil.Error);
-                        }
-                    }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialInActivityDetail1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        ss[0] = contractNumber; //合同号
+                        ss[1] = supplier; //发货厂家
+                        ss[2] = senderName; //发货人
+                        ss[3] = sendDate; //发货时间
+                        ss[4] = contact; //电话
+                        ss[5] = materia_name; //物料名称
+                        ss[6] = weight; //总量
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
+                    if (code == 0) {
+                        initView();
+                    } else {
+                        ToastUtil.showToast(MaterialInActivityDetail1.this, message, ToastUtil.Error);
+                    }
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialInActivityDetail1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     public void initView() {

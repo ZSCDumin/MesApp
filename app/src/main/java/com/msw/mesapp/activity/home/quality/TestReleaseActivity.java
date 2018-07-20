@@ -41,22 +41,28 @@ public class TestReleaseActivity extends AppCompatActivity {
     private final String[] mTitles = {"未发布", "已发布"};
     private ArrayList<Fragment> fragmentList = new ArrayList<>();
 
+    String titile = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test_release);
         ButterKnife.bind(this);
+        titile = getIntent().getExtras().get("1").toString();
         initData();
         initView();
     }
+
     public void initData() {
 
     }
+
     public void initView() {
         initTitle();
         initPopup();
         initSlidingTabLayout();
     }
+
     public void initTitle() {
         StatusBarUtils.setActivityTranslucent(this); //设置全屏
         back.setOnClickListener(new View.OnClickListener() {
@@ -65,7 +71,7 @@ public class TestReleaseActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("原料发布");
+        title.setText(titile);
         add.setImageResource(R.mipmap.icon_list);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,13 +80,15 @@ public class TestReleaseActivity extends AppCompatActivity {
             }
         });
     }
+
     public void initSlidingTabLayout() {
         fragmentList.add(new FragmentTestReleaseing());
         fragmentList.add(new FragmentTestReleaseed());
-        viewPager.setNestedpParent((ViewGroup)viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
+        viewPager.setNestedpParent((ViewGroup) viewPager.getParent());//将 viewpager 的父view传递到viewpager里面 ,解决滑动冲突
         viewPager.setAdapter(new TestReleaseActivity.mPageAdapter(this.getSupportFragmentManager()));
         slidingTabLayout.setViewPager(viewPager, mTitles);
     }
+
     //初始化标题列表
     public void initPopup() {
         titlePopup = new TitlePopup(this, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -89,9 +97,9 @@ public class TestReleaseActivity extends AppCompatActivity {
         titlePopup.setItemOnClickListener(new TitlePopup.OnItemOnClickListener() {
             @Override
             public void onItemClick(TitlePopup.ActionItem item, int position) {
-                switch (position){
+                switch (position) {
                     case 0:
-                        ActivityUtil.switchTo(TestReleaseActivity.this,TestRelease2Activity.class);
+                        ActivityUtil.switchTo(TestReleaseActivity.this, TestRelease2Activity.class);
                         finish();
                         break;
                     default:
@@ -100,6 +108,7 @@ public class TestReleaseActivity extends AppCompatActivity {
             }
         });
     }
+
     public class mPageAdapter extends FragmentPagerAdapter {
 
         public mPageAdapter(FragmentManager fm) {

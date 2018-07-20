@@ -449,6 +449,7 @@ public class GlobalApi {
 
         //原料入库
         public final static class MaterialIn {
+            public final static String updateStatusByCode = "godownEntryHeader/updateStatusByCode";
             //第三方发货单
             public final static String PATH_Send_Header_ByPage = "sendEntryHeader/getAllByPage"; //分页获取
             public final static String PATH_Send_Header_ByCode = "sendEntryHeader/getByCode"; //编码获取
@@ -525,13 +526,15 @@ public class GlobalApi {
 
         public final static class ShaiwangCheck {
 
-            public final static String getAll = "screenCheck/getAll";
+            public final static String getAll = "goods/getAll";
             public final static String add = "screenCheck/add";
             public final static String upload = "image/upload";
             public final static String getById = "screenCheck/getById";
             public final static String getByShakerCodeLikeByPage = "screenCheck/getByShakerCodeLikeByPage";
             public final static String update = "screenCheck/update";
             public final static String code = "code";
+            public final static String asc = "asc";
+            public final static String sortFieldName = "sortFieldName";
             public final static String shakerCode = "shakerCode";
             public final static String picture = "picture";
             public final static String file = "file";

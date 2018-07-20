@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,7 +50,7 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
     RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
     private List<Map<String, Object>> list = new ArrayList<>();
-    private String code = "";
+    private String shakerName = "";
     private String shakerCode = "";
     @Bind(R.id.classicsFooter)
     ClassicsFooter classicsFooter;
@@ -65,7 +64,7 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shai_wang_management_details1);
         ButterKnife.bind(this);
-        code = getIntent().getExtras().get("code").toString();
+        shakerName = getIntent().getExtras().get("shakerName").toString();
         shakerCode = getIntent().getExtras().get("shakerCode").toString();
         intiView();
         initRefreshLayout();
@@ -78,7 +77,9 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
             page = 0;
         }
         EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.getByShakerCodeLikeByPage)
-            .params(GlobalApi.ProductManagement.ShaiwangCheck.shakerCode, shakerCode)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.shakerCode, shakerName)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.sortFieldName, "inspectorTime")
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.asc, "0")
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
@@ -93,10 +94,12 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
                         JSONArray content = data.optJSONArray("content");
                         for (int i = 0; i < content.length(); i++) {
                             JSONObject item = content.getJSONObject(i);
+                            String code = item.optString("code");
                             String inspectorTime = item.optString("inspectorTime");
                             inspectorTime = DateUtil.getDateToString(inspectorTime);
                             Map<String, Object> map = new HashMap<>();
                             map.put("1", inspectorTime);
+                            map.put("2", code);
                             list.add(map);
                         }
                         adapter.notifyDataSetChanged();
@@ -109,7 +112,7 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
 
     public void intiView() {
 
-        title.setText(shakerCode + "筛网");
+        title.setText(shakerName + "筛网");
         add.setImageResource(R.mipmap.add);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));//设置为listview的布局
         recyclerView.addItemDecoration(new DividerItemDecoration(this, 0));//添加分割线
@@ -123,9 +126,9 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
                     public void onClick(View view) {
                         //查看详情
                         Map<String, Object> map = new HashMap<>();
-                        map.put("code", code);
                         map.put("shakerCode", shakerCode);
-                        Log.i("TAG", code);
+                        map.put("shakerName", shakerName);
+                        map.put("code", s.get("2").toString());
                         ActivityUtil.switchTo(ShaiWangManagementDetails1.this, ShaiWangManagementDetails3.class, map);
                     }
                 });
@@ -142,9 +145,8 @@ public class ShaiWangManagementDetails1 extends AppCompatActivity {
                 break;
             case R.id.add:
                 Map<String, Object> map = new HashMap<>();
-                map.put("code", code);
                 map.put("shakerCode", shakerCode);
-                Log.i("TAG", code);
+                map.put("shakerName", shakerName);
                 ActivityUtil.switchTo(ShaiWangManagementDetails1.this, ShaiWangManagementDetails2.class, map);
                 break;
         }

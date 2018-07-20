@@ -36,22 +36,22 @@ public class ShaiWangManagementDetails3 extends AppCompatActivity {
     TextView tv2;
     @Bind(R.id.imageView)
     ImageView imageView;
+    private String shakerName = "";
     private String code = "";
-    private String shakerCode = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shai_wang_management_details3);
         ButterKnife.bind(this);
+        shakerName = getIntent().getExtras().get("shakerName").toString();
         code = getIntent().getExtras().get("code").toString();
-        shakerCode = getIntent().getExtras().get("shakerCode").toString();
         intiView();
         getData();
     }
 
     public void intiView() {
-        title.setText(shakerCode + "筛网");
+        title.setText(shakerName + "筛网");
         add.setVisibility(View.INVISIBLE);
     }
 

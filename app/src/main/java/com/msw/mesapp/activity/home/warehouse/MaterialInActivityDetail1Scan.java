@@ -85,6 +85,8 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
                         check(0);
                     }
                     break;
+                default:
+                    break;
             }
         }
     };
@@ -144,7 +146,7 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("产品收货");
+        title.setText("原料收货");
 
         add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,7 +210,7 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         super.onResume();
         BarcodeAPI.getInstance().m_handler = mHandler;
     }
-
+    @Override
     public void onStop() {
         super.onStop();
     }
@@ -244,36 +246,37 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         Log.i("TAG", BtFlag + "");
 
         if (BtFlag && batchList.size() == list.size())
-            EasyHttp.post(GlobalApi.WareHourse.SampleIn.updateStatusByCode)
-                    .params(GlobalApi.WareHourse.code, headcode) //
-                    .params(GlobalApi.WareHourse.status, "1") //
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            int code = 1;
-                            String message = "出错";
-                            try {
-                                JSONObject jsonObject = new JSONObject(result);
-                                code = jsonObject.optInt("code");
-                                message = jsonObject.optString("message");
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            if (code == 0) {
-                                ToastUtil.showToast(MaterialInActivityDetail1Scan.this, message, ToastUtil.Success);
-                                finish();
-                            } else {
-                                ToastUtil.showToast(MaterialInActivityDetail1Scan.this, message, ToastUtil.Error);
-                            }
+            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.updateStatusByCode)
+                .params(GlobalApi.WareHourse.code, headcode) //
+                .params(GlobalApi.WareHourse.status, "1") //
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        int code = 1;
+                        String message = "出错";
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            code = jsonObject.optInt("code");
+                            message = jsonObject.optString("message");
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                        if (code == 0) {
+                            ToastUtil.showToast(MaterialInActivityDetail1Scan.this, message, ToastUtil.Success);
+                            finish();
+                        } else {
+                            ToastUtil.showToast(MaterialInActivityDetail1Scan.this, message, ToastUtil.Error);
+                        }
+                        Log.i("TAG",message);
+                    }
 
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(MaterialInActivityDetail1Scan.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                        }
-                    });
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(MaterialInActivityDetail1Scan.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    }
+                });
         else {
             ToastUtil.showToast(MaterialInActivityDetail1Scan.this, "匹配数目不一致！", ToastUtil.Confusion);
         }

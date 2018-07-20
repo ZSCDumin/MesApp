@@ -102,7 +102,6 @@ public class QrManageActivity extends AppCompatActivity {
     }
 
     private void initData() {
-
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.QrManager.PATH)

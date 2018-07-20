@@ -69,7 +69,7 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
     private String mPhotoPath1;
     public final static int CAMERA_RESULT = 1;
     private static final int MY_PERMISSION_REQUEST_CODE = 10000;
-    private String code = "";
+    private String shakerName = "";
     public String message;
     private String imageCode = "";
     private String shakerCode = "";
@@ -98,13 +98,13 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shai_wang_management_details2);
         ButterKnife.bind(this);
-        code = getIntent().getExtras().get("code").toString();
+        shakerName = getIntent().getExtras().get("shakerName").toString();
         shakerCode = getIntent().getExtras().get("shakerCode").toString();
         intiView();
     }
 
     public void intiView() {
-        title.setText(shakerCode + "筛网");
+        title.setText(shakerName + "筛网");
         add.setVisibility(View.INVISIBLE);
     }
 
@@ -168,7 +168,7 @@ public class ShaiWangManagementDetails2 extends AppCompatActivity {
 
         EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.add)
             .params(GlobalApi.ProductManagement.ShaiwangCheck.picture, imageCode)
-            .params(GlobalApi.ProductManagement.ShaiwangCheck.shakerCode, shakerCode)
+            .params(GlobalApi.ProductManagement.ShaiwangCheck.shakerCode, shakerName)
             .params(GlobalApi.ProductManagement.ShaiwangCheck.inspectorCode, GetCurrentUserIDUtil.currentUserId(this))
             .params(GlobalApi.ProductManagement.ShaiwangCheck.inspectorTime, DateUtil.getDateToString(new Date().getTime()))
             .params(GlobalApi.ProductManagement.ShaiwangCheck.state, "1")

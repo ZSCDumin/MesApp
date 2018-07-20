@@ -55,10 +55,6 @@ public class ShaiWangManagement extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
 
-    private int page = 0;
-    private int totalPages = 0;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,16 +62,12 @@ public class ShaiWangManagement extends AppCompatActivity {
         ButterKnife.bind(this);
         intiView();
         initRefreshLayout();
-        initData(1);
+        initData();
     }
 
-    public void initData(int flag) {
-        if (flag == 1) {
-            list.clear();
-            page = 0;
-        }
-        EasyHttp.post(GlobalApi.ProductManagement.ShaiwangCheck.getAll)
-            .params("page", page + "")
+    public void initData() {
+
+        EasyHttp.get(GlobalApi.ProductManagement.ShaiwangCheck.getAll)
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onError(ApiException e) {
@@ -84,19 +76,16 @@ public class ShaiWangManagement extends AppCompatActivity {
 
                 @Override
                 public void onSuccess(String s) {
-
                     try {
                         JSONObject jsonObject = new JSONObject(s);
-                        JSONObject data = jsonObject.optJSONObject("data");
-                        JSONArray content = data.optJSONArray("content");
-                        totalPages = data.optInt("totalPages");
-                        for (int i = 0; i < content.length(); i++) {
-                            JSONObject item = content.getJSONObject(i);
-                            String shakerCode = item.optString("shakerCode");
-                            String code = item.optString("code");
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String shakerCode = item.optString("code");
+                            String shakerName = item.optString("name");
                             Map<String, Object> map = new HashMap<>();
                             map.put("1", shakerCode);
-                            map.put("2", code);
+                            map.put("2", shakerName);
                             list.add(map);
                         }
                         adapter.notifyDataSetChanged();
@@ -107,16 +96,6 @@ public class ShaiWangManagement extends AppCompatActivity {
                 }
             });
     }
-
-    public void loadMoreData() {
-        page = page + 1;
-        if (page > totalPages) {
-            classicsFooter.setLoadmoreFinished(true);
-        } else {
-            initData(0);
-        }
-    }
-
 
     public void intiView() {
         title.setText("筛网检查");
@@ -130,13 +109,13 @@ public class ShaiWangManagement extends AppCompatActivity {
                     @Override
                     public void onClick(View view) {
                         Map<String, Object> map = new HashMap<>();
+                        map.put("shakerName", s.get("2").toString());
                         map.put("shakerCode", s.get("1").toString());
-                        map.put("code", s.get("2").toString());
                         ActivityUtil.switchTo(ShaiWangManagement.this, ShaiWangManagementDetails1.class, map);
                     }
                 });
-                holder.setText(R.id.tv1, s.get("1").toString() + "筛网");
-                holder.setText(R.id.tv2, "");
+                holder.setText(R.id.tv1, s.get("1").toString());
+                holder.setText(R.id.tv2, s.get("2").toString() + "筛网");
             }
         };
         recyclerView.setAdapter(adapter);
@@ -152,7 +131,7 @@ public class ShaiWangManagement extends AppCompatActivity {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 refreshlayout.finishRefresh(1500);
-                initData(1);
+                initData();
                 classicsFooter.setLoadmoreFinished(false);
             }
         });
@@ -160,7 +139,6 @@ public class ShaiWangManagement extends AppCompatActivity {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
                 refreshlayout.finishLoadmore(1000);//传入false表示加载失败
-                loadMoreData();
             }
         });
     }

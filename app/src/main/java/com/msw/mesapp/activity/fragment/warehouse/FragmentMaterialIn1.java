@@ -94,63 +94,63 @@ public class FragmentMaterialIn1 extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Header_ByPage) //获取发货单
-                .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
-                .params(GlobalApi.WareHourse.size, "20") //一次获取多少
-                .params(GlobalApi.WareHourse.sort, "code") //根据code排序
-                .params(GlobalApi.WareHourse.asc, "1") //升序
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
+            .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
+            .params(GlobalApi.WareHourse.size, "10") //一次获取多少
+            .params(GlobalApi.WareHourse.sort, "code") //根据code排序
+            .params(GlobalApi.WareHourse.asc, "1") //升序
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
 
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = jsonObject.optInt("code");
-                            message = jsonObject.optString("message");
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            JSONArray content = data.optJSONArray("content");
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        JSONArray content = data.optJSONArray("content");
 
-                            totalPages = data.optInt("totalPages");
-                            totalElements = data.optInt("totalElements");
+                        totalPages = data.optInt("totalPages");
+                        totalElements = data.optInt("totalElements");
 
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject content0 = content.optJSONObject(i);
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject content0 = content.optJSONObject(i);
 
-                                String head_code = content0.optString("code"); //获取编码
-                                String materia_name = content0.optString("name"); //原料名字
-                                String weight = content0.optString("weight"); //重量
-                                String sendDate = content0.optString("sendDate"); //发货日期
+                            String head_code = content0.optString("code"); //获取编码
+                            String materia_name = content0.optString("name"); //原料名字
+                            String weight = content0.optString("weight"); //重量
+                            String sendDate = content0.optString("sendDate"); //发货日期
 
-                                String status = content0.optString("status"); //获取状态
+                            String status = content0.optString("status"); //获取状态
 
-                                if (status.equals("1")) { //获取所有为入库的数据
-                                    Map listmap = new HashMap<>();
-                                    listmap.put("1", materia_name + "：" + weight + "kg"); //物料名称+重量
-                                    listmap.put("2", sendDate); //
-                                    listmap.put("3", head_code); //
-                                    list.add(listmap);
-                                }
+                            if (status.equals("0")) { //获取所有未入库的数据
+                                Map listmap = new HashMap<>();
+                                listmap.put("1", materia_name + "：" + weight + "kg"); //物料名称+重量
+                                listmap.put("2", sendDate); //
+                                listmap.put("3", head_code); //
+                                list.add(listmap);
                             }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                        if (code == 0) {
-                            adapter.notifyDataSetChanged();
-                            //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
-                        } else {
-                            ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
-                        }
-                    }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
+                    if (code == 0) {
+                        adapter.notifyDataSetChanged();
+                        //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
+                    } else {
+                        ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
+                    }
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     private void initView() {
@@ -211,63 +211,63 @@ public class FragmentMaterialIn1 extends Fragment {
         if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
         else {
             EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Header_ByPage) //获取发货单
-                    .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
-                    .params(GlobalApi.WareHourse.size, "20") //一次获取多少
-                    .params(GlobalApi.WareHourse.sort, "code") //根据code排序
-                    .params(GlobalApi.WareHourse.asc, "1") //升序
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            int code = 1;
-                            String message = "出错";
+                .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
+                .params(GlobalApi.WareHourse.size, "20") //一次获取多少
+                .params(GlobalApi.WareHourse.sort, "code") //根据code排序
+                .params(GlobalApi.WareHourse.asc, "1") //升序
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        int code = 1;
+                        String message = "出错";
 
-                            try {
-                                JSONObject jsonObject = new JSONObject(result);
-                                code = jsonObject.optInt("code");
-                                message = jsonObject.optString("message");
-                                JSONObject data = jsonObject.optJSONObject("data");
-                                JSONArray content = data.optJSONArray("content");
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            code = jsonObject.optInt("code");
+                            message = jsonObject.optString("message");
+                            JSONObject data = jsonObject.optJSONObject("data");
+                            JSONArray content = data.optJSONArray("content");
 
-                                totalPages = data.optInt("totalPages");
-                                totalElements = data.optInt("totalElements");
+                            totalPages = data.optInt("totalPages");
+                            totalElements = data.optInt("totalElements");
 
-                                for (int i = 0; i < content.length(); i++) {
-                                    JSONObject content0 = content.optJSONObject(i);
+                            for (int i = 0; i < content.length(); i++) {
+                                JSONObject content0 = content.optJSONObject(i);
 
-                                    String head_code = content0.optString("code"); //获取编码
-                                    String materia_name = content0.optString("name"); //原料名字
-                                    String weight = content0.optString("weight"); //重量
-                                    String sendDate = content0.optString("sendDate"); //发货日期
+                                String head_code = content0.optString("code"); //获取编码
+                                String materia_name = content0.optString("name"); //原料名字
+                                String weight = content0.optString("weight"); //重量
+                                String sendDate = content0.optString("sendDate"); //发货日期
 
-                                    String status = content0.optString("status"); //获取状态
+                                String status = content0.optString("status"); //获取状态
 
-                                    if (status.equals("0")) { //获取所有为入库的数据
-                                        Map listmap = new HashMap<>();
-                                        listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
-                                        listmap.put("2", sendDate); //
-                                        listmap.put("3", head_code); //
-                                        list.add(listmap);
-                                    }
+                                if (status.equals("0")) { //获取所有为入库的数据
+                                    Map listmap = new HashMap<>();
+                                    listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
+                                    listmap.put("2", sendDate); //
+                                    listmap.put("3", head_code); //
+                                    list.add(listmap);
                                 }
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                            if (code == 0) {
-                                adapter.notifyDataSetChanged();
-                                //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
-                            } else {
-                                ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
-                            }
-                        }
 
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    });
+                        if (code == 0) {
+                            adapter.notifyDataSetChanged();
+                            //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
+                        } else {
+                            ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
+                        }
+                    }
+
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    }
+                });
         }
     }
 
