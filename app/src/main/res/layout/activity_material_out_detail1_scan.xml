@@ -83,36 +83,32 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="160dp">
+                android:layout_height="160dp"
+                android:layout_marginTop="50dp"
+                android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center">
+                <Button
+                    android:id="@+id/bt1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:layout_toLeftOf="@+id/view"
+                    android:layout_weight="1"
+                    android:background="@color/text_blue"
+                    android:text="撤销"
+                    android:textColor="@color/white" />
 
-                    <Button
-                        android:id="@+id/bt1"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toLeftOf="@+id/view"
-                        android:background="@drawable/button_submit_selector"
-                        android:text="撤销" />
+                <Button
+                    android:id="@+id/bt2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:layout_toRightOf="@id/view"
+                    android:layout_weight="1"
+                    android:background="@color/text_blue"
+                    android:text="提交"
+                    android:textColor="@color/white" />
 
-                    <View
-                        android:id="@+id/view"
-                        android:layout_width="20dp"
-                        android:layout_height="wrap_content"
-                        android:layout_centerHorizontal="true"
-                        android:background="#00000000" />
-
-                    <Button
-                        android:id="@+id/bt2"
-                        android:layout_width="120dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/view"
-                        android:background="@drawable/button_submit_selector"
-                        android:text="扫码" />
-                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

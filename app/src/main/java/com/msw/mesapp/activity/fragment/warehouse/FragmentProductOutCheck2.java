@@ -97,7 +97,7 @@ public class FragmentProductOutCheck2 extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByAuditStatusByPage)
-                .params(GlobalApi.WareHourse.auditStatus, "2")
+                .params(GlobalApi.WareHourse.auditStatus, "1")
                 .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.WareHourse.size, "20") //一次获取多少
                 .params(GlobalApi.WareHourse.sort, "code") //根据code排序

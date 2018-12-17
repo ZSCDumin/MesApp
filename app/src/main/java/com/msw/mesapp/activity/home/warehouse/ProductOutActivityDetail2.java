@@ -3,6 +3,7 @@ package com.msw.mesapp.activity.home.warehouse;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -22,6 +23,8 @@ import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.bean.warehouse.ProductOutBean;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
+import com.msw.mesapp.utils.StatusBarUtils;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
@@ -54,66 +57,97 @@ public class ProductOutActivityDetail2 extends AppCompatActivity {
     TextView tx2;
     @Bind(R.id.table)
     SmartTable table;
-    @Bind(R.id.txc1)
-    TextView txc1;
-    @Bind(R.id.txc2)
-    TextView txc2;
-    @Bind(R.id.txc3)
-    TextView txc3;
-    @Bind(R.id.txc4)
-    TextView txc4;
-    @Bind(R.id.txc5)
-    TextView txc5;
-    @Bind(R.id.txc6)
-    TextView txc6;
-    @Bind(R.id.txc7)
-    TextView txc7;
+    @Bind(R.id.tx3)
+    TextView tx3;
+    @Bind(R.id.tx4)
+    TextView tx4;
+    @Bind(R.id.tx5)
+    TextView tx5;
+    @Bind(R.id.tx6)
+    TextView tx6;
+    @Bind(R.id.tx7)
+    TextView tx7;
+    @Bind(R.id.tx8)
+    TextView tx8;
+    @Bind(R.id.tx9)
+    TextView tx9;
     @Bind(R.id.bt)
     Button bt;
+
+    public String code = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_out_detail2);
         ButterKnife.bind(this);
+        initTitle();
+        getData();
+        initTable();
     }
 
-    public String code = "";
+    public void initTitle() {
+        StatusBarUtils.setActivityTranslucent(this); //设置全屏
+        title.setText("产品出库");
+        add.setVisibility(View.INVISIBLE);
+    }
 
     public void getData() {
         code = getIntent().getExtras().get("code").toString();
         EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByCode)
-                .params(GlobalApi.WareHourse.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
+            .params(GlobalApi.WareHourse.code, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String number = data.optString("number");
+                        tx1.setText(number);
+                        String company = data.optJSONObject("company").optString("name");
+                        tx2.setText(company);
+                        String applicant = data.optJSONObject("applicant").optString("name");
+                        tx3.setText(applicant);
+                        String applyTime = DateUtil.getDateToString(data.optString("applyTime"));
+                        tx4.setText(applyTime);
 
-                            JSONArray productSends = data.optJSONArray("productSends");
-
-                            for (int i = 0; i < productSends.length(); i++) {
-                                JSONObject item = productSends.getJSONObject(i);
-                                String batchNumber = item.optString("batchNumber");
-                                HashMap map = new HashMap();
-
-
-                                tableList.add(map);
-                            }
-                            initTable();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        String auditStatus = data.optString("auditStatus").equals("0") ? "未审核" : "已审核";
+                        tx5.setText(auditStatus);
+                        if (auditStatus.equals("未审核")) {
+                            tx7.setText("");
+                            tx6.setText("");
                         }
-                    }
 
-                    @Override
-                    public void onError(ApiException e) {
+                        String sender = data.optJSONObject("sender").optString("name");
+                        tx8.setText(sender);
+                        String sendTime = DateUtil.getDateToString(data.optString("sendTime"));
+                        tx9.setText(sendTime);
 
+                        String outStatus = data.optString("outStatus").equals("0") ? "未出库" : "已出库";
+                        JSONArray productSends = data.optJSONArray("productSends");
+
+                        for (int i = 0; i < productSends.length(); i++) {
+                            JSONObject item = productSends.getJSONObject(i);
+                            String batchNumber = item.optString("batchNumber");
+                            HashMap map = new HashMap();
+                            map.put("0", batchNumber);
+                            map.put("1", outStatus);
+                            tableList.add(map);
+                        }
+                        initTable();
+                        initTable();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+
+                }
+            });
 
     }
 
@@ -163,9 +197,16 @@ public class ProductOutActivityDetail2 extends AppCompatActivity {
         table.setTableData(tableData);
     }
 
-    @OnClick(R.id.bt)
-    public void onViewClicked() {
-        ActivityUtil.switchTo(this, MaterialOutActivity.class);
-        finish();
+    @OnClick({R.id.back, R.id.bt})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.back:
+                finish();
+                break;
+            case R.id.bt:
+                ActivityUtil.switchTo(this, ProductOutActivity.class);
+                finish();
+                break;
+        }
     }
 }

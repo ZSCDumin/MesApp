@@ -22,6 +22,7 @@ import com.bin.david.form.utils.DensityUtils;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.bean.warehouse.ProductInBean;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -76,12 +77,16 @@ public class ProductInActivityDetail2 extends AppCompatActivity {
     Button bt;
     public String code = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_in_detail2);
         ButterKnife.bind(this);
         code = getIntent().getExtras().get("code").toString();
+        initTitle();
+        initData();
+        initTable();
     }
 
     public void initTitle() {
@@ -96,67 +101,63 @@ public class ProductInActivityDetail2 extends AppCompatActivity {
         add.setVisibility(View.INVISIBLE);
     }
 
-    @OnClick(R.id.bt)
-    public void onViewClicked() {
-        //
-    }
 
     public void initData() {
         //获取第一块数据
         EasyHttp.post(GlobalApi.WareHourse.ProductIn.getByCode)
-                .params(GlobalApi.WareHourse.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            String batchNumber = data.optString("batchNumber");
-                            String department = data.optString("department");
-                            String model = data.optString("model");
-                            String weight = data.optString("weight");
+            .params(GlobalApi.WareHourse.code, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String batchNumber = data.optString("batchNumber");
+                        String department = data.optJSONObject("department").optString("name");
+                        String model = data.optString("model");
+                        String weight = data.optString("weight");
 
-                            String status = data.optString("status");
-                            String payer = data.optJSONObject("payer").optString("name");
-                            String payTime = data.optString("payTime");
-                            String godowner = data.optString("godowner");
-                            String godownTime = data.optString("godownTime");
+                        String status = data.optString("status").equals("1") ? "已入库" : "未入库";
+                        String payer = data.optJSONObject("payer").optString("name");
+                        String payTime = DateUtil.getDateToString(data.optString("payTime"));
+                        String godowner = data.optJSONObject("godowner").optString("name");
+                        String godownTime = DateUtil.getDateToString(data.optString("godownTime"));
 
-                            tx1.setText(batchNumber);
-                            tx2.setText(department);
-                            tx3.setText(model);
-                            tx4.setText(weight);
+                        tx1.setText(batchNumber);
+                        tx2.setText(department);
+                        tx3.setText(model);
+                        tx4.setText(weight);
 
-                            txc1.setText(status);
-                            txc2.setText(payer);
-                            txc3.setText(payTime);
-                            txc4.setText(godowner);
-                            txc5.setText(godownTime);
+                        txc1.setText(status);
+                        txc2.setText(payer);
+                        txc3.setText(payTime);
+                        txc4.setText(godowner);
+                        txc5.setText(godownTime);
 
-                            JSONArray productGodowns = data.optJSONArray("productGodowns");
-                            for (int i = 0; i < productGodowns.length(); i++) {
-                                JSONObject item = productGodowns.getJSONObject(i);
-                                String batchNumber1 = item.optString("batchNumber");
-                                String weight1 = item.optString("weight");
-                                HashMap map = new HashMap();
-                                map.put("0", batchNumber1);
-                                map.put("1", weight1);
-                                tableList.add(map);
-                            }
-                            initTable();
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        JSONArray productGodowns = data.optJSONArray("productGodowns");
+                        for (int i = 0; i < productGodowns.length(); i++) {
+                            JSONObject item = productGodowns.getJSONObject(i);
+                            String batchNumber1 = item.optString("batchNumber");
+                            String weight1 = item.optString("weight");
+                            HashMap map = new HashMap();
+                            map.put("0", batchNumber1);
+                            map.put("1", weight1);
+                            tableList.add(map);
                         }
-                    }
+                        initTable();
 
-                    @Override
-                    public void onError(ApiException e) {
-
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+
+                }
+            });
     }
 
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
@@ -203,5 +204,17 @@ public class ProductInActivityDetail2 extends AppCompatActivity {
         table.setSelectFormat(new BaseSelectFormat());
         table.getConfig().setContentCellBackgroundFormat(backgroundFormat);
         table.setTableData(tableData);
+    }
+
+    @OnClick({R.id.back, R.id.bt})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.back:
+                finish();
+                break;
+            case R.id.bt:
+                finish();
+                break;
+        }
     }
 }

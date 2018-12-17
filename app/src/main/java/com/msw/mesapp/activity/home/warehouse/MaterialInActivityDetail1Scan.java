@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.android.dev.BarcodeAPI;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
+import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
@@ -61,7 +62,6 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
     List<Map<String, Object>> batchList = new ArrayList<>();
-    int count = 1;
     String headcode = "";
 
     @SuppressLint("HandlerLeak")
@@ -210,6 +210,7 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         super.onResume();
         BarcodeAPI.getInstance().m_handler = mHandler;
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -246,9 +247,10 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
         Log.i("TAG", BtFlag + "");
 
         if (BtFlag && batchList.size() == list.size())
-            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.updateStatusByCode)
-                .params(GlobalApi.WareHourse.code, headcode) //
-                .params(GlobalApi.WareHourse.status, "1") //
+            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_Send_Updata)
+                .params(GlobalApi.WareHourse.code, headcode)
+                .params(GlobalApi.WareHourse.userCode, GetCurrentUserIDUtil.currentUserId(this))
+                .params(GlobalApi.WareHourse.status, "2")
                 .sign(true)
                 .timeStamp(true)//本次请求是否携带时间戳
                 .execute(new SimpleCallBack<String>() {
@@ -269,7 +271,7 @@ public class MaterialInActivityDetail1Scan extends AppCompatActivity {
                         } else {
                             ToastUtil.showToast(MaterialInActivityDetail1Scan.this, message, ToastUtil.Error);
                         }
-                        Log.i("TAG",message);
+                        Log.i("TAG", message);
                     }
 
                     @Override

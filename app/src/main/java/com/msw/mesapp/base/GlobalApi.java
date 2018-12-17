@@ -449,11 +449,10 @@ public class GlobalApi {
 
         //原料入库
         public final static class MaterialIn {
-            public final static String updateStatusByCode = "godownEntryHeader/updateStatusByCode";
             //第三方发货单
             public final static String PATH_Send_Header_ByPage = "sendEntryHeader/getAllByPage"; //分页获取
             public final static String PATH_Send_Header_ByCode = "sendEntryHeader/getByCode"; //编码获取
-            public final static String PATH_Send_Updata = "sendEntryHeader/updateStatusByCode"; //跟新
+            public final static String PATH_Send_Updata = "sendEntryHeader/updateStatusByCode"; //更新
             //入库单表头
             public final static String PATH_GoDown_Header_ByPage = "godownEntryHeader/getAllByPage"; //表头--通过编码获取
             public final static String PATH_GoDown_Header_ByCode = "godownEntryHeader/getByCode"; //编码获取
@@ -469,12 +468,15 @@ public class GlobalApi {
             public final static String updateAuditStatusByCode = "pickingApplyHeader/updateAuditStatusByCode";//正常审核
             public final static String updateAuditStatusByCodeUrgent = "pickingApplyHeader/updateAuditStatusByCodeUrgent";//紧急审核
             public final static String getRestAuditorByCode = "pickingApplyHeader/getRestAuditorByCode";//获取剩余审批人
+            public final static String updatePickingStatusByCode = "pickingApplyHeader/updatePickingStatusByCode";//获取剩余审批人
 
         }
 
         //产品入库
         public final static class ProductIn {
-            public final static String getAllDepartment = "department/getAllByPage";
+
+            public final static String getAllDepartment = "department/getAll";
+            public final static String getTypeByCode = "rawType/getByCode";
             public final static String getAllRawType = "rawType/getAllByPage";
             public final static String getByMaterialCode = "rawType/getByMaterialCode";
             public final static String getByStatusByPage = "productGodownHeader/getByStatusByPage"; //通过入库状态查询

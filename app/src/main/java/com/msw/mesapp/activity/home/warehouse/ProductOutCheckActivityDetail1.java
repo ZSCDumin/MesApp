@@ -1,6 +1,9 @@
 package com.msw.mesapp.activity.home.warehouse;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.alibaba.fastjson.JSON;
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.core.TableConfig;
 import com.bin.david.form.data.CellInfo;
@@ -32,6 +36,7 @@ import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -76,6 +81,21 @@ public class ProductOutCheckActivityDetail1 extends AppCompatActivity {
     @Bind(R.id.agree_bt)
     Button agreeBt;
 
+    @SuppressLint("HandlerLeak")
+    private Handler mHandle = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x011:
+                    initTable();
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,7 +103,6 @@ public class ProductOutCheckActivityDetail1 extends AppCompatActivity {
         ButterKnife.bind(this);
         initTitle();
         initData();
-        initTable();
     }
 
     public void initTitle() {
@@ -104,60 +123,55 @@ public class ProductOutCheckActivityDetail1 extends AppCompatActivity {
     public void initData() {
         code = getIntent().getExtras().get("code").toString();
         EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByCode)
-                .params(GlobalApi.WareHourse.code, code) //
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
+            .params(GlobalApi.WareHourse.code, code) //
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject data = jsonObject.optJSONObject("data");
 
-                            String number = data.optString("number");
-                            tx1.setText(number);
-                            String rawType = data.optJSONObject("rawType").optString("name");
-                            tx2.setText(rawType);
-                            String company = data.optJSONObject("company").optString("name");
-                            tx3.setText(company);
-                            String transportMode = data.optString("pickingStatus");
-                            tx4.setText(transportMode);
-                            String auditStatus = data.optString("auditStatus");
-                            tx5.setText(auditStatus);
-                            String outStatus = data.optString("outStatus");
+                        String number = data.optString("number");
+                        tx1.setText(number);
+                        String rawType = data.optJSONObject("rawType").optString("name");
+                        tx2.setText(rawType);
+                        String company = data.optJSONObject("company").optString("name");
+                        tx3.setText(company);
+                        String transportMode = data.optString("transportMode");
+                        tx4.setText(transportMode);
+                        String auditStatus = data.optString("auditStatus").equals("0") ? "未审核" : "已审核";
+                        tx5.setText(auditStatus);
+                        String outStatus = data.optString("outStatus");
 
-                            String applicant = data.optJSONObject("applicant").optString("name");
-                            txc1.setText(applicant);
-                            String applyTime = DateUtil.getDateToString(Long.valueOf(data.optString("applyTime")));
-                            txc2.setText(applyTime);
+                        String applicant = data.optJSONObject("applicant").optString("name");
+                        txc1.setText(applicant);
+                        String applyTime = DateUtil.getDateToString(Long.valueOf(data.optString("applyTime")));
+                        txc2.setText(applyTime);
 
-                            JSONArray productSends = data.optJSONArray("productSends");
-                            for (int i = 0; i < productSends.length(); i++) {
-                                JSONObject item = productSends.getJSONObject(i);
-                                String batchNumber = item.optString("batchNumber");
-                                HashMap map = new HashMap();
-                                map.put("1", batchNumber);
-                                map.put("2", outStatus);
-                                tableList.add(map);
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        JSONArray productSends = data.optJSONArray("productSends");
+                        for (int i = 0; i < productSends.length(); i++) {
+                            JSONObject item = productSends.getJSONObject(i);
+                            String batchNumber = item.optString("batchNumber");
+                            HashMap map = new HashMap();
+                            map.put("1", batchNumber);
+                            map.put("2", outStatus);
+                            tableList.add(map);
                         }
-                        if (code == 0) {
-
-                        } else {
-                            ToastUtil.showToast(ProductOutCheckActivityDetail1.this, message, ToastUtil.Error);
-                        }
+                        mHandle.sendEmptyMessage(0x011);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ToastUtil.showToast(ProductOutCheckActivityDetail1.this, message, ToastUtil.Error);
                     }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(ProductOutCheckActivityDetail1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ProductOutCheckActivityDetail1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     @OnClick({R.id.back, R.id.disagree_bt, R.id.agree_bt})
@@ -186,23 +200,36 @@ public class ProductOutCheckActivityDetail1 extends AppCompatActivity {
      */
     public void submit(String code, String auditStatus, String note, String auditorCode) {
         EasyHttp.post(GlobalApi.WareHourse.ProductOut.updateAuditStatusByCode) //获取发货单
-                .params(GlobalApi.WareHourse.code, code)
-                .params(GlobalApi.WareHourse.auditStatus, auditStatus)
-                .params(GlobalApi.WareHourse.note, note)
-                .params(GlobalApi.WareHourse.auditorCode, auditorCode)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        ToastUtil.showToast(ProductOutCheckActivityDetail1.this, "成功！", 1);
+            .params(GlobalApi.WareHourse.code, code)
+            .params(GlobalApi.WareHourse.auditStatus, auditStatus)
+            .params(GlobalApi.WareHourse.note, note)
+            .params(GlobalApi.WareHourse.auditorCode, auditorCode)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        String code = jsonObject.optString("code");
+                        String message = jsonObject.optString("message");
+                        if (code.equals("0")) {
+                            ToastUtil.showToast(ProductOutCheckActivityDetail1.this, "成功！", 1);
+                            finish();
+                        } else {
+                            ToastUtil.showToast(ProductOutCheckActivityDetail1.this, message, 1);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(ProductOutCheckActivityDetail1.this, "失败！", 1);
-                    }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ProductOutCheckActivityDetail1.this, "失败！", 1);
+                }
+            });
     }
 
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
@@ -227,7 +254,7 @@ public class ProductOutCheckActivityDetail1 extends AppCompatActivity {
         column0.setAutoCount(false);
         columns.add(column0);
         columns.add(new Column<>("批号", "batchNumber"));
-        columns.add(new Column<>("状态", "status"));
+        columns.add(new Column<>("状态", "outStatus"));
 
 
         final TableData<ProductOutBean> tableData = new TableData<>("入库单", testData, columns);

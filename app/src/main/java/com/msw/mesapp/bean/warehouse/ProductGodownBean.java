@@ -14,16 +14,16 @@ import java.util.List;
 public class ProductGodownBean {
 
     private String model;
-    private String departmentCode;
+    private Department department;
     private String weight;
-    private String payerCode;
+    private User payer;
     private List<ProductGodown> productGodowns;
 
-    public ProductGodownBean(String model, String departmentCode, String weight, String payerCode, List<ProductGodown> productGodowns) {
+    public ProductGodownBean(String model, Department departmentCode, String weight, User payerCode, List<ProductGodown> productGodowns) {
         this.model = model;
-        this.departmentCode = departmentCode;
+        this.department = departmentCode;
         this.weight = weight;
-        this.payerCode = payerCode;
+        this.payer = payerCode;
         this.productGodowns = productGodowns;
     }
 
@@ -35,12 +35,12 @@ public class ProductGodownBean {
         this.model = model;
     }
 
-    public String getDepartmentCode() {
-        return departmentCode;
+    public Department getDepartmentCode() {
+        return department;
     }
 
-    public void setDepartmentCode(String departmentCode) {
-        this.departmentCode = departmentCode;
+    public void setDepartmentCode(Department departmentCode) {
+        this.department = departmentCode;
     }
 
     public String getWeight() {
@@ -51,12 +51,12 @@ public class ProductGodownBean {
         this.weight = weight;
     }
 
-    public String getPayerCode() {
-        return payerCode;
+    public User getPayerCode() {
+        return payer;
     }
 
-    public void setPayerCode(String payerCode) {
-        this.payerCode = payerCode;
+    public void setPayerCode(User payerCode) {
+        this.payer = payerCode;
     }
 
     public List<ProductGodown> getProductGodowns() {

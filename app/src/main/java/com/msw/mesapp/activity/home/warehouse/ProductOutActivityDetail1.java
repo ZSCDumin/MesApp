@@ -25,6 +25,7 @@ import com.msw.mesapp.bean.warehouse.ProductInBean;
 import com.msw.mesapp.bean.warehouse.ProductOutBean;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
+import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
@@ -82,8 +83,15 @@ public class ProductOutActivityDetail1 extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_out_detail1);
         ButterKnife.bind(this);
+        initTitle();
+        getData();
+        initTable();
     }
-
+    public void initTitle() {
+        StatusBarUtils.setActivityTranslucent(this); //设置全屏
+        title.setText("产品出库");
+        add.setVisibility(View.INVISIBLE);
+    }
     @OnClick({R.id.back, R.id.cancle_bt, R.id.product_out_bt})
     public void onViewClicked(View view) {
         switch (view.getId()) {
@@ -111,57 +119,57 @@ public class ProductOutActivityDetail1 extends AppCompatActivity {
     public void getData() {
         code = getIntent().getExtras().get("code").toString();
         EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByCode)
-                .params(GlobalApi.WareHourse.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            String number = data.optString("number");
-                            tx1.setText(number);
-                            String rawType = data.optJSONObject("rawType").optString("name");
-                            tx2.setText(rawType);
-                            String company = data.optJSONObject("company").optString("name");
-                            tx3.setText(company);
-                            String transportMode = data.optString("transportMode");
-                            tx4.setText(transportMode);
-                            String applicant = data.optJSONObject("applicant").optString("name");
-                            txc1.setText(applicant);
-                            String applyTime = data.optString("applyTime");
-                            txc2.setText(applyTime);
-                            String auditStatus = data.optString("auditStatus");
-                            txc3.setText(auditStatus);
+            .params(GlobalApi.WareHourse.code, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String number = data.optString("number");
+                        tx1.setText(number);
+                        String rawType = data.optJSONObject("rawType").optString("name");
+                        tx2.setText(rawType);
+                        String company = data.optJSONObject("company").optString("name");
+                        tx3.setText(company);
+                        String transportMode = data.optString("transportMode");
+                        tx4.setText(transportMode);
+                        String applicant = data.optJSONObject("applicant").optString("name");
+                        txc1.setText(applicant);
+                        String applyTime = DateUtil.getDateToString(data.optString("applyTime"));
+                        txc2.setText(applyTime);
+                        String auditStatus = data.optString("auditStatus").equals("0") ? "未审核" : "已审核";
+                        txc3.setText(auditStatus);
 
-                            String outStatus = data.optString("outStatus");
-                            String sender = data.optString("sender");
-                            txc4.setText(sender);
-                            String sendTime = data.optString("sendTime");
-                            txc5.setText(sendTime);
+                        String outStatus = data.optString("outStatus").equals("0") ? "未出库" : "已出库";
+                        String sender = data.optJSONObject("sender").optString("name");
+                        txc4.setText(sender);
+                        String sendTime = DateUtil.getDateToString(data.optString("sendTime"));
+                        txc5.setText(sendTime);
 
-                            JSONArray productSends = data.optJSONArray("productSends");
+                        JSONArray productSends = data.optJSONArray("productSends");
 
-                            for (int i = 0; i < productSends.length(); i++) {
-                                JSONObject item = productSends.getJSONObject(i);
-                                String batchNumber = item.optString("batchNumber");
-                                HashMap map = new HashMap();
-                                map.put("0", batchNumber);
-                                map.put("1", outStatus);
-                                tableList.add(map);
-                            }
-                            initTable();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        for (int i = 0; i < productSends.length(); i++) {
+                            JSONObject item = productSends.getJSONObject(i);
+                            String batchNumber = item.optString("batchNumber");
+                            HashMap map = new HashMap();
+                            map.put("0", batchNumber);
+                            map.put("1", outStatus);
+                            tableList.add(map);
                         }
+                        initTable();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
+                @Override
+                public void onError(ApiException e) {
 
-                    }
-                });
+                }
+            });
 
     }
 

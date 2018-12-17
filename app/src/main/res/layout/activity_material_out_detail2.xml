@@ -209,6 +209,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:layout_marginBottom="50dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/line1"
@@ -238,22 +239,16 @@
             <Button
                 android:id="@+id/bt"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
+                android:layout_height="45dp"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="15dp"
                 android:layout_marginBottom="30dp"
                 android:background="@drawable/button_submit_selector"
                 android:clickable="true"
                 android:paddingLeft="20dp"
-
                 android:paddingRight="20dp"
                 android:text="执行出库"
                 android:textColor="#fff" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@color/white" />
 
         </LinearLayout>
     </ScrollView>

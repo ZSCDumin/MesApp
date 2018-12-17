@@ -23,6 +23,7 @@ import com.msw.mesapp.activity.home.warehouse.ProductInActivityDetail1;
 import com.msw.mesapp.activity.home.warehouse.ProductOutActivityDetail1;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -122,7 +123,7 @@ public class FragmentProductIn1 extends Fragment {
                             for (int i = 0; i < content.length(); i++) {
                                 JSONObject item = content.optJSONObject(i);
                                 String batchNumber = item.optString("batchNumber");
-                                String payTime = item.optString("payTime");
+                                String payTime = DateUtil.getDateToString(item.optLong("payTime"));
                                 String code1 = item.optString("code");
                                 Map map = new HashMap();
                                 map.put("0", batchNumber);

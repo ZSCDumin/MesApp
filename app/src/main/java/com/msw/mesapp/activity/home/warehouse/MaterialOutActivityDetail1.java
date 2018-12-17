@@ -3,6 +3,7 @@ package com.msw.mesapp.activity.home.warehouse;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -83,8 +84,6 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
         code = getIntent().getExtras().get("code").toString();
         initData();
         initTitle();
-        initTable();
-        initTable1();
     }
 
     public void initTitle() {
@@ -102,87 +101,108 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
     public void initData() {
         //获取第一块和第二块的数据
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_CODE)
-                .params(GlobalApi.WareHourse.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            String department = data.optJSONObject("department").optString("name").toString();
-                            JSONArray contents = data.optJSONArray("pickingApplies");
-                            for (int i = 0; i < contents.length(); i++) {
-                                JSONObject item = contents.optJSONObject(i);
-                                String rawType = item.optJSONObject("rawType").optString("name");
-                                String batchNumber = item.optString("batchNumber");
-                                String unit = item.optString("unit");
-                                String weight = item.optString("weight");
-                                HashMap map = new HashMap();
-                                map.put("0", rawType);
-                                map.put("1", batchNumber);
-                                map.put("2", unit);
-                                map.put("3", weight);
-                                tableList.add(map);
-                            }
-                            tx1.setText(department);
-                            String applyDate = data.optString("applyDate");
-                            tx2.setText(applyDate);
-                            String auditStatus = data.optString("auditStatus");
-                            tx3.setText(auditStatus);
-                            String processManage = data.optJSONObject("processManage").optString("name").toString();
-                            tx4.setText(processManage);
-                            String pickingStatus = data.optString("pickingStatus");
-                            tx5.setText(pickingStatus);
-                            initTable();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+            .params(GlobalApi.WareHourse.code, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String department = data.optJSONObject("department").optString("name");
+                        JSONArray contents = data.optJSONArray("pickingApplies");
+                        for (int i = 0; i < contents.length(); i++) {
+                            JSONObject item = contents.optJSONObject(i);
+                            String rawType = item.optJSONObject("rawType").optString("name");
+                            String batchNumber = item.optString("batchNumber");
+                            String unit = item.optString("unit");
+                            String weight = item.optString("weight");
+                            HashMap map = new HashMap();
+                            map.put("0", rawType);
+                            map.put("1", batchNumber);
+                            map.put("2", unit);
+                            map.put("3", weight);
+                            tableList.add(map);
                         }
+                        initTable();
+                        tx1.setText(department);
+                        String applyDate = DateUtil.getDateToString(data.optString("applyDate"));
+                        tx2.setText(applyDate);
+                        String auditStatus = data.optString("auditStatus");
+                        if ("0".equals(auditStatus)) {
+                            auditStatus = "未提交";
+                        } else if ("1".equals(auditStatus)) {
+                            auditStatus = "在审核";
+                        } else if ("2".equals(auditStatus)) {
+                            auditStatus = "通过";
+                        } else if ("3".equals(auditStatus)) {
+                            auditStatus = "不通过";
+                        }
+                        tx3.setText(auditStatus);
+                        String processManage = data.optJSONObject("processManage").optString("name");
+                        tx4.setText(processManage);
+                        String pickingStatus = data.optInt("pickingStatus") == 0 ? "未出库" : "已出库";
+                        tx5.setText(pickingStatus);
+                        initTable();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialOutActivityDetail1.this, "获取数据失败", 1);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialOutActivityDetail1.this, "获取数据失败", 1);
+                }
+            });
 
+        Log.i("TAG","初始化第三块数据");
         //初始化第三块数据
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_ApplyHeader)
-                .params(GlobalApi.WareHourse.pickingApplyHeaderCode, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONArray data = jsonObject.optJSONArray("data");
+            .params(GlobalApi.WareHourse.pickingApplyHeaderCode, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONArray data = jsonObject.optJSONArray("data");
 
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject item = data.getJSONObject(i);
-                                String auditResult = item.optString("auditResult");
-                                String auditor = item.optJSONObject("auditor").optString("name");
-                                String auditTime = DateUtil.getDateToString(Long.valueOf(item.optString("auditTime")));
-                                String note = item.optString("note");
-                                HashMap map = new HashMap();
-                                map.put("0", auditor);
-                                map.put("1", note);
-                                map.put("2", auditResult);
-                                map.put("3", auditTime);
-                                tableList1.add(map);
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String auditResult = item.optString("auditResult");
+                            if ("0".equals(auditResult)) {
+                                auditResult = "未提交";
+                            } else if ("1".equals(auditResult)) {
+                                auditResult = "在审核";
+                            } else if ("2".equals(auditResult)) {
+                                auditResult = "通过";
+                            } else if ("3".equals(auditResult)) {
+                                auditResult = "不通过";
                             }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            String auditor = item.optJSONObject("auditor").optString("name");
+                            String auditTime = DateUtil.getDateToString(Long.valueOf(item.optString("auditTime")));
+                            String note = item.optString("note");
+                            HashMap map = new HashMap();
+                            map.put("0", auditor);
+                            map.put("1", note);
+                            map.put("2", auditResult);
+                            map.put("3", auditTime);
+                            tableList1.add(map);
                         }
-                    }
+                        initTable1();
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialOutActivityDetail1.this, "获取数据失败", 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialOutActivityDetail1.this, "获取数据失败", 1);
+                }
+            });
     }
 
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
@@ -240,7 +260,7 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
         List<ProductOutCheckBean> testData = new ArrayList<>();
         for (int i = 0; i < tableList1.size(); i++) {
             Map map = tableList1.get(i);
-            ProductOutCheckBean userData = new ProductOutCheckBean(map.get("0").toString(), map.get("1").toString(), map.get("2").toString(), map.get("3").toString());
+            ProductOutCheckBean userData = new ProductOutCheckBean(map.get("0").toString(), map.get("2").toString(), map.get("1").toString(), map.get("3").toString());
             testData.add(userData);
         }
 
@@ -253,8 +273,8 @@ public class MaterialOutActivityDetail1 extends AppCompatActivity {
         column0.setFixed(true);
         column0.setAutoCount(false);
         columns.add(column0);
-        columns.add(new Column<>("审核意见", "auditNote"));
         columns.add(new Column<>("审核结果", "auditResult"));
+        columns.add(new Column<>("审核意见", "auditNote"));
         columns.add(new Column<>("审核时间", "auditTime"));
 
         final TableData<ProductOutCheckBean> tableData = new TableData<>("出库审核单", testData, columns);

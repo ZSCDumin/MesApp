@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.warehouse.MaterialOutCheckActivityDetail1;
 import com.msw.mesapp.activity.home.warehouse.MaterialOutUrgentCheckActivity;
+import com.msw.mesapp.activity.home.warehouse.ProductOutCheckActivity;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
@@ -78,8 +79,9 @@ public class CardFragment extends Fragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.cardview:
-                //进行数据库更新操作
-                EasyHttp.post(GlobalApi.UndoThingsItems.PATH1)
+                try {
+                    //进行数据库更新操作
+                    EasyHttp.post(GlobalApi.UndoThingsItems.PATH1)
                         .params(GlobalApi.UndoThingsItems.STATUS, "1")
                         .params(GlobalApi.UndoThingsItems.CODE, ss1[5])
                         .sign(true)
@@ -92,7 +94,7 @@ public class CardFragment extends Fragment {
                                     tvview.setBackgroundResource(R.mipmap.blue_dot);
                                 else
                                     tvview.setBackgroundResource(R.mipmap.red_dot);
-                                ToastUtil.showToast(getActivity(), "更新消息为已读成功!", ToastUtil.Error);
+                                ToastUtil.showToast(getActivity(), "更新消息为已读成功!", ToastUtil.Success);
                             }
 
                             @Override
@@ -100,20 +102,23 @@ public class CardFragment extends Fragment {
                                 ToastUtil.showToast(getActivity(), "更新消息为已读出错!", ToastUtil.Error);
                             }
                         });
-                //跳转页面
-                String destActivity = ss1[3].split("-")[0];
-                String code = ss1[3].split("-")[2];
-                String isUrgent = ss1[3].split("-")[1];
-                Map map = new HashMap<>();
-                map.put("code", code);
-                if (destActivity.equals("1")) { //领料申请
-                    if (isUrgent.equals("0")) { //紧急
-                        ActivityUtil.switchTo(getActivity(), MaterialOutUrgentCheckActivity.class, map);
-                    } else { //正常
-                        ActivityUtil.switchTo(getActivity(), MaterialOutCheckActivityDetail1.class, map);
+                    //跳转页面
+                    String destActivity = ss1[3].split("-")[0];
+                    String isUrgent = ss1[3].split("-")[1];
+                    String code = ss1[3].split("-")[2];
+                    Map map = new HashMap<>();
+                    map.put("code", code);
+                    if ("1".equals(destActivity)) { //原料申请
+                        if (isUrgent.equals("0")) { //紧急
+                            ActivityUtil.switchTo(getActivity(), MaterialOutUrgentCheckActivity.class, map);
+                        } else { //正常
+                            ActivityUtil.switchTo(getActivity(), MaterialOutCheckActivityDetail1.class, map);
+                        }
+                    } else if ("2".equals(destActivity)) { //产品申请
+                        ActivityUtil.switchTo(getActivity(), ProductOutCheckActivity.class, map);
                     }
-                } else {
-                    //待续
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
         }

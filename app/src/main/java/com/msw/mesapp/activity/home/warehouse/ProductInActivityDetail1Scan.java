@@ -9,6 +9,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
@@ -53,7 +54,7 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
     List<Map<String, Object>> batchList = new ArrayList<>();
-    int count = 1;
+
     public String headcode = "";
     public String godowner = "";
 
@@ -64,23 +65,45 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
             switch (msg.what) {
                 case BarcodeAPI.BARCODE_READ:
                     String s = msg.obj.toString().trim();
-                    boolean tt = true;
+                    boolean tt = false;
                     for (int i = 0; i < batchList.size(); i++) {
                         Map map = batchList.get(i);
-                        if (map.get("2").equals(s)) tt = false;
+                        if (map.get("2").equals(s)) tt = true;
                     }
-                    if (tt) {
+                    if (!tt) { //如果不存在该记录则添加
                         Map listmap = new HashMap<>();
                         listmap.put("1", String.valueOf(batchList.size()));
                         listmap.put("2", s);
                         batchList.add(listmap);
-                        adapter.notifyDataSetChanged();
-                        checkSubmit();
+                        check(0);
                     }
                     break;
             }
         }
     };
+
+    public void check(int flag) {
+        for (int i = 0; i < batchList.size(); i++) {
+            Map map1 = batchList.get(i);
+            for (int j = 0; j < list.size(); j++) {
+                Map map2 = list.get(j);
+                Map map = new HashMap();
+                map.put("1", map1.get("1"));
+                map.put("2", map1.get("2"));
+                if ((map1.get("2").toString()).equals(map2.get("2").toString())) {
+                    map.put("3", "1");
+                    batchList.set(i, map);
+                    break;
+                } else if (j == list.size() - 1) { //扫描记录不存在于批号数据集中
+                    map.put("3", "0");
+                    batchList.set(i, map);
+                    if (flag == 1)
+                        BtFlag = false;
+                }
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
 
     boolean BtFlag = true;
 
@@ -91,19 +114,18 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
         ButterKnife.bind(this);
         initView();
         initData();
-
     }
 
     private void initData() {
         String batchLen = getIntent().getExtras().get("batchLen").toString();
         headcode = getIntent().getExtras().get("headcode").toString();
-        godowner = getIntent().getExtras().get("godowner").toString();
+        godowner = GetCurrentUserIDUtil.currentUserId(this);
         ToastUtil.showToast(ProductInActivityDetail1Scan.this, headcode, ToastUtil.Success);
 
         for (int i = 0; i < Integer.valueOf(batchLen); i++) { //获得所有的 batch list
             Map map = new HashMap();
             map.put("1", String.valueOf(i + 1));
-            map.put("2", getIntent().getExtras().get("batchNumber" + i).toString());
+            map.put("2", getIntent().getExtras().get("batchNumber" + i).toString().trim());
             list.add(map);
         }
     }
@@ -117,7 +139,7 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
             }
         });
         title.setText("接收入库");
-        add.setText("扫描");
+        add.setText("扫一扫");
         add.setTextSize(15);
 
         add.setOnClickListener(new View.OnClickListener() {
@@ -145,11 +167,10 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
             protected void convert(ViewHolder holder, Map s, final int position) {
                 holder.setText(R.id.tv1, s.get("1").toString());
                 holder.setText(R.id.tv2, s.get("2").toString());
-                if (!BtFlag)
-                    if (s.get("3").toString().equals("1"))
-                        holder.setImageResource(R.id.img, R.mipmap.cross_right);
-                    else
-                        holder.setImageResource(R.id.img, R.mipmap.cross_false);
+                if (s.get("3").toString().equals("1"))
+                    holder.setImageResource(R.id.img, R.mipmap.cross_right);
+                else
+                    holder.setImageResource(R.id.img, R.mipmap.cross_false);
                 holder.getView(R.id.img).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -214,44 +235,37 @@ public class ProductInActivityDetail1Scan extends AppCompatActivity {
     }
 
     public void checkSubmit() {
-        final String userCode = GetCurrentUserIDUtil.currentUserId(this);
-        for (int i = 0; i < batchList.size(); i++) {
-            Map map1 = batchList.get(i);
-            for (int j = 0; j < list.size(); j++) {
-                Map map2 = list.get(j);
-                Map map = new HashMap();
-                map.put("1", map1.get("1"));
-                map.put("2", map1.get("2"));
-                if ((map1.get("2").toString()).equals(map2.get("2").toString())) {
-                    map.put("3", "1");
-                    batchList.set(i, map);
-                    break;
-                } else if (j == list.size() - 1) {
-                    map.put("3", "0");
-                    batchList.set(i, map);
-                    BtFlag = false;
-                }
-            }
-        }
-        if (!BtFlag) adapter.notifyDataSetChanged();
-        if (BtFlag && batchList.size() > 0)
-            EasyHttp.post(GlobalApi.WareHourse.ProductIn.updateStatusAndGodownerByCode)
-                    .params(GlobalApi.WareHourse.code, headcode) //code
-                    .params(GlobalApi.WareHourse.status, "1") //状态为1表示已入库
-                    .params(GlobalApi.WareHourse.godownerCode, godowner) //入库人
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            ToastUtil.showToast(ProductInActivityDetail1Scan.this, "入库成功！", 1);
-                        }
+        BtFlag = true;
+        check(1);
 
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(ProductInActivityDetail1Scan.this, "入库失败！", 1);
-                        }
-                    });
+        Log.i("TAG", batchList.size() + "");
+        Log.i("TAG", list.size() + "");
+        Log.i("TAG", BtFlag + "");
+
+        if (BtFlag && batchList.size() == list.size()) {
+            EasyHttp.post(GlobalApi.WareHourse.ProductIn.updateStatusAndGodownerByCode)
+                .params(GlobalApi.WareHourse.code, headcode) //code
+                .params(GlobalApi.WareHourse.status, "1") //状态为1表示已入库
+                .params(GlobalApi.WareHourse.godownerCode, godowner) //入库人
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+
+
+                        ToastUtil.showToast(ProductInActivityDetail1Scan.this, "入库成功！", 1);
+                        ProductInActivityDetail1Scan.this.finish();
+                    }
+
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(ProductInActivityDetail1Scan.this, "入库失败！", 1);
+                    }
+                });
+        } else {
+            ToastUtil.showToast(ProductInActivityDetail1Scan.this, "匹配数目不一致！", ToastUtil.Confusion);
+        }
     }
 
 }

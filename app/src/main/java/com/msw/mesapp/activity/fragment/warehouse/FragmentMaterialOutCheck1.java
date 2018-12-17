@@ -21,6 +21,7 @@ import com.msw.mesapp.R;
 import com.msw.mesapp.activity.home.warehouse.MaterialOutCheckActivityDetail1;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -100,7 +101,7 @@ public class FragmentMaterialOutCheck1 extends Fragment {
                 .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.WareHourse.size, "20") //一次获取多少
                 .params(GlobalApi.WareHourse.sort, "code") //根据code排序
-                .params(GlobalApi.WareHourse.asc, "0") //升序
+                .params(GlobalApi.WareHourse.asc, "1") //升序
                 .sign(true)
                 .timeStamp(true)//本次请求是否携带时间戳
                 .execute(new SimpleCallBack<String>() {
@@ -108,7 +109,6 @@ public class FragmentMaterialOutCheck1 extends Fragment {
                     public void onSuccess(String result) {
                         int code = 1;
                         String message = "出错";
-
                         try {
                             JSONObject jsonObject = new JSONObject(result);
                             code = jsonObject.optInt("code");
@@ -117,13 +117,15 @@ public class FragmentMaterialOutCheck1 extends Fragment {
 
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject content0 = data.optJSONObject(i);
-                                String number = content0.optString("number"); //获取出库单编号
-                                String applyDate = content0.optString("applyDate");
+                                String applyDate = DateUtil.getDateToString1(content0.optLong("applyDate")); //获取申请时间
+                                String department = content0.optJSONObject("applicant").optJSONObject("department").optString("name");
+                                String applicant = content0.optJSONObject("applicant").optString("name"); //
+                                String number = department + "-" + applicant;
                                 String code1 = content0.optString("code");
                                 Map listmap = new HashMap<>();
-                                listmap.put("1", number); //出库单编号
-                                listmap.put("2", applyDate); //申请日期
-                                listmap.put("3", code1); //code
+                                listmap.put("1", number);
+                                listmap.put("2", applyDate);
+                                listmap.put("3", code1);
                                 list.add(listmap);
                             }
 
@@ -147,7 +149,6 @@ public class FragmentMaterialOutCheck1 extends Fragment {
 
     private void initView() {
         initRefreshLayout();
-        initSearchView();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
@@ -169,13 +170,6 @@ public class FragmentMaterialOutCheck1 extends Fragment {
             }
         };
         recyclerView.setAdapter(adapter);
-    }
-
-    /**
-     * 初始化搜索框
-     */
-    private void initSearchView() {
-
     }
 
     /**
@@ -239,13 +233,12 @@ public class FragmentMaterialOutCheck1 extends Fragment {
                                     String status = content0.optString("status"); //查看是否入库
 
                                     if (status.equals("0")) { //获取所有为入库的数据
-                                        Map listmap = new HashMap<>();
-                                        listmap.put("1", materia_name); //部门+设备名称
-                                        listmap.put("2", inDate); //是否接单
-                                        listmap.put("3", head_code); //主键
-                                        list.add(listmap);
+                                        Map map = new HashMap<>();
+                                        map.put("1", materia_name);
+                                        map.put("2", DateUtil.getDateToString(inDate));
+                                        map.put("3", head_code); //主键
+                                        list.add(map);
                                     }
-
                                 }
 
                             } catch (Exception e) {
@@ -265,39 +258,6 @@ public class FragmentMaterialOutCheck1 extends Fragment {
                     });
         }
     }
-
-    /**
-     * 滑动到指定位置
-     *
-     * @param mRecyclerView
-     * @param position
-     */
-    private void smoothMoveToPosition(RecyclerView mRecyclerView, final int position) {
-        // 第一个可见位置
-        int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0));
-        // 最后一个可见位置
-        int lastItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(mRecyclerView.getChildCount() - 1));
-
-        if (position < firstItem) {
-            // 如果跳转位置在第一个可见位置之前，就smoothScrollToPosition可以直接跳转
-            mRecyclerView.smoothScrollToPosition(position);
-        } else if (position <= lastItem) {
-            // 跳转位置在第一个可见项之后，最后一个可见项之前
-            // smoothScrollToPosition根本不会动，此时调用smoothScrollBy来滑动到指定位置
-            int movePosition = position - firstItem;
-            if (movePosition >= 0 && movePosition < mRecyclerView.getChildCount()) {
-                int top = mRecyclerView.getChildAt(movePosition).getTop();
-                mRecyclerView.smoothScrollBy(0, top);
-            }
-        } else {
-            // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
-            // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
-            mRecyclerView.smoothScrollToPosition(position);
-            mToPosition = position;
-            mShouldScroll = true;
-        }
-    }
-
 
     @Override
     public void onDestroyView() {

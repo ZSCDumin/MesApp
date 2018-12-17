@@ -14,7 +14,7 @@ public class ProductOutCheckBean {
         this.auditNote = auditNote;
     }
 
-    public ProductOutCheckBean(String auditResult, String auditor, String auditNote, String auditTime) {
+    public ProductOutCheckBean( String auditor,String auditResult, String auditNote, String auditTime) {
         this.auditResult = auditResult;
         this.auditor = auditor;
         this.auditNote = auditNote;

@@ -96,7 +96,7 @@ public class FragmentProductOutCheck1 extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.WareHourse.ProductOut.getByAuditStatusByPage)
-                .params(GlobalApi.WareHourse.auditStatus, "1")
+                .params(GlobalApi.WareHourse.auditStatus, "0")
                 .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
                 .params(GlobalApi.WareHourse.size, "20") //一次获取多少
                 .params(GlobalApi.WareHourse.sort, "code") //根据code排序
@@ -147,7 +147,6 @@ public class FragmentProductOutCheck1 extends Fragment {
 
     private void initView() {
         initRefreshLayout();
-        initSearchView();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
@@ -170,12 +169,7 @@ public class FragmentProductOutCheck1 extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    /**
-     * 初始化搜索框
-     */
-    private void initSearchView() {
 
-    }
 
     /**
      * 初始化滑动列表
@@ -252,39 +246,6 @@ public class FragmentProductOutCheck1 extends Fragment {
                     });
         }
     }
-
-    /**
-     * 滑动到指定位置
-     *
-     * @param mRecyclerView
-     * @param position
-     */
-    private void smoothMoveToPosition(RecyclerView mRecyclerView, final int position) {
-        // 第一个可见位置
-        int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0));
-        // 最后一个可见位置
-        int lastItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(mRecyclerView.getChildCount() - 1));
-
-        if (position < firstItem) {
-            // 如果跳转位置在第一个可见位置之前，就smoothScrollToPosition可以直接跳转
-            mRecyclerView.smoothScrollToPosition(position);
-        } else if (position <= lastItem) {
-            // 跳转位置在第一个可见项之后，最后一个可见项之前
-            // smoothScrollToPosition根本不会动，此时调用smoothScrollBy来滑动到指定位置
-            int movePosition = position - firstItem;
-            if (movePosition >= 0 && movePosition < mRecyclerView.getChildCount()) {
-                int top = mRecyclerView.getChildAt(movePosition).getTop();
-                mRecyclerView.smoothScrollBy(0, top);
-            }
-        } else {
-            // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
-            // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
-            mRecyclerView.smoothScrollToPosition(position);
-            mToPosition = position;
-            mShouldScroll = true;
-        }
-    }
-
 
     @Override
     public void onDestroyView() {

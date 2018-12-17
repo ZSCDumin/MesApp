@@ -3,6 +3,7 @@ package com.msw.mesapp.activity.home.warehouse;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -100,87 +101,86 @@ public class MaterialInActivityDetail2 extends AppCompatActivity {
 
     public void initData() {
         code = getIntent().getExtras().get("code").toString();
-
+        Log.i("TAG", code);
         EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_GoDown_Header_ByCode)
-                .params(GlobalApi.WareHourse.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
+            .params(GlobalApi.WareHourse.code, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
 
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = jsonObject.optInt("code");
-                            message = jsonObject.optString("message");
-                            JSONObject data = jsonObject.optJSONObject("data");
+                        String headcode = data.optString("code");
+                        String batchNumber = data.optString("batchNumber"); //入库编码
 
-                            String headcode = data.optString("code");
-                            String batchNumber = data.optString("batchNumber"); //入库编码
+                        JSONObject sendEntryHeaderobj = data.optJSONObject("sendEntryHeader");
+                        String contractNumber = "";
+                        if (sendEntryHeaderobj != null)
+                            contractNumber = sendEntryHeaderobj.optString("contractNumber"); //发货编码
 
-                            JSONObject sendEntryHeaderobj = data.optJSONObject("sendEntryHeader");
-                            String contractNumber = "";
-                            if(sendEntryHeaderobj != null)
-                                contractNumber = sendEntryHeaderobj.optString("contractNumber"); //发货编码
+                        JSONObject supplierobj = data.optJSONObject("supplier");
+                        String supplier = "";
+                        if (supplierobj != null)
+                            supplier = supplierobj.optString("name"); //发货厂家
 
-                            JSONObject supplierobj = data.optJSONObject("supplier");
-                            String supplier="";
-                            if(supplierobj != null)
-                                supplier = supplierobj.optString("name"); //发货厂家
+                        JSONObject rawTypeobj = data.optJSONObject("rawType");
+                        String rawName = "";
+                        if (rawTypeobj != null)
+                            rawName = rawTypeobj.optString("name"); //原料类型
 
-                            JSONObject rawTypeobj = data.optJSONObject("rawType");
-                            String rawName="";
-                            if(rawTypeobj!=null)
-                                 rawName = rawTypeobj.optString("name"); //原料类型
+                        String weight = data.optString("weight"); //总量
+                        String date = data.optString("date"); //到货日期
+                        String createTime = DateUtil.getDateToString(Long.valueOf(data.optString("createTime"))); //制单时间
 
-                            String weight = data.optString("weight"); //总量
-                            String date = data.optString("date"); //到货日期
-                            String createTime = DateUtil.getDateToString(Long.valueOf(data.optString("createTime"))); //制单时间
+                        JSONObject createUserobj = data.optJSONObject("createUser");
+                        String createUser = createUserobj.optString("name"); //制单工人
 
-                            JSONObject createUserobj = data.optJSONObject("createUser");
-                            String createUser = createUserobj.optString("name"); //制单工人
+                        String status = data.optString("status");//样品状态
 
-                            String status = data.optString("status");//样品状态
-
-                            JSONArray godownEntriesAyy = data.getJSONArray("godownEntries");
-                            for (int i = 0; i < godownEntriesAyy.length(); i++) {
-                                JSONObject godwon0 = new JSONObject(godownEntriesAyy.opt(i).toString());
-                                HashMap map = new HashMap();
-                                map.put("0", godwon0.optString("code"));
-                                map.put("1", godwon0.optString("batchNumber")); //批号
-                                map.put("2", godwon0.optString("unit")); //单位
-                                map.put("3", godwon0.optString("weight")); //重量
-                                map.put("4", godwon0.optString("testResult")); //化验结果:0未化验; 1合格; 2不合格
-                                tableList.add(map);
-                            }
-
-                            ss[0] = batchNumber; //入库单号
-                            ss[1] = contractNumber; //发货编码
-                            ss[2] = supplier; //发货厂家
-                            ss[3] = rawName; //原料类型
-                            ss[4] = weight; //总量
-                            ss[5] = date; //到货日期
-                            ss[6] = createTime; //制单日期
-                            ss[7] = createUser; //制单工人
-                            ss[8] = status.equals("0") ? "未入库" : "已入库";
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        JSONArray godownEntriesAyy = data.getJSONArray("godownEntries");
+                        for (int i = 0; i < godownEntriesAyy.length(); i++) {
+                            JSONObject godwon0 = new JSONObject(godownEntriesAyy.opt(i).toString());
+                            HashMap map = new HashMap();
+                            map.put("0", godwon0.optString("code"));
+                            map.put("1", godwon0.optString("batchNumber")); //批号
+                            map.put("2", godwon0.optString("unit")); //单位
+                            map.put("3", godwon0.optString("weight")); //重量
+                            map.put("4", godwon0.optString("testResult")); //化验结果:0未化验; 1合格; 2不合格
+                            tableList.add(map);
                         }
-                        if (code == 0) {
-                            initView();
-                        } else {
-                            ToastUtil.showToast(MaterialInActivityDetail2.this, message, ToastUtil.Error);
-                        }
-                    }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialInActivityDetail2.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        ss[0] = batchNumber; //入库单号
+                        ss[1] = contractNumber; //发货编码
+                        ss[2] = supplier; //发货厂家
+                        ss[3] = rawName; //原料类型
+                        ss[4] = weight; //总量
+                        ss[5] = date; //到货日期
+                        ss[6] = createTime; //制单日期
+                        ss[7] = createUser; //制单工人
+                        ss[8] = status.equals("0") ? "未入库" : "已入库";
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
+                    if (code == 0) {
+                        initView();
+                    } else {
+                        ToastUtil.showToast(MaterialInActivityDetail2.this, message, ToastUtil.Error);
+                    }
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialInActivityDetail2.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
 
     }
 

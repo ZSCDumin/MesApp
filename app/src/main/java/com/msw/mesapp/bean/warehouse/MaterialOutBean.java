@@ -57,7 +57,7 @@ public class MaterialOutBean {
         this.weight = weight;
     }
 
-    public MaterialOutBean(String result, String suggestion, String auditor, String date) {
+    public MaterialOutBean(String auditor, String result, String suggestion, String date) {
         this.result = result;
         this.suggestion = suggestion;
         this.auditor = auditor;

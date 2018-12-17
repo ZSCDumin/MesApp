@@ -108,9 +108,11 @@ public class FragmentMaterialOut1 extends Fragment {
                             totalElements = data.optInt("totalElements");
                             for (int i = 0; i < content.length(); i++) {
                                 JSONObject content0 = content.optJSONObject(i);
-                                String applyDate = content0.optString("applyDate"); //获取申请时间
-                                String number = content0.optString("number"); //
-                                String code1 = content0.optString("code"); //
+                                String applyDate = DateUtil.getDateToString1(content0.optLong("applyDate")); //获取申请时间
+                                String department = content0.optJSONObject("applicant").optJSONObject("department").optString("name");
+                                String applicant = content0.optJSONObject("applicant").optString("name"); //
+                                String number = department + "-" + applicant;
+                                String code1 = content0.optString("code");
                                 Map listmap = new HashMap<>();
                                 listmap.put("0", number);
                                 listmap.put("1", applyDate);
@@ -152,7 +154,7 @@ public class FragmentMaterialOut1 extends Fragment {
                     }
                 });
                 holder.setText(R.id.tv1, s.get("0").toString());
-                holder.setText(R.id.tv2, DateUtil.getDateToString(Long.valueOf(s.get("1").toString())));
+                holder.setText(R.id.tv2, s.get("1").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -208,11 +210,15 @@ public class FragmentMaterialOut1 extends Fragment {
                                 totalElements = data.optInt("totalElements");
                                 for (int i = 0; i < content.length(); i++) {
                                     JSONObject content0 = content.optJSONObject(i);
-                                    String applyDate = content0.optString("applyDate"); //获取申请时间
-                                    String number = content0.optString("number"); //
+                                    String applyDate = DateUtil.getDateToString1(content0.optLong("applyDate")); //获取申请时间
+                                    String department = content0.optJSONObject("applicant").optJSONObject("department").optString("name");
+                                    String applicant = content0.optJSONObject("applicant").optString("name"); //
+                                    String number = department + "-" + applicant;
+                                    String code1 = content0.optString("code");
                                     Map listmap = new HashMap<>();
-                                    listmap.put("1", number);
-                                    listmap.put("2", applyDate);
+                                    listmap.put("0", number);
+                                    listmap.put("1", applyDate);
+                                    listmap.put("2", code1);
                                     list.add(listmap);
                                 }
                             } catch (Exception e) {

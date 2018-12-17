@@ -83,8 +83,6 @@ public class MaterialOutCheckActivityDetail2 extends AppCompatActivity {
         ButterKnife.bind(this);
         initTitle();
         initData(getIntent().getExtras().get("code").toString());
-        initTable();
-        initTable1();
     }
 
     public void initTitle() {
@@ -102,102 +100,120 @@ public class MaterialOutCheckActivityDetail2 extends AppCompatActivity {
 
     public void initData(String code) {
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_CODE)
-                .params(GlobalApi.WareHourse.code, code)
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = jsonObject.optInt("code");
-                            message = jsonObject.optString("message");
-                            JSONObject data = jsonObject.optJSONObject("data");
-
-                            String department = data.optJSONObject("department").optString("name");
-                            String applyDate = data.optString("applyDate");
-                            String auditStatus = data.optString("auditStatus");
-                            String pickingStatus = data.optString("pickingStatus");
-                            String process = data.optJSONObject("process").optString("name");
-                            departmentTv.setText(department);
-                            auditStatusTv.setText(auditStatus);
-                            applyDateTv.setText(applyDate);
-                            godownStatusTv.setText(pickingStatus);
-                            processTypeTv.setText(process);
-
-                            JSONArray pickingApplies = data.optJSONArray("pickingApplies");
-
-                            for (int i = 0; i < pickingApplies.length(); i++) {
-                                JSONObject item = pickingApplies.getJSONObject(i);
-
-                                String rawType = item.optString("rawType");
-                                String batchNumber = item.optString("batchNumber");
-                                String unit = item.optString("unit");
-                                String weight = item.optString("weight");
-                                HashMap map = new HashMap();
-                                map.put("1", rawType);
-                                map.put("2", batchNumber);
-                                map.put("3", unit);
-                                map.put("4", weight);
-                                tableList.add(map);
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+            .params(GlobalApi.WareHourse.code, code)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        String department = data.optJSONObject("department").optString("name");
+                        String applyDate = data.optString("applyDate");
+                        String auditStatus = data.optString("auditStatus");
+                        if ("0".equals(auditStatus)) {
+                            auditStatus = "未提交";
+                        } else if ("1".equals(auditStatus)) {
+                            auditStatus = "在审核";
+                        } else if ("2".equals(auditStatus)) {
+                            auditStatus = "通过";
+                        } else if ("3".equals(auditStatus)) {
+                            auditStatus = "不通过";
                         }
-                        if (code == 0) {
+                        String pickingStatus = data.optInt("pickingStatus") == 0 ? "未出库" : "已出库";
+                        String process = data.optJSONObject("process").optString("name");
+                        departmentTv.setText(department);
+                        auditStatusTv.setText(auditStatus);
+                        applyDateTv.setText(DateUtil.getDateToString(applyDate));
+                        godownStatusTv.setText(pickingStatus);
+                        processTypeTv.setText(process);
 
-                        } else {
-                            ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, message, ToastUtil.Error);
+                        JSONArray pickingApplies = data.optJSONArray("pickingApplies");
+
+                        for (int i = 0; i < pickingApplies.length(); i++) {
+                            JSONObject item = pickingApplies.getJSONObject(i);
+                            String rawType = item.optJSONObject("rawType").optString("name");
+                            String batchNumber = item.optString("batchNumber");
+                            String unit = item.optString("unit");
+                            String weight = item.optString("weight");
+                            HashMap map = new HashMap();
+                            map.put("1", rawType);
+                            map.put("2", batchNumber);
+                            map.put("3", unit);
+                            map.put("4", weight);
+                            tableList.add(map);
                         }
+                        initTable();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    if (code == 0) {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, message, ToastUtil.Success);
+                    } else {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, message, ToastUtil.Error);
+                    }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_ApplyHeader)
-                .params(GlobalApi.WareHourse.pickingApplyHeaderCode, code) //
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONArray data = jsonObject.optJSONArray("data");
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject item = data.getJSONObject(i);
-                                String auditResult = item.optString("auditResult");
-                                String auditor = item.optJSONObject("auditor").optString("name");
-                                String auditTime = DateUtil.getDateToString(Long.valueOf(item.optString("auditTime")));
-                                String note = item.optString("note");
-                                HashMap map = new HashMap();
-                                map.put("0", auditor);
-                                map.put("1", note);
-                                map.put("2", auditResult);
-                                map.put("3", auditTime);
-                                tableList1.add(map);
+            .params(GlobalApi.WareHourse.pickingApplyHeaderCode, code) //
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        message = jsonObject.optString("message");
+                        code = jsonObject.optInt("code");
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String auditResult = item.optString("auditResult");
+                            if ("0".equals(auditResult)) {
+                                auditResult = "未提交";
+                            } else if ("1".equals(auditResult)) {
+                                auditResult = "在审核";
+                            } else if ("2".equals(auditResult)) {
+                                auditResult = "通过";
+                            } else if ("3".equals(auditResult)) {
+                                auditResult = "不通过";
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            String auditor = item.optJSONObject("auditor").optString("name");
+                            String auditTime = DateUtil.getDateToString(Long.valueOf(item.optString("auditTime")));
+                            String note = item.optString("note");
+                            HashMap map = new HashMap();
+                            map.put("0", auditor);
+                            map.put("1", auditResult);
+                            map.put("2", note);
+                            map.put("3", auditTime);
+                            tableList1.add(map);
                         }
-                        if (code == 0) {
-
-                        } else {
-                            ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, message, ToastUtil.Error);
-                        }
+                        initTable1();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    if (code == 0) {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, message, ToastUtil.Success);
+                    } else {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, message, ToastUtil.Error);
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialOutCheckActivityDetail2.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     @OnClick({R.id.back, R.id.back_bt})
@@ -231,7 +247,7 @@ public class MaterialOutCheckActivityDetail2 extends AppCompatActivity {
         column0.setFixed(true);
         column0.setAutoCount(false);
         columns.add(column0);
-        columns.add(new Column<>("类型", "rawType"));
+        columns.add(new Column<>("类型", "materialStyle"));
         columns.add(new Column<>("批号", "batchNumber"));
         columns.add(new Column<>("单位", "unit"));
         columns.add(new Column<>("重量", "weight"));
@@ -277,8 +293,8 @@ public class MaterialOutCheckActivityDetail2 extends AppCompatActivity {
         column0.setFixed(true);
         column0.setAutoCount(false);
         columns.add(column0);
-        columns.add(new Column<>("审核意见", "auditNote"));
         columns.add(new Column<>("审核结果", "auditResult"));
+        columns.add(new Column<>("审核意见", "auditNote"));
         columns.add(new Column<>("审核时间", "auditTime"));
 
         final TableData<ProductOutCheckBean> tableData = new TableData<>("出库审核单", testData, columns);

@@ -49,11 +49,6 @@
         </android.support.v4.view.ViewPager>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="15dp"
-        android:background="@color/barcolor" />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -72,7 +67,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp">
+                    android:padding="5dp">
 
                     <View
                         android:layout_width="3dp"
@@ -124,7 +119,6 @@
                             android:id="@+id/repair_bill_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-
                             android:orientation="vertical">
 
                             <ImageView
@@ -146,9 +140,7 @@
                             android:id="@+id/repair_apply_ll"
                             android:layout_height="@dimen/item_home_high"
                             android:background="@drawable/setting_item_selector"
-
-                            android:orientation="vertical"
-                            android:visibility="visible">
+                            android:orientation="vertical">
 
                             <ImageView
                                 android:layout_width="@dimen/icon_home_size"
@@ -278,15 +270,10 @@
                 android:orientation="vertical"
                 android:visibility="visible">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp"
-                    android:background="@color/barcolor" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp">
+                    android:padding="5dp">
 
                     <View
                         android:layout_width="3dp"
@@ -467,15 +454,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp"
-                    android:background="@color/barcolor" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp">
+                    android:padding="5dp">
 
                     <View
                         android:layout_width="3dp"
@@ -732,15 +714,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp"
-                    android:background="@color/barcolor" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp">
+                    android:padding="5dp">
 
                     <View
                         android:layout_width="3dp"
@@ -860,15 +837,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="15dp"
-                    android:background="@color/barcolor" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="5dp">
+                    android:padding="5dp">
 
                     <View
                         android:layout_width="3dp"

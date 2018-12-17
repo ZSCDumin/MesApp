@@ -1,6 +1,9 @@
 package com.msw.mesapp.activity.home.warehouse;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -19,12 +22,14 @@ import com.bin.david.form.data.format.selected.BaseSelectFormat;
 import com.bin.david.form.data.style.FontStyle;
 import com.bin.david.form.data.table.TableData;
 import com.bin.david.form.utils.DensityUtils;
+import com.google.gson.JsonObject;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.bean.warehouse.ProductInBean;
 import com.msw.mesapp.utils.ActivityUtil;
 import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
+import com.msw.mesapp.utils.ToastUtil;
 import com.zhouyou.http.EasyHttp;
 import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
@@ -73,6 +78,23 @@ public class ProductInActivityDetail1 extends AppCompatActivity {
 
     public String code = "";
     public String headcode = "";
+    public String godowner = "";
+    public String productType = "";
+
+    @SuppressLint("HandlerLeak")
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x011:
+                    rawTypeTv.setText(productType);
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,58 +131,79 @@ public class ProductInActivityDetail1 extends AppCompatActivity {
         ActivityUtil.switchTo(this, ProductInActivityDetail1Scan.class, map); //扫码验证
     }
 
-    public String godowner = "";
+    public void getProductType(String code) {
+        EasyHttp.post(GlobalApi.WareHourse.ProductIn.getTypeByCode)
+            .params("code", code)
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ProductInActivityDetail1.this, "获取数据失败", ToastUtil.Error);
+                }
+
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        productType = jsonObject.optJSONObject("data").optString("name");
+                        handler.sendEmptyMessage(0x011);
+                        ToastUtil.showToast(ProductInActivityDetail1.this, "获取数据成功", ToastUtil.Success);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+    }
 
     public void initData() {
         //获取第一块数据
         EasyHttp.post(GlobalApi.WareHourse.ProductIn.getByCode)
-                .params(GlobalApi.WareHourse.code, code)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            headcode = data.optString("code");
-                            String batchNumber = data.optString("batchNumber");
-                            String payTime = data.optString("payTime");
-                            String payer = data.optJSONObject("payer").optString("name");
-                            String department = data.optJSONObject("department").optString("name");
-                            String model = data.optString("model");
-                            String weight = data.optString("weight");
-                            godowner = data.optString("godowner");
-                            godownCodeTv.setText(batchNumber);
-                            departmentTv.setText(department);
-                            rawTypeTv.setText(model);
-                            totalWeightTv.setText(weight);
-                            memberTv.setText(payer);
-                            timeTv.setText(payTime);
-                            JSONArray productGodowns = data.optJSONArray("productGodowns");
-                            for (int i = 0; i < productGodowns.length(); i++) {
+            .params(GlobalApi.WareHourse.code, code)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        headcode = data.optString("code");
+                        String batchNumber = data.optString("batchNumber");
+                        String payTime = DateUtil.getDateToString(data.optString("payTime"));
+                        String payer = data.optJSONObject("payer").optString("name");
+                        String department = data.optJSONObject("department").optString("name");
+                        String model = data.optString("model");
+                        getProductType(model);
+                        String weight = data.optString("weight");
+                        godowner = data.optString("godowner");
+                        godownCodeTv.setText(batchNumber);
+                        departmentTv.setText(department);
+                        totalWeightTv.setText(weight);
+                        memberTv.setText(payer);
+                        timeTv.setText(payTime);
+                        JSONArray productGodowns = data.optJSONArray("productGodowns");
+                        for (int i = 0; i < productGodowns.length(); i++) {
 
-                                JSONObject item = productGodowns.getJSONObject(i);
-                                String batchNumber1 = item.optString("batchNumber");
-                                String weight1 = item.optString("weight");
-                                HashMap map = new HashMap();
-                                map.put("0", batchNumber1);
-                                map.put("1", weight1);
-                                tableList.add(map);
-                            }
-                            initTable();
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            JSONObject item = productGodowns.getJSONObject(i);
+                            String batchNumber1 = item.optString("batchNumber");
+                            String weight1 = item.optString("weight");
+                            HashMap map = new HashMap();
+                            map.put("0", batchNumber1);
+                            map.put("1", weight1);
+                            tableList.add(map);
                         }
-                    }
+                        initTable();
 
-                    @Override
-                    public void onError(ApiException e) {
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+
+                }
+            });
     }
 
     List<HashMap<String, Objects>> tableList = new ArrayList<>();

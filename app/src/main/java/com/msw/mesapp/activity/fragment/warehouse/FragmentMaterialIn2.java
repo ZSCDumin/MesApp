@@ -11,6 +11,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,22 +66,12 @@ public class FragmentMaterialIn2 extends Fragment {
     int totalPages = 0; //总共几页
     int totalElements = 0; //总共多少条数据
 
-    /**
-     * 目标项是否在最后一个可见项之后
-     */
-    private boolean mShouldScroll;
-    /**
-     * 记录目标项位置
-     */
-    private int mToPosition;
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //引用创建好的xml布局
         View view = inflater.inflate(R.layout.viewpaper_testchecking, container, false);
         ButterKnife.bind(this, view);
-        initData();
+        initData(0);
         initView();
         return view;
     }
@@ -90,9 +81,11 @@ public class FragmentMaterialIn2 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    private void initData() {
-        list.clear();
-        page = 0;
+    private void initData(int flag) {
+        if (flag == 0) {
+            list.clear();
+            page = 0;
+        }
         EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_GoDown_Header_ByPage) //获取发货单
             .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
             .params(GlobalApi.WareHourse.size, "10") //一次获取多少
@@ -103,6 +96,8 @@ public class FragmentMaterialIn2 extends Fragment {
             .execute(new SimpleCallBack<String>() {
                 @Override
                 public void onSuccess(String result) {
+
+                    Log.i("TAG", result);
                     int code = 1;
                     String message = "出错";
 
@@ -120,20 +115,18 @@ public class FragmentMaterialIn2 extends Fragment {
                             JSONObject content0 = content.optJSONObject(i);
 
                             String head_code = content0.optString("code"); //获取编码
-                            String materia_name = "";
-                            JSONObject rawTypeobj = content0.optJSONObject("rawType");
-                            if (rawTypeobj != null)
-                                materia_name = rawTypeobj.optString("name"); //原料名字
-
-
+                            String materia_name = content0.optJSONObject("rawType").optString("name"); //原料名字
                             String weight = content0.optString("weight"); //重量
-                            String DownDate = content0.optString("date"); //到货日期
+                            String sendDate = content0.optString("date"); //发货日期
+                            String status = content0.optString("status"); //获取状态
 
-                            Map listmap = new HashMap<>();
-                            listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
-                            listmap.put("2", DownDate); //
-                            listmap.put("3", head_code); //
-                            list.add(listmap);
+                            if (status.equals("0")) { //获取所有为入库的数据
+                                Map listmap = new HashMap<>();
+                                listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
+                                listmap.put("2", sendDate); //
+                                listmap.put("3", head_code); //
+                                list.add(listmap);
+                            }
                         }
 
                     } catch (Exception e) {
@@ -156,7 +149,6 @@ public class FragmentMaterialIn2 extends Fragment {
 
     private void initView() {
         initRefreshLayout();
-        initSearchView();
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));//设置为listview的布局
         recyclerView.setItemAnimator(new DefaultItemAnimator());//设置动画
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), 0));//添加分割线
@@ -181,12 +173,6 @@ public class FragmentMaterialIn2 extends Fragment {
     }
 
     /**
-     * 初始化搜索框
-     */
-    private void initSearchView() {
-    }
-
-    /**
      * 初始化滑动列表
      */
     private void initRefreshLayout() {
@@ -194,7 +180,7 @@ public class FragmentMaterialIn2 extends Fragment {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
                 refreshlayout.finishRefresh(1500);
-                initData();
+                initData(0);
                 classicsFooter.setLoadmoreFinished(false);
             }
         });
@@ -211,102 +197,9 @@ public class FragmentMaterialIn2 extends Fragment {
         page++;
         if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
         else {
-            EasyHttp.post(GlobalApi.WareHourse.MaterialIn.PATH_GoDown_Header_ByPage) //获取发货单
-                .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0业开始获取
-                .params(GlobalApi.WareHourse.size, "20") //一次获取多少
-                .params(GlobalApi.WareHourse.sort, "code") //根据code排序
-                .params(GlobalApi.WareHourse.asc, "1") //升序
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = jsonObject.optInt("code");
-                            message = jsonObject.optString("message");
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            JSONArray content = data.optJSONArray("content");
-
-                            totalPages = data.optInt("totalPages");
-                            totalElements = data.optInt("totalElements");
-
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject content0 = content.optJSONObject(i);
-
-                                String head_code = content0.optString("code"); //获取编码
-
-                                JSONObject rawTypeobj = content0.optJSONObject("rawType");
-                                String materia_name = "";
-                                if (rawTypeobj != null) {
-                                    materia_name = rawTypeobj.optString("name"); //原料名字
-                                }
-
-                                String weight = content0.optString("weight"); //重量
-                                String DownDate = content0.optString("date"); //到货日期
-
-                                Map listmap = new HashMap<>();
-                                listmap.put("1", materia_name + ":" + weight + "kg"); //物料名称+重量
-                                listmap.put("2", DownDate); //
-                                listmap.put("3", head_code); //
-                                list.add(listmap);
-
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (code == 0) {
-                            adapter.notifyDataSetChanged();
-                            //ToastUtil.showToast(getActivity(),message,ToastUtil.Success);
-                        } else {
-                            ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
-                        }
-                    }
-
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                    }
-                });
+            initData(1);
         }
     }
-
-    /**
-     * 滑动到指定位置
-     *
-     * @param mRecyclerView
-     * @param position
-     */
-    private void smoothMoveToPosition(RecyclerView mRecyclerView, final int position) {
-        // 第一个可见位置
-        int firstItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(0));
-        // 最后一个可见位置
-        int lastItem = mRecyclerView.getChildLayoutPosition(mRecyclerView.getChildAt(mRecyclerView.getChildCount() - 1));
-
-        if (position < firstItem) {
-            // 如果跳转位置在第一个可见位置之前，就smoothScrollToPosition可以直接跳转
-            mRecyclerView.smoothScrollToPosition(position);
-        } else if (position <= lastItem) {
-            // 跳转位置在第一个可见项之后，最后一个可见项之前
-            // smoothScrollToPosition根本不会动，此时调用smoothScrollBy来滑动到指定位置
-            int movePosition = position - firstItem;
-            if (movePosition >= 0 && movePosition < mRecyclerView.getChildCount()) {
-                int top = mRecyclerView.getChildAt(movePosition).getTop();
-                mRecyclerView.smoothScrollBy(0, top);
-            }
-        } else {
-            // 如果要跳转的位置在最后可见项之后，则先调用smoothScrollToPosition将要跳转的位置滚动到可见位置
-            // 再通过onScrollStateChanged控制再次调用smoothMoveToPosition，执行上一个判断中的方法
-            mRecyclerView.smoothScrollToPosition(position);
-            mToPosition = position;
-            mShouldScroll = true;
-        }
-    }
-
 
     @Override
     public void onDestroyView() {

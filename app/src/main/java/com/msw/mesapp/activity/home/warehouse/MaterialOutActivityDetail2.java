@@ -80,8 +80,6 @@ public class MaterialOutActivityDetail2 extends AppCompatActivity {
         code = getIntent().getExtras().get("code").toString();
         initTitle();
         initData();
-        initTable();
-        initTable1();
     }
 
     public void initTitle() {
@@ -124,14 +122,24 @@ public class MaterialOutActivityDetail2 extends AppCompatActivity {
                                 map.put("3", weight);
                                 tableList.add(map);
                             }
+                            initTable();
                             tx1.setText(department);
-                            String applyDate = data.optString("applyDate");
+                            String applyDate = DateUtil.getDateToString(data.optString("applyDate"));
                             tx2.setText(applyDate);
                             String auditStatus = data.optString("auditStatus");
+                            if ("0".equals(auditStatus)) {
+                                auditStatus = "未提交";
+                            } else if ("1".equals(auditStatus)) {
+                                auditStatus = "在审核";
+                            } else if ("2".equals(auditStatus)) {
+                                auditStatus = "通过";
+                            } else if ("3".equals(auditStatus)) {
+                                auditStatus = "不通过";
+                            }
                             tx3.setText(auditStatus);
-                            String processManage = data.optJSONObject("processManage").optString("name").toString();
+                            String processManage = data.optJSONObject("processManage").optString("name");
                             tx4.setText(processManage);
-                            String pickingStatus = data.optString("pickingStatus");
+                            String pickingStatus = data.optInt("pickingStatus") == 0 ? "未出库" : "已出库";
                             tx5.setText(pickingStatus);
                             initTable();
                         } catch (JSONException e) {
@@ -160,6 +168,15 @@ public class MaterialOutActivityDetail2 extends AppCompatActivity {
                             for (int i = 0; i < data.length(); i++) {
                                 JSONObject item = data.getJSONObject(i);
                                 String auditResult = item.optString("auditResult");
+                                if ("0".equals(auditResult)) {
+                                    auditResult = "未提交";
+                                } else if ("1".equals(auditResult)) {
+                                    auditResult = "在审核";
+                                } else if ("2".equals(auditResult)) {
+                                    auditResult = "通过";
+                                } else if ("3".equals(auditResult)) {
+                                    auditResult = "不通过";
+                                }
                                 String auditor = item.optJSONObject("auditor").optString("name");
                                 String auditTime = DateUtil.getDateToString(Long.valueOf(item.optString("auditTime")));
                                 String note = item.optString("note");
@@ -170,6 +187,7 @@ public class MaterialOutActivityDetail2 extends AppCompatActivity {
                                 map.put("3", auditTime);
                                 tableList1.add(map);
                             }
+                            initTable1();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -238,7 +256,7 @@ public class MaterialOutActivityDetail2 extends AppCompatActivity {
         List<ProductOutCheckBean> testData = new ArrayList<>();
         for (int i = 0; i < tableList1.size(); i++) {
             Map map = tableList1.get(i);
-            ProductOutCheckBean userData = new ProductOutCheckBean(map.get("0").toString(), map.get("1").toString(), map.get("2").toString(), map.get("3").toString());
+            ProductOutCheckBean userData = new ProductOutCheckBean(map.get("0").toString(), map.get("2").toString(), map.get("1").toString(), map.get("3").toString());
             testData.add(userData);
         }
 
@@ -251,8 +269,8 @@ public class MaterialOutActivityDetail2 extends AppCompatActivity {
         column0.setFixed(true);
         column0.setAutoCount(false);
         columns.add(column0);
-        columns.add(new Column<>("审核意见", "auditNote"));
         columns.add(new Column<>("审核结果", "auditResult"));
+        columns.add(new Column<>("审核意见", "auditNote"));
         columns.add(new Column<>("审核时间", "auditTime"));
 
         final TableData<ProductOutCheckBean> tableData = new TableData<>("出库审核单", testData, columns);

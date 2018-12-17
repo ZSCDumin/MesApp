@@ -185,6 +185,7 @@ public class ProductInAddActivityDetail1Scan extends AppCompatActivity {
                 }
                 map.put("batchLen", batchList.size());
                 ActivityUtil.switchTo(this, ProductInAddActivityDetail1.class, map);
+                this.finish();
                 break;
         }
     }

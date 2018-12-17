@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:orientation="vertical"
-    tools:context="com.msw.mesapp.activity.home.warehouse.MaterialInActivityDetail1">
+    android:orientation="vertical">
 
     <include
         layout="@layout/title_layout"
@@ -53,7 +50,7 @@
                         android:paddingLeft="10dp"
                         android:paddingRight="20dp"
                         android:singleLine="true"
-                        android:text="KDHUD-8982939"
+                        android:text="455565665"
                         android:textColor="@color/balack333" />
                 </RelativeLayout>
 
@@ -74,7 +71,7 @@
                         android:layout_height="match_parent"
                         android:gravity="center_vertical"
                         android:paddingLeft="10dp"
-                        android:text="制造部门："
+                        android:text="公司名称："
                         android:textColor="@color/balack333" />
 
                     <TextView
@@ -87,9 +84,10 @@
                         android:paddingLeft="10dp"
                         android:paddingRight="20dp"
                         android:singleLine="true"
-                        android:text="KDHUD-8982939"
+                        android:text="制造部"
                         android:textColor="@color/balack333" />
                 </RelativeLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="10dp"
@@ -140,7 +138,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc1"
+                            android:id="@+id/tx3"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt1"
@@ -149,7 +147,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="admin"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -175,7 +173,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc2"
+                            android:id="@+id/tx4"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt2"
@@ -184,7 +182,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="2018-06-27"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -231,7 +229,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc3"
+                            android:id="@+id/tx5"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt3"
@@ -240,7 +238,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="未审核"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -266,7 +264,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc4"
+                            android:id="@+id/tx6"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt4"
@@ -275,7 +273,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="admin"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -301,7 +299,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc5"
+                            android:id="@+id/tx7"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt5"
@@ -310,7 +308,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="2018-06-27"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -357,7 +355,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc6"
+                            android:id="@+id/tx8"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt6"
@@ -366,7 +364,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="admin"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -392,7 +390,7 @@
                             android:textColor="@color/balack333" />
 
                         <TextView
-                            android:id="@+id/txc7"
+                            android:id="@+id/tx9"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_toRightOf="@+id/ttt7"
@@ -401,7 +399,7 @@
                             android:paddingLeft="10dp"
                             android:paddingRight="20dp"
                             android:singleLine="true"
-                            android:text="KDHUD-8982939"
+                            android:text="2018-07-26"
                             android:textColor="@color/balack333" />
                     </RelativeLayout>
 
@@ -417,24 +415,16 @@
             </LinearLayout>
 
             <Button
+                android:layout_marginTop="80dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="30dp"
                 android:id="@+id/bt"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:layout_centerHorizontal="true"
-                android:layout_margin="15dp"
-                android:layout_marginBottom="30dp"
+                android:layout_height="45dp"
                 android:background="@drawable/button_submit_selector"
-                android:clickable="true"
-                android:paddingLeft="20dp"
-
-                android:paddingRight="20dp"
                 android:text="出库单列表"
                 android:textColor="#fff" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:background="@color/white" />
 
         </LinearLayout>
     </ScrollView>

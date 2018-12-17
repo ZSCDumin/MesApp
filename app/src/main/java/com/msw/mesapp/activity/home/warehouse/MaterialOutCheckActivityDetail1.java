@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bin.david.form.core.SmartTable;
 import com.bin.david.form.core.TableConfig;
@@ -23,6 +24,7 @@ import com.bin.david.form.utils.DensityUtils;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.bean.warehouse.MaterialInBean;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
 import com.msw.mesapp.utils.ToastUtil;
@@ -31,6 +33,7 @@ import com.zhouyou.http.callback.SimpleCallBack;
 import com.zhouyou.http.exception.ApiException;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -83,7 +86,6 @@ public class MaterialOutCheckActivityDetail1 extends AppCompatActivity {
         code = getIntent().getExtras().get("code").toString();
         initTitle();
         initData();
-        initTable();
     }
 
     public void initTitle() {
@@ -94,63 +96,72 @@ public class MaterialOutCheckActivityDetail1 extends AppCompatActivity {
     }
 
     public void initData() {
-        code = getIntent().getExtras().get("code").toString();
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_CODE)
-                .params(GlobalApi.WareHourse.code, code) //
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONObject data = jsonObject.optJSONObject("data");
+            .params(GlobalApi.WareHourse.code, code) //
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
 
-                            String department = data.optJSONObject("department").optString("name");
-                            String applyDate = data.optString("applyDate");
-                            String auditStatus = data.optString("auditStatus");
-                            String pickingStatus = data.optString("pickingStatus");
-                            String process = data.optJSONObject("process").optString("name");
-                            departmentTv.setText(department);
-                            auditStatusTv.setText(auditStatus);
-                            applyTimeTv.setText(applyDate);
-                            godownStatusTv.setText(pickingStatus);
-                            processTypeTv.setText(process);
-
-                            JSONArray pickingApplies = data.optJSONArray("pickingApplies");
-
-                            for (int i = 0; i < pickingApplies.length(); i++) {
-                                JSONObject item = pickingApplies.getJSONObject(i);
-
-                                String rawType = item.optString("rawType");
-                                String batchNumber = item.optString("batchNumber");
-                                String unit = item.optString("unit");
-                                String weight = item.optString("weight");
-                                HashMap map = new HashMap();
-                                map.put("1", rawType);
-                                map.put("2", batchNumber);
-                                map.put("3", unit);
-                                map.put("4", weight);
-                                tableList.add(map);
-                            }
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        String department = data.optJSONObject("department").optString("name");
+                        String applyDate = data.optString("applyDate");
+                        String auditStatus = data.optString("auditStatus");
+                        if ("0".equals(auditStatus)) {
+                            auditStatus = "未提交";
+                        } else if ("1".equals(auditStatus)) {
+                            auditStatus = "在审核";
+                        } else if ("2".equals(auditStatus)) {
+                            auditStatus = "通过";
+                        } else if ("3".equals(auditStatus)) {
+                            auditStatus = "不通过";
                         }
-                        if (code == 0) {
+                        int pickingStatus = data.optInt("pickingStatus");
+                        String process = data.optJSONObject("process").optString("name");
+                        departmentTv.setText(department);
+                        auditStatusTv.setText(auditStatus);
+                        applyTimeTv.setText(DateUtil.getDateToString(applyDate));
+                        godownStatusTv.setText(pickingStatus == 0 ? "未出库" : "已出库");
+                        processTypeTv.setText(process);
 
-                        } else {
-                            ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, message, ToastUtil.Error);
+                        JSONArray pickingApplies = data.optJSONArray("pickingApplies");
+
+                        for (int i = 0; i < pickingApplies.length(); i++) {
+                            JSONObject item = pickingApplies.getJSONObject(i);
+                            String rawType = item.optJSONObject("rawType").optString("name");
+                            String batchNumber = item.optString("batchNumber");
+                            String unit = item.optString("unit");
+                            String weight = item.optString("weight").equals("null") ? "0" : item.optString("weight");
+                            HashMap map = new HashMap();
+                            map.put("1", rawType);
+                            map.put("2", batchNumber);
+                            map.put("3", unit);
+                            map.put("4", weight);
+                            tableList.add(map);
                         }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    if (code == 0) {
+                        initTable();
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, "初始化数据成功", ToastUtil.Success);
+                    } else {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, message, ToastUtil.Error);
+                    }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     @OnClick({R.id.back, R.id.disagree_bt, R.id.agree_bt})
@@ -179,23 +190,37 @@ public class MaterialOutCheckActivityDetail1 extends AppCompatActivity {
      */
     public void submit(String code, String auditStatus, String note, String auditorCode) {
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.updateAuditStatusByCode) //获取发货单
-                .params(GlobalApi.WareHourse.code, code)
-                .params(GlobalApi.WareHourse.auditStatus, auditStatus)
-                .params(GlobalApi.WareHourse.note, note)
-                .params(GlobalApi.WareHourse.auditorCode, auditorCode)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, "成功！", 1);
+            .params(GlobalApi.WareHourse.code, code)
+            .params(GlobalApi.WareHourse.auditStatus, auditStatus)
+            .params(GlobalApi.WareHourse.note, note)
+            .params(GlobalApi.WareHourse.auditorCode, auditorCode)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
+                    if (code == 0) {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, "提交审核成功", ToastUtil.Success);
+                        finish();
+                    } else {
+                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, message, ToastUtil.Error);
+                    }
+                }
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, "失败！", 1);
-                    }
-                });
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(MaterialOutCheckActivityDetail1.this, "出现异常！", 1);
+                }
+            });
     }
 
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
@@ -219,7 +244,7 @@ public class MaterialOutCheckActivityDetail1 extends AppCompatActivity {
         column0.setFixed(true);
         column0.setAutoCount(false);
         columns.add(column0);
-        columns.add(new Column<>("类型", "rawType"));
+        columns.add(new Column<>("类型", "materialStyle"));
         columns.add(new Column<>("批号", "batchNumber"));
         columns.add(new Column<>("单位", "unit"));
         columns.add(new Column<>("重量", "weight"));

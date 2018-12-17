@@ -55,6 +55,7 @@ public class JiaojiebanManagementDetails4 extends AppCompatActivity {
     @Bind(R.id.next)
     Button next;
     List<String> dataList = new ArrayList<>();
+    List<String> list = new ArrayList<>();
     ArrayAdapter<String> adapter;
     private String code = "";
     private String name = "";
@@ -119,7 +120,8 @@ public class JiaojiebanManagementDetails4 extends AppCompatActivity {
                 } else if (wanban.isChecked()) {
                     duty_code = "2";
                 }
-                successor_code = spinner.getSelectedItem().toString();
+                successor_code = list.get(spinner.getSelectedItemPosition() - 1);
+                Log.i("successor_code", successor_code);
                 if (successor_code.equals("请选择")) {
                     ToastUtil.showToast(this, "请选择交班人", ToastUtil.Warning);
                 } else {
@@ -146,7 +148,9 @@ public class JiaojiebanManagementDetails4 extends AppCompatActivity {
                         for (int i = 0; i < data.length(); i++) {
                             JSONObject item = data.getJSONObject(i);
                             String code = item.optString("code");
-                            dataList.add(code);
+                            String name = item.optString("name");
+                            list.add(code);
+                            dataList.add(name);
                         }
                         handler.sendEmptyMessage(0x102);//通过handler发送一个更新数据的标记
                     } catch (JSONException e) {

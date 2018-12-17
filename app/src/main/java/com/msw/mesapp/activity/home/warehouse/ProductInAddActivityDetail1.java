@@ -1,6 +1,9 @@
 package com.msw.mesapp.activity.home.warehouse;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -25,9 +28,12 @@ import com.bin.david.form.utils.DensityUtils;
 import com.google.gson.Gson;
 import com.msw.mesapp.R;
 import com.msw.mesapp.base.GlobalApi;
+import com.msw.mesapp.bean.warehouse.Department;
 import com.msw.mesapp.bean.warehouse.MaterialInBean;
 import com.msw.mesapp.bean.warehouse.ProductGodown;
 import com.msw.mesapp.bean.warehouse.ProductGodownBean;
+import com.msw.mesapp.bean.warehouse.ProductOutBean;
+import com.msw.mesapp.bean.warehouse.User;
 import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.GetCurrentUserIDUtil;
 import com.msw.mesapp.utils.StatusBarUtils;
@@ -87,6 +93,22 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
     public String message = "";
     public int totalWeight = 0;
     List<HashMap<String, Objects>> tableList = new ArrayList<>();
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0x011:
+                    ToastUtil.showToast(ProductInAddActivityDetail1.this, message, 1);
+                    if (message.equals("成功")) {
+                        ProductInAddActivityDetail1.this.finish();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,74 +146,75 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
     public void getRawType() {
         data_list = new ArrayList<>();
         data_list_code = new ArrayList<>();
-        EasyHttp.post(GlobalApi.WareHourse.ProductIn.getAllRawType)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
+        EasyHttp.post(GlobalApi.WareHourse.ProductIn.getByMaterialCode)
+            .params("materialCode", "2")
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
 
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONArray content = jsonObject.optJSONObject("data").optJSONArray("content");
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject item = content.getJSONObject(i);
-                                String code = item.optString("code");
-                                String rawType = item.optString("name");
-                                data_list_code.add(code);
-                                data_list.add(rawType);
-                            }
-                            arr_adapter = new ArrayAdapter<>(ProductInAddActivityDetail1.this, android.R.layout.simple_spinner_item, data_list);
-                            arr_adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                            rawTypeSp.setAdapter(arr_adapter);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String code = item.optString("code");
+                            String rawType = item.optString("name");
+                            data_list_code.add(code);
+                            data_list.add(rawType);
                         }
-                        ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取产品类型数据成功！", 1);
-                    }
+                        arr_adapter = new ArrayAdapter<>(ProductInAddActivityDetail1.this, android.R.layout.simple_spinner_item, data_list);
+                        arr_adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                        rawTypeSp.setAdapter(arr_adapter);
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取产品类型数据成功！", 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                    ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取产品类型数据成功！", 1);
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取产品类型数据成功！", 1);
+                }
+            });
     }
 
     public void getDepartment() {
         data_list1 = new ArrayList<>();
         data_list1_code = new ArrayList<>();
-        EasyHttp.post(GlobalApi.WareHourse.ProductIn.getAllDepartment)
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            JSONArray content = jsonObject.optJSONObject("data").optJSONArray("content");
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject item = content.getJSONObject(i);
-                                String code = item.optString("code");
-                                String deparment = item.optString("name");
-                                data_list1_code.add(code);
-                                data_list1.add(deparment);
-                            }
-                            arr_adapter1 = new ArrayAdapter<>(ProductInAddActivityDetail1.this, android.R.layout.simple_spinner_item, data_list1);
-                            arr_adapter1.setDropDownViewResource(android.R.layout.simple_list_item_1);
-                            departmentSp.setAdapter(arr_adapter1);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+        EasyHttp.get(GlobalApi.WareHourse.ProductIn.getAllDepartment)
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        JSONArray data = jsonObject.optJSONArray("data");
+                        for (int i = 0; i < data.length(); i++) {
+                            JSONObject item = data.getJSONObject(i);
+                            String code = item.optString("code");
+                            String department = item.optString("name");
+                            data_list1_code.add(code);
+                            data_list1.add(department);
                         }
-                        ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取部门数据成功！", 1);
-                    }
+                        arr_adapter1 = new ArrayAdapter<>(ProductInAddActivityDetail1.this, android.R.layout.simple_spinner_item, data_list1);
+                        arr_adapter1.setDropDownViewResource(android.R.layout.simple_list_item_1);
+                        departmentSp.setAdapter(arr_adapter1);
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取部门数据成功！", 1);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
+                    ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取部门数据成功！", 1);
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(ProductInAddActivityDetail1.this, "获取部门数据成功！", 1);
+                }
+            });
 
 
     }
@@ -202,7 +225,7 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
             HashMap map = new HashMap();
             String batchNumber = getIntent().getExtras().get("batchNumber" + i).toString();
             totalWeight += Integer.valueOf(batchNumber.split("-")[1]);
-            map.put("1", batchNumber);
+            map.put("1", batchNumber.split("-")[0]);
             map.put("2", batchNumber.split("-")[1]);
             tableList.add(map);
         }
@@ -271,6 +294,8 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
     }
 
     public void submit() {
+
+        Log.i("TAG", data_list1_code.get(departmentSp.getSelectedItemPosition()));
         OkHttpClient okHttpClient = new OkHttpClient.Builder().build();
         List<ProductGodown> list = new ArrayList<>();
         for (int i = 0; i < tableList.size(); i++) {
@@ -278,21 +303,21 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
             ProductGodown productGodown = new ProductGodown(map.get("1").toString(), map.get("2").toString());
             list.add(productGodown);
         }
-        ProductGodownBean productGodownBean = new ProductGodownBean(data_list_code.get(rawTypeSp.getSelectedItemPosition()), data_list_code.get(departmentSp.getSelectedItemPosition()), String.valueOf(totalWeight), GetCurrentUserIDUtil.currentUserId(this), list);
+        ProductGodownBean productGodownBean = new ProductGodownBean(data_list_code.get(rawTypeSp.getSelectedItemPosition()), new Department(data_list1_code.get(departmentSp.getSelectedItemPosition())), String.valueOf(totalWeight), new User(GetCurrentUserIDUtil.currentUserId(this)), list);
         Gson gson = new Gson();
         //使用Gson将对象转换为json字符串
         final String json = gson.toJson(productGodownBean);
         Log.i("TAG", json);
         RequestBody requestBody = FormBody.create(MediaType.parse("application/json; charset=utf-8"), json);
         Request request = new Request.Builder()
-                .post(requestBody)
-                .url(GlobalApi.BASEURL + GlobalApi.WareHourse.ProductIn.add_godown_info)//请求的url
-                .build();
+            .post(requestBody)
+            .url(GlobalApi.BASEURL + GlobalApi.WareHourse.ProductIn.add_godown_info)//请求的url
+            .build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-
+                ToastUtil.showToast(ProductInAddActivityDetail1.this, "提交失败", ToastUtil.Error);
             }
 
             @Override
@@ -301,11 +326,11 @@ public class ProductInAddActivityDetail1 extends AppCompatActivity {
                 try {
                     JSONObject jsonObject = new JSONObject(result);
                     message = jsonObject.optString("message");
+                    mHandler.sendEmptyMessage(0x011);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         });
-        ToastUtil.showToast(this, message, 1);
     }
 }

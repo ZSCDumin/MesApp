@@ -63,20 +63,6 @@ public class FragmentProductOut1 extends Fragment {
     private RecyclerView.Adapter adapter;
     List<Map<String, Object>> list = new ArrayList<>();
 
-    int page = 0; //获取数据的第几页
-    int totalPages = 0; //总共几页
-    int totalElements = 0; //总共多少条数据
-
-    /**
-     * 目标项是否在最后一个可见项之后
-     */
-    private boolean mShouldScroll;
-    /**
-     * 记录目标项位置
-     */
-    private int mToPosition;
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         //引用创建好的xml布局

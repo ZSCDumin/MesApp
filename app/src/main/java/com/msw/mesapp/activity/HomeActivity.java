@@ -174,28 +174,28 @@ public class HomeActivity extends AppCompatActivity {
             permission_code.contains(GlobalKey.Permission.QrManagment)) {
 
             if (!permission_code.contains(GlobalKey.Permission.ProduceInpsect)) {//执行巡检
-                deviceInspectionLl.setVisibility(View.INVISIBLE);
+                deviceInspectionLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.InspectCheck)) {//巡检审核
-                deviceVerifyLl.setVisibility(View.INVISIBLE);
+                deviceVerifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.Repair_Bill)) {//维修单据
-                repairBillLl.setVisibility(View.INVISIBLE);
+                repairBillLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.Repair_Recevive)) {//维修接单
-                receiveRepairOrderLl.setVisibility(View.INVISIBLE);
+                receiveRepairOrderLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.Repair_Apply)) {//维修申请
-                repairApplyLl.setVisibility(View.INVISIBLE);
+                repairApplyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.Repair_Comment)) {//维修评价
-                repairCommentLl.setVisibility(View.INVISIBLE);
+                repairCommentLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.QrManagment)) {//条码管理
-                qrManagementLl.setVisibility(View.INVISIBLE);
+                qrManagementLl.setVisibility(View.GONE);
             }
         } else {
-            deviceManagementLl.setVisibility(View.INVISIBLE);
+            deviceManagementLl.setVisibility(View.GONE);
         }
 
         /**
@@ -204,25 +204,25 @@ public class HomeActivity extends AppCompatActivity {
         if (permission_code.contains(GlobalKey.Permission.ProductCheck) || permission_code.contains(GlobalKey.Permission.MaterialCheck) || permission_code.contains(GlobalKey.Permission.ProcessCheck) ||
             permission_code.contains(GlobalKey.Permission.ProductRelease) || permission_code.contains(GlobalKey.Permission.MaterialRelease) || permission_code.contains(GlobalKey.Permission.ProcessRelease)) {
             if (!permission_code.contains(GlobalKey.Permission.ProductCheck)) {//产品审核
-                productVertifyLl.setVisibility(View.INVISIBLE);
+                productVertifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.MaterialCheck)) {//原料审核
-                materialVertifyLl.setVisibility(View.INVISIBLE);
+                materialVertifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.ProcessCheck)) {//制程审核
-                produceVertifyLl.setVisibility(View.INVISIBLE);
+                produceVertifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.ProductRelease)) {//产品发布
-                productReleaseLl.setVisibility(View.INVISIBLE);
+                productReleaseLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.MaterialRelease)) {//原料发布
-                materialReleaseLl.setVisibility(View.INVISIBLE);
+                materialReleaseLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.ProcessRelease)) {//制程发布
-                produceReleaseLl.setVisibility(View.INVISIBLE);
+                produceReleaseLl.setVisibility(View.GONE);
             }
         } else {
-            qualityManagementLl.setVisibility(View.INVISIBLE);
+            qualityManagementLl.setVisibility(View.GONE);
         }
 
         /***
@@ -238,34 +238,34 @@ public class HomeActivity extends AppCompatActivity {
             permission_code.contains(GlobalKey.Permission.SampleInput) ||
             permission_code.contains(GlobalKey.Permission.SampleOutput)) {
             if (!permission_code.contains(GlobalKey.Permission.MaterialInput)) {//原料入库
-                materialInputLl.setVisibility(View.INVISIBLE);
+                materialInputLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.MaterialOutput)) {//原料出库执行
-                materialOutputLl.setVisibility(View.INVISIBLE);
+                materialOutputLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.MaterialOutputCheck)) {//原料出库审核
-                materialOutputVertifyLl.setVisibility(View.INVISIBLE);
+                materialOutputVertifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.ProductInput)) {//产品入库
-                productInputLl.setVisibility(View.INVISIBLE);
+                productInputLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.ProductOutput)) {//产品出库执行
-                productOutputLl.setVisibility(View.INVISIBLE);
+                productOutputLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.ProductOutputCheck)) {//产品出库审核
-                productOutputVertifyLl.setVisibility(View.INVISIBLE);
+                productOutputVertifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.AddProductVertify)) {//新增缴库
-                addVertifyLl.setVisibility(View.INVISIBLE);
+                addVertifyLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.SampleInput)) {//样品入库
-                sampleInputLl.setVisibility(View.INVISIBLE);
+                sampleInputLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.SampleOutput)) {//样品领取
-                sampleOutputLl.setVisibility(View.INVISIBLE);
+                sampleOutputLl.setVisibility(View.GONE);
             }
         } else {
-            warehouseManagementLl.setVisibility(View.INVISIBLE);
+            warehouseManagementLl.setVisibility(View.GONE);
         }
 
         /**
@@ -277,21 +277,21 @@ public class HomeActivity extends AppCompatActivity {
             permission_code.contains(GlobalKey.Permission.JobTransform)
             ) {
             if (!permission_code.contains(GlobalKey.Permission.ProductCheckScale)) {//生产核秤
-                productCheckScaleLl.setVisibility(View.INVISIBLE);
+                productCheckScaleLl.setVisibility(View.GONE);
             }
 
             if (!permission_code.contains(GlobalKey.Permission.CheckScaleVertify)) {//生产审核
-                checkScaleVertifyLl.setVisibility(View.INVISIBLE);
+                checkScaleVertifyLl.setVisibility(View.GONE);
             }
 
             if (!permission_code.contains(GlobalKey.Permission.ShaiwangCheck)) {//筛网检查
-                shaiwangCheckLl.setVisibility(View.INVISIBLE);
+                shaiwangCheckLl.setVisibility(View.GONE);
             }
             if (!permission_code.contains(GlobalKey.Permission.JobTransform)) {//岗位交接
-                jiaojiebanLl.setVisibility(View.INVISIBLE);
+                jiaojiebanLl.setVisibility(View.GONE);
             }
         } else {
-            productionManagementLl.setVisibility(View.INVISIBLE);
+            productionManagementLl.setVisibility(View.GONE);
         }
 
         /**
@@ -299,10 +299,10 @@ public class HomeActivity extends AppCompatActivity {
          */
         if (permission_code.contains(GlobalKey.Permission.IDManagement)) {
             if (!permission_code.contains(GlobalKey.Permission.IDManagement)) {//ID管理
-                idBindLl.setVisibility(View.INVISIBLE);
+                idBindLl.setVisibility(View.GONE);
             }
         } else {
-            idManagementLl.setVisibility(View.INVISIBLE);
+            idManagementLl.setVisibility(View.GONE);
         }
 
     }
@@ -326,7 +326,7 @@ public class HomeActivity extends AppCompatActivity {
                                      fragmentList.clear();
                                      initCardView();
                                  }
-                             }, 0, 5000
+                             }, 0, 3000
         );
     }
 

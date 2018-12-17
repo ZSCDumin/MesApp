@@ -98,54 +98,56 @@ public class FragmentMaterialOut2 extends Fragment {
         list.clear();
         page = 0;
         EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_PickingApply_Header_ByPage)
-                .params(GlobalApi.WareHourse.pickingStatus, "1")
-                .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
-                .params(GlobalApi.WareHourse.size, "20") //一次获取多少
-                .params(GlobalApi.WareHourse.sort, "code") //根据code排序
-                .params(GlobalApi.WareHourse.asc, "0") //升序
-                .sign(true)
-                .timeStamp(true)//本次请求是否携带时间戳
-                .execute(new SimpleCallBack<String>() {
-                    @Override
-                    public void onSuccess(String result) {
-                        int code = 1;
-                        String message = "出错";
+            .params(GlobalApi.WareHourse.pickingStatus, "1")
+            .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
+            .params(GlobalApi.WareHourse.size, "20") //一次获取多少
+            .params(GlobalApi.WareHourse.sort, "code") //根据code排序
+            .params(GlobalApi.WareHourse.asc, "0") //升序
+            .sign(true)
+            .timeStamp(true)//本次请求是否携带时间戳
+            .execute(new SimpleCallBack<String>() {
+                @Override
+                public void onSuccess(String result) {
+                    int code = 1;
+                    String message = "出错";
 
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            code = jsonObject.optInt("code");
-                            message = jsonObject.optString("message");
-                            JSONObject data = jsonObject.optJSONObject("data");
-                            JSONArray content = data.optJSONArray("content");
-                            totalPages = data.optInt("totalPages");
-                            totalElements = data.optInt("totalElements");
-                            for (int i = 0; i < content.length(); i++) {
-                                JSONObject content0 = content.optJSONObject(i);
-                                String applyDate = content0.optString("applyDate"); //获取申请时间
-                                String number = content0.optString("number"); //
-                                String code1 = content0.optString("code"); //
-                                Map listmap = new HashMap<>();
-                                listmap.put("0", number);
-                                listmap.put("1", applyDate);
-                                listmap.put("2", code1);
-                                list.add(listmap);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        code = jsonObject.optInt("code");
+                        message = jsonObject.optString("message");
+                        JSONObject data = jsonObject.optJSONObject("data");
+                        JSONArray content = data.optJSONArray("content");
+                        totalPages = data.optInt("totalPages");
+                        totalElements = data.optInt("totalElements");
+                        for (int i = 0; i < content.length(); i++) {
+                            JSONObject content0 = content.optJSONObject(i);
+                            String applyDate = DateUtil.getDateToString1(content0.optLong("applyDate")); //获取申请时间
+                            String department = content0.optJSONObject("applicant").optJSONObject("department").optString("name");
+                            String applicant = content0.optJSONObject("applicant").optString("name"); //
+                            String number = department + "-" + applicant;
+                            String code1 = content0.optString("code");
+                            Map listmap = new HashMap<>();
+                            listmap.put("0", number);
+                            listmap.put("1", applyDate);
+                            listmap.put("2", code1);
+                            list.add(listmap);
                         }
-                        if (code == 0) {
-                            adapter.notifyDataSetChanged();
-
-                        } else {
-                            ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
-                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    if (code == 0) {
+                        adapter.notifyDataSetChanged();
 
-                    @Override
-                    public void onError(ApiException e) {
-                        ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    } else {
+                        ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                     }
-                });
+                }
+
+                @Override
+                public void onError(ApiException e) {
+                    ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                }
+            });
     }
 
     private void initView() {
@@ -160,15 +162,13 @@ public class FragmentMaterialOut2 extends Fragment {
                 holder.setOnClickListener(R.id.item, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //ActivityUtil.toastShow(getActivity(), "点击了" + position);
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("2").toString());
-
                         ActivityUtil.switchTo(getActivity(), MaterialOutActivityDetail1.class, map);
                     }
                 });
                 holder.setText(R.id.tv1, s.get("0").toString());
-                holder.setText(R.id.tv2, DateUtil.getDateToString(Long.valueOf(s.get("1").toString())));
+                holder.setText(R.id.tv2, s.get("1").toString());
             }
         };
         recyclerView.setAdapter(adapter);
@@ -178,7 +178,7 @@ public class FragmentMaterialOut2 extends Fragment {
      * 初始化搜索框
      */
     private void initSearchView() {
-        searchView.setVoiceSearch(false); //or true    ，是否支持声音的
+        searchView.setVoiceSearch(false); //or true,是否支持声音的
         searchView.setSubmitOnClick(true);  //设置为true后，单击ListView的条目，search_view隐藏。实现数据的搜索
         searchView.setEllipsize(true);   //搜索框的ListView中的Item条目是否是单显示
         //搜索显示的提示
@@ -252,52 +252,56 @@ public class FragmentMaterialOut2 extends Fragment {
         if (page > totalPages) classicsFooter.setLoadmoreFinished(true);
         else {
             EasyHttp.post(GlobalApi.WareHourse.MaterialOut.PATH_PickingApply_Header_ByPage)
-                    .params(GlobalApi.WareHourse.pickingStatus, "1")
-                    .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
-                    .params(GlobalApi.WareHourse.size, "20") //一次获取多少
-                    .params(GlobalApi.WareHourse.sort, "code") //根据code排序
-                    .params(GlobalApi.WareHourse.asc, "0") //升序
-                    .sign(true)
-                    .timeStamp(true)//本次请求是否携带时间戳
-                    .execute(new SimpleCallBack<String>() {
-                        @Override
-                        public void onSuccess(String result) {
-                            int code = 1;
-                            String message = "出错";
+                .params(GlobalApi.WareHourse.pickingStatus, "1")
+                .params(GlobalApi.WareHourse.page, String.valueOf(page)) //从第0 业开始获取
+                .params(GlobalApi.WareHourse.size, "20") //一次获取多少
+                .params(GlobalApi.WareHourse.sort, "code") //根据code排序
+                .params(GlobalApi.WareHourse.asc, "0") //升序
+                .sign(true)
+                .timeStamp(true)//本次请求是否携带时间戳
+                .execute(new SimpleCallBack<String>() {
+                    @Override
+                    public void onSuccess(String result) {
+                        int code = 1;
+                        String message = "出错";
 
-                            try {
-                                JSONObject jsonObject = new JSONObject(result);
-                                code = jsonObject.optInt("code");
-                                message = jsonObject.optString("message");
-                                JSONObject data = jsonObject.optJSONObject("data");
-                                JSONArray content = data.optJSONArray("content");
-                                totalPages = data.optInt("totalPages");
-                                totalElements = data.optInt("totalElements");
-                                for (int i = 0; i < content.length(); i++) {
-                                    JSONObject content0 = content.optJSONObject(i);
-                                    String applyDate = content0.optString("applyDate"); //获取申请时间
-                                    String number = content0.optString("number"); //
-                                    Map listmap = new HashMap<>();
-                                    listmap.put("1", number);
-                                    listmap.put("2", applyDate);
-                                    list.add(listmap);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                        try {
+                            JSONObject jsonObject = new JSONObject(result);
+                            code = jsonObject.optInt("code");
+                            message = jsonObject.optString("message");
+                            JSONObject data = jsonObject.optJSONObject("data");
+                            JSONArray content = data.optJSONArray("content");
+                            totalPages = data.optInt("totalPages");
+                            totalElements = data.optInt("totalElements");
+                            for (int i = 0; i < content.length(); i++) {
+                                JSONObject content0 = content.optJSONObject(i);
+                                String applyDate = DateUtil.getDateToString1(content0.optLong("applyDate")); //获取申请时间
+                                String department = content0.optJSONObject("applicant").optJSONObject("department").optString("name");
+                                String applicant = content0.optJSONObject("applicant").optString("name"); //
+                                String number = department + "-" + applicant;
+                                String code1 = content0.optString("code");
+                                Map listmap = new HashMap<>();
+                                listmap.put("0", number);
+                                listmap.put("1", applyDate);
+                                listmap.put("2", code1);
+                                list.add(listmap);
                             }
-                            if (code == 0) {
-                                adapter.notifyDataSetChanged();
-
-                            } else {
-                                ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
-                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                        if (code == 0) {
+                            adapter.notifyDataSetChanged();
 
-                        @Override
-                        public void onError(ApiException e) {
-                            ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                        } else {
+                            ToastUtil.showToast(getActivity(), message, ToastUtil.Error);
                         }
-                    });
+                    }
+
+                    @Override
+                    public void onError(ApiException e) {
+                        ToastUtil.showToast(getActivity(), GlobalApi.ProgressDialog.INTERR, ToastUtil.Confusion);
+                    }
+                });
         }
     }
 

@@ -51,7 +51,6 @@ public class ProductOutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_out);
         ButterKnife.bind(this);
-        initData();
         initView();
     }
 
@@ -63,11 +62,10 @@ public class ProductOutActivity extends AppCompatActivity {
                 finish();
             }
         });
-        title.setText("成品出库");
+        title.setText("产品出库");
         add.setVisibility(View.INVISIBLE);
     }
-    public void initData() {
-    }
+
     public void initView() {
         initTitle();
         initSlidingTabLayout();

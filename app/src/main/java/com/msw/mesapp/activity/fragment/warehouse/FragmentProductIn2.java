@@ -12,6 +12,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.msw.mesapp.activity.home.warehouse.ProductInActivityDetail2;
 import com.msw.mesapp.activity.home.warehouse.ProductOutActivityDetail1;
 import com.msw.mesapp.base.GlobalApi;
 import com.msw.mesapp.utils.ActivityUtil;
+import com.msw.mesapp.utils.DateUtil;
 import com.msw.mesapp.utils.ToastUtil;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -120,7 +122,7 @@ public class FragmentProductIn2 extends Fragment {
                             for (int i = 0; i < content.length(); i++) {
                                 JSONObject item = content.optJSONObject(i);
                                 String batchNumber = item.optString("batchNumber");
-                                String payTime = item.optString("payTime");
+                                String payTime = DateUtil.getDateToString(item.optLong("payTime"));
                                 String code1 = item.optString("code");
                                 Map map = new HashMap();
                                 map.put("0", batchNumber);
@@ -161,6 +163,7 @@ public class FragmentProductIn2 extends Fragment {
                         //ActivityUtil.toastShow(getActivity(), "点击了" + position);
                         Map<String, Object> map = new HashMap<>();
                         map.put("code", s.get("2").toString());
+                        Log.i("TAG",s.get("2").toString());
                         ActivityUtil.switchTo(getActivity(), ProductInActivityDetail2.class, map);
                     }
                 });

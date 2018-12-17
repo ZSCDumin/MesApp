@@ -403,36 +403,29 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_height="50dp"
                 android:gravity="center"
+                android:layout_marginTop="50dp"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/cancle_bt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="15dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_margin="10dp"
+                    android:layout_height="45dp"
                     android:background="@drawable/button_submit_selector"
                     android:clickable="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
                     android:text="取消"
                     android:textColor="#fff" />
 
                 <Button
                     android:id="@+id/product_out_bt"
-                    android:layout_width="wrap_content"
-                    android:layout_height="35dp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_margin="15dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="45dp"
                     android:background="@drawable/button_submit_selector"
-                    android:clickable="true"
-                    android:paddingLeft="20dp"
-                    android:paddingRight="20dp"
+                    android:layout_margin="10dp"
                     android:text="产品出库"
                     android:textColor="#fff" />
             </LinearLayout>
